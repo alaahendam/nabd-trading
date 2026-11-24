@@ -5,6 +5,10 @@ const socketIo = {
   name: 'socket.io-client',
   message: 'Only features/market-data may import socket.io-client.',
 };
+const chartLibrary = {
+  name: 'lightweight-charts',
+  message: 'Only features/stocks/lightweight-chart-adapter.ts may import the chart library.',
+};
 const httpClients = ['axios', 'ky'].map((name) => ({
   name,
   message: 'HTTP requests go through lib/api.',
@@ -75,7 +79,7 @@ export const webArchitecture = defineConfig(
     rules: {
       'no-restricted-imports': [
         'error',
-        { paths: [socketIo, ...httpClients], patterns: [sharedDeepImports] },
+        { paths: [socketIo, chartLibrary, ...httpClients], patterns: [sharedDeepImports] },
       ],
       'no-restricted-globals': [
         'error',
@@ -89,11 +93,24 @@ export const webArchitecture = defineConfig(
     // The one feature allowed to import socket.io-client.
     files: ['src/features/market-data/**/*.{ts,tsx}'],
     rules: {
-      'no-restricted-imports': ['error', { paths: httpClients, patterns: [sharedDeepImports] }],
+      'no-restricted-imports': [
+        'error',
+        { paths: [chartLibrary, ...httpClients], patterns: [sharedDeepImports] },
+      ],
       'no-restricted-globals': [
         'error',
         { name: 'fetch', message: 'HTTP requests go through lib/api.' },
         { name: 'XMLHttpRequest', message: 'HTTP requests go through lib/api.' },
+      ],
+    },
+  },
+  {
+    // The one module allowed to import the chart library, and the test that mocks it.
+    files: ['src/features/stocks/lightweight-chart-adapter*.ts'],
+    rules: {
+      'no-restricted-imports': [
+        'error',
+        { paths: [socketIo, ...httpClients], patterns: [sharedDeepImports] },
       ],
     },
   },

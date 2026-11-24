@@ -62,6 +62,20 @@ const en = {
       volume: 'Volume',
     },
   },
+  chart: {
+    loading: 'Loading chart…',
+    empty: 'No chart data for this period',
+    error: 'Could not load the chart',
+    label: '{{symbol}} price chart: {{period}}',
+    period: {
+      label: 'Chart period',
+      '1D': 'Past day',
+      '1W': 'Past week',
+      '1M': 'Past month',
+      '3M': 'Past 3 months',
+      '1Y': 'Past year',
+    },
+  },
   count: { stocks_one: '{{count}} stock', stocks_other: '{{count}} stocks' },
 } as const;
 
@@ -123,6 +137,20 @@ const ar: Tree = {
       low: 'الأدنى',
       previousClose: 'الإغلاق السابق',
       volume: 'حجم التداول',
+    },
+  },
+  chart: {
+    loading: 'جارٍ تحميل الرسم البياني…',
+    empty: 'لا توجد بيانات لهذه الفترة',
+    error: 'تعذّر تحميل الرسم البياني',
+    label: '{{symbol}}: رسم بياني للسعر، {{period}}',
+    period: {
+      label: 'فترة الرسم البياني',
+      '1D': 'اليوم الماضي',
+      '1W': 'الأسبوع الماضي',
+      '1M': 'الشهر الماضي',
+      '3M': 'آخر 3 أشهر',
+      '1Y': 'السنة الماضية',
     },
   },
   count: {

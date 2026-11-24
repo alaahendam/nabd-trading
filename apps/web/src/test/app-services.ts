@@ -8,6 +8,7 @@ import type { Language } from '../lib/i18n/language';
 import { LanguageStore } from '../lib/i18n/language-store';
 import { createQueryClient } from '../lib/query/query-client';
 import { ThemeStore } from '../lib/theme/theme';
+import { createFakeChart } from './fake-chart';
 import { FakeSocket } from './fake-socket';
 import { API_URL } from './msw';
 
@@ -27,6 +28,7 @@ const memoryStorage = () => {
  */
 export function createTestServices({ language = 'en' }: { language?: Language } = {}) {
   const socket = new FakeSocket();
+  const chart = createFakeChart();
   const i18n = createI18n(language);
   const languageRoot = { lang: '', dir: '' };
   const themeRoot = { dataset: {} as DOMStringMap };
@@ -55,7 +57,8 @@ export function createTestServices({ language = 'en' }: { language?: Language } 
     ),
     queryClient: createQueryClient(),
     realtime: new RealtimeClient(socket, new PriceStore()),
+    loadChart: chart.loader,
   };
 
-  return { services, socket, languageRoot, themeRoot };
+  return { services, socket, languageRoot, themeRoot, chart };
 }

@@ -7,11 +7,15 @@ import { MemoryRouter } from 'react-router';
 import { PriceStore } from '../features/market-data/price-store';
 import { RealtimeClient } from '../features/market-data/realtime-client';
 import { RealtimeProvider } from '../features/market-data/realtime-hooks';
+import { ChartProvider } from '../features/stocks/chart-context';
 import { ApiProvider } from '../lib/api';
 import { createI18n } from '../lib/i18n/i18n';
 import type { Language } from '../lib/i18n/language';
 import { createQueryClient } from '../lib/query/query-client';
+import { ThemeStore } from '../lib/theme/theme';
+import { ThemeProvider } from '../lib/theme/theme-hooks';
 import { createFakeApi } from './fake-api';
+import { createFakeChart } from './fake-chart';
 import { FakeSocket } from './fake-socket';
 
 interface HarnessOptions {
@@ -46,18 +50,32 @@ export function createFeatureHarness({ language = 'en', route = '/' }: HarnessOp
   const client = new RealtimeClient(socket, store);
   const queryClient = createQueryClient();
   const i18n = createI18n(language);
+  const chart = createFakeChart();
+  const themeStore = new ThemeStore({
+    storage: { getItem: () => null, setItem: () => undefined },
+    matchMedia: () => ({
+      matches: false,
+      addEventListener: () => undefined,
+      removeEventListener: () => undefined,
+    }),
+    root: { dataset: {} },
+  });
   let stamp = Date.now();
 
   function Wrapper({ children }: { children: ReactNode }) {
     return (
       <I18nextProvider i18n={i18n}>
-        <ApiProvider api={api}>
-          <QueryClientProvider client={queryClient}>
-            <RealtimeProvider client={client}>
-              <MemoryRouter initialEntries={[route]}>{children}</MemoryRouter>
-            </RealtimeProvider>
-          </QueryClientProvider>
-        </ApiProvider>
+        <ThemeProvider store={themeStore}>
+          <ApiProvider api={api}>
+            <QueryClientProvider client={queryClient}>
+              <RealtimeProvider client={client}>
+                <ChartProvider loader={chart.loader}>
+                  <MemoryRouter initialEntries={[route]}>{children}</MemoryRouter>
+                </ChartProvider>
+              </RealtimeProvider>
+            </QueryClientProvider>
+          </ApiProvider>
+        </ThemeProvider>
       </I18nextProvider>
     );
   }
@@ -67,6 +85,8 @@ export function createFeatureHarness({ language = 'en', route = '/' }: HarnessOp
     socket,
     client,
     queryClient,
+    chart,
+    themeStore,
     Wrapper,
     connect: () => {
       act(() => {

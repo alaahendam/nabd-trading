@@ -8,6 +8,7 @@ import { formatPrice, formatVolume } from '../../lib/format/format';
 import { Button, buttonVariants, ChangeBadge, Skeleton, StateMessage } from '../../shared/ui';
 import { useSubscription } from '../market-data';
 import { PriceFlash } from './price-flash';
+import { StockChart } from './stock-chart';
 import { useStock } from './stock-queries';
 import { useLiveQuote } from './use-live-quote';
 
@@ -124,6 +125,8 @@ function StockDetailBody({
           </div>
         ))}
       </dl>
+
+      <StockChart symbol={stock.symbol} />
     </div>
   );
 }

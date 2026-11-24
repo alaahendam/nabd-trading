@@ -5,7 +5,7 @@ import { afterEach, describe, expect, it, vi } from 'vitest';
 
 import { ApiClientError } from '../../lib/api';
 import { createFeatureHarness } from '../../test/feature-harness';
-import { aapl } from '../../test/fixtures';
+import { aapl, aaplHistory } from '../../test/fixtures';
 import { StockDetail } from './stock-detail';
 
 afterEach(() => {
@@ -35,6 +35,7 @@ function renderDetail(options: Options = {}) {
     harness.api.getStock.mockRejectedValueOnce(firstFailure);
   }
   harness.api.getStock.mockResolvedValue(aapl);
+  harness.api.getHistory.mockResolvedValue(aaplHistory);
   const view = render(
     <StockDetail symbol={symbol} {...(renderAction === undefined ? {} : { renderAction })} />,
     { wrapper: harness.Wrapper },
@@ -114,6 +115,7 @@ describe('StockDetail', () => {
     }
     const harness = createFeatureHarness();
     harness.api.getStock.mockResolvedValue(aapl);
+    harness.api.getHistory.mockResolvedValue(aaplHistory);
     render(<Screen />, { wrapper: harness.Wrapper });
     await screen.findByRole('heading', { name: 'AAPL' });
     harness.connect();

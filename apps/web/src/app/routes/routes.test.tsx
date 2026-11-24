@@ -6,7 +6,7 @@ import { RouterProvider } from 'react-router/dom';
 import { afterEach, beforeEach, describe, expect, it, vi } from 'vitest';
 
 import { createTestServices } from '../../test/app-services';
-import { server, stockHandler, stocksHandler } from '../../test/msw';
+import { historyHandler, server, stockHandler, stocksHandler } from '../../test/msw';
 import { Shell } from '../layout/shell';
 import { Providers } from '../providers/providers';
 import { StockPage } from './pages/stock-page';
@@ -78,7 +78,7 @@ describe('app routes and shell', () => {
   });
 
   it('APP-04 opens the stock page for a symbol and titles the tab with it', async () => {
-    server.use(stockHandler);
+    server.use(stockHandler, historyHandler);
     mount('/stocks/AAPL');
     expect(await screen.findByRole('heading', { level: 1, name: 'AAPL' })).toBeVisible();
     expect(screen.getByText('Apple Inc.')).toBeVisible();

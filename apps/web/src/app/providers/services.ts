@@ -2,6 +2,7 @@ import type { QueryClient } from '@tanstack/react-query';
 import type { i18n } from 'i18next';
 
 import { createRealtimeClient, type RealtimeClient } from '../../features/market-data';
+import { type ChartLoader, loadLightweightChart } from '../../features/stocks';
 import {
   type Api,
   createApi,
@@ -22,6 +23,7 @@ export interface AppServices {
   api: Api;
   queryClient: QueryClient;
   realtime: RealtimeClient;
+  loadChart: ChartLoader;
 }
 
 export function createServices(apiUrl: string): AppServices {
@@ -37,5 +39,6 @@ export function createServices(apiUrl: string): AppServices {
     ),
     queryClient: createQueryClient(),
     realtime: createRealtimeClient(apiUrl),
+    loadChart: loadLightweightChart,
   };
 }
