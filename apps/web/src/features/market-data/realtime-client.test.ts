@@ -108,6 +108,16 @@ describe('RealtimeClient connection', () => {
     expect(socket.calls.connect).toBe(1);
   });
 
+  it('RTC-24 returns to connected when the browser blips offline and online with the socket intact', () => {
+    const { client, socket } = connected();
+    client.setBrowserOnline(false);
+    expect(client.getStatus()).toBe('offline');
+
+    client.setBrowserOnline(true);
+    expect(client.getStatus()).toBe('connected');
+    expect(socket.calls.connect).toBe(1);
+  });
+
   it('RTC-19 notifies status subscribers about real changes only', () => {
     const { client, socket } = setup();
     const listener = vi.fn();

@@ -64,6 +64,7 @@ Module: `apps/web/src/features/market-data`. Design: ADR 0005. Contracts: `@nabd
 | RTC-21 | Release then acquire in one tick sends nothing  | connected and subscribed; `release()` and `acquire` the same symbol in the same tick         | no subscribe and no unsubscribe is sent                                                                         | unit  |
 | RTC-22 | One tick, one message                           | three single-symbol acquires, then three releases, each batch in its own tick                | one subscribe with all three symbols; one unsubscribe with all three                                            | unit  |
 | RTC-23 | The server is forgotten across a disconnect     | subscribed, `disconnect()`, `connect()`, socket connects                                     | the symbol is subscribed again                                                                                  | unit  |
+| RTC-24 | A browser blip does not strand the status       | connected, `setBrowserOnline(false)`, then `true` while the socket never dropped             | status returns to `connected` and `socket.connect()` is not called again                                        | unit  |
 
 ## Cases: socket.io adapter (mocked `socket.io-client`)
 

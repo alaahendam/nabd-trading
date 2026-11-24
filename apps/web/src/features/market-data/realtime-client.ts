@@ -112,9 +112,13 @@ export class RealtimeClient {
     this.browserOnline = online;
     if (!online) {
       this.setStatus('offline');
-    } else if (this.started && !this.socket.connected) {
-      this.setStatus('reconnecting');
-      this.socket.connect();
+    } else if (this.started) {
+      if (this.socket.connected) {
+        this.setStatus('connected');
+      } else {
+        this.setStatus('reconnecting');
+        this.socket.connect();
+      }
     }
   }
 
