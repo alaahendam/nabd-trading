@@ -1,0 +1,13 @@
+{
+  "name": "@nabd/config",
+  "private": true,
+  "version": "0.0.0",
+  "description": "Shared tooling configs: TypeScript, ESLint, Prettier, Stylelint",
+  "license": "UNLICENSED",
+  "type": "module",
+  "exports": {
+    "./tsconfig/base.json": "./tsconfig/base.json",
+    "./tsconfig/react.json": "./tsconfig/react.json",
+    "./tsconfig/node.json": "./tsconfig/node.json"
+  }
+}
