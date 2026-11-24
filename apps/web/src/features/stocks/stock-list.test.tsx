@@ -141,9 +141,9 @@ describe('StockList', () => {
   it('LST-07 marks a price as delayed after ten silent seconds', async () => {
     vi.useFakeTimers({ toFake: ['Date', 'setInterval', 'clearInterval'] });
     const { connect, tick } = renderFeatureWith([aapl]);
-    await act(async () => {
-      await vi.advanceTimersByTimeAsync(10);
-    });
+    // Wait for the rows themselves. Advancing a few fake milliseconds and hoping the list had
+    // loaded passed on a fast machine and failed on a slow CI runner.
+    await screen.findByText('Apple Inc.');
     connect();
     tick([{ symbol: 'AAPL', price: 231 }]);
     expect(screen.queryByText('Delayed')).not.toBeInTheDocument();
