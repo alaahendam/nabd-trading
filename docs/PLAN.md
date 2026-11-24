@@ -73,7 +73,7 @@ Git gates
 
 - Every module gets a written test matrix (cases listed before the code) committed in `docs/testing/`.
 - Coverage thresholds enforced in config (build fails below): 100% on domain logic (price simulator, history generator, watchlist service, realtime store/subscription manager, formatters); ≥90% global; bootstrap files (`main.ts`, module wiring) excluded explicitly.
-- Server: Jest unit tests, Supertest integration for REST, Socket.IO client e2e for the gateway (subscribe/unsubscribe, rooms, batching, reconnect, invalid payloads).
+- Server: Vitest (SWC) unit tests, see ADR 0002, Supertest integration for REST, Socket.IO client e2e for the gateway (subscribe/unsubscribe, rooms, batching, reconnect, invalid payloads).
 - Shared: schema tests (valid/invalid payloads).
 - Web: Vitest + Testing Library + MSW; realtime layer tested with a fake socket; component tests per state (loading/empty/error/offline/RTL/dark).
 - E2E: Playwright on the main flows (list live update → open detail → switch periods → star → watchlist reflects it → reload persists → switch to Arabic).
@@ -89,7 +89,7 @@ Phase 0 — Repository and workspace (no app code)
 
 Phase 1 — App shells with configs only
 
-- `apps/server` Nest shell, `apps/web` Vite shell, Tailwind v4, Vitest/Jest/Playwright configs, env handling (validated).
+- `apps/server` Nest shell, `apps/web` Vite shell, Tailwind v4, Vitest (web and server) and Playwright configs, env handling (validated).
 - Gate: `pnpm lint`, `pnpm typecheck`, `pnpm test`, `pnpm build` all green on empty shells; verify each lint rule fails on a deliberate violation.
 
 Phase 2 — `packages/shared`
