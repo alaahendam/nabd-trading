@@ -3,6 +3,7 @@ export const API_PREFIX = '/api';
 
 /** Route patterns, for the server's controllers. Paths are relative to `API_PREFIX`. */
 export const ROUTES = {
+  health: '/health',
   stocks: '/stocks',
   stock: '/stocks/:symbol',
   history: '/stocks/:symbol/history',

@@ -1,6 +1,6 @@
 # Test matrix: shared API contracts (identity, watchlist, errors, routes)
 
-Modules: `packages/shared/src/watchlist.ts`, `errors.ts`, `routes.ts`.
+Modules: `packages/shared/src/watchlist.ts`, `errors.ts`, `routes.ts`, `health.ts`.
 
 ## Purpose and public surface
 
@@ -41,6 +41,14 @@ Modules: `packages/shared/src/watchlist.ts`, `errors.ts`, `routes.ts`.
 | RTE-02 | Symbol routes fill the parameter | each symbol pattern, `AAPL` | `/stocks/AAPL`, `/stocks/AAPL/history`, `/watchlist/AAPL`    | unit  |
 | RTE-03 | A dotted symbol stays readable   | `BRK.B`                     | `.` is kept                                                  | unit  |
 | RTE-04 | Unsafe characters are encoded    | `A/B`, `A B`, `A?B`         | `A%2FB`, `A%20B`, `A%3FB`; no raw `/`, space or `?` survives | unit  |
+
+## Cases: health
+
+| ID     | Case                                | Input / setup                              | Expected  | Level |
+| ------ | ----------------------------------- | ------------------------------------------ | --------- | ----- |
+| HLT-01 | Health response wrapped in { data } | `status: ok`, non-negative `uptimeSeconds` | parses    | unit  |
+| HLT-02 | Invalid health responses            | other status, negative uptime, no wrapper  | rejected  | unit  |
+| HLT-03 | Health has a route                  | `ROUTES.health`                            | `/health` | unit  |
 
 ## Coverage target
 
