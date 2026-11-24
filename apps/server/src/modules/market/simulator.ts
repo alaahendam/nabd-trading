@@ -94,6 +94,11 @@ export class MarketSimulator {
     return this.states.map((state) => this.toQuote(state));
   }
 
+  /** Every stock's universe entry with its current quote, in universe order. */
+  snapshot(): { entry: UniverseEntry; quote: Quote }[] {
+    return this.states.map((state) => ({ entry: state.entry, quote: this.toQuote(state) }));
+  }
+
   quote(symbol: string): Quote | undefined {
     const state = this.bySymbol.get(symbol);
     return state && this.toQuote(state);

@@ -7,7 +7,7 @@ Module: `apps/server/src/modules/market/simulator.ts` (`MarketSimulator`). Desig
 `new MarketSimulator(universe, { seed, startTime, volatilityScale?, marketDailyVolatility?, clusterStrength? })`
 
 - `advance(now)`: moves simulated time to `now` and returns the ticks emitted in `(previous time, now]`, in time order. Calling it with a time that is not later returns nothing.
-- `quotes()`, `quote(symbol)`: the current `Quote` of every stock or one stock.
+- `quotes()`, `quote(symbol)`: the current `Quote` of every stock or one stock. `snapshot()` pairs each universe entry with its quote.
 - `latestTick(symbol)`: the current price, cumulative volume and last update time as a `PriceTick`.
 - `volatilityMultiplier(symbol)`: diagnostics only, the current volatility regime of a stock (1 is normal).
 
@@ -36,6 +36,7 @@ Behavior under test: every quote and tick satisfies the shared contracts; everyt
 | SIM-17 | Options are validated                          | `volatilityScale` `0`, `-1`, `NaN`; negative market volatility or cluster strength                                                             | throws `RangeError`                                                                                                                                                                                       | unit  |
 | SIM-18 | An empty universe is harmless                  | no stocks                                                                                                                                      | `advance` returns no ticks, across a day boundary too                                                                                                                                                     | unit  |
 | SIM-19 | Results are copies                             | mutate a returned quote                                                                                                                        | the simulator's next quote is unchanged                                                                                                                                                                   | unit  |
+| SIM-20 | Entries paired with quotes                     | `snapshot()` after a few steps                                                                                                                 | each universe entry with its quote, in universe order, quotes equal `quotes()`                                                                                                                            | unit  |
 
 ## Coverage target
 

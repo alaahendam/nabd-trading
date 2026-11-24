@@ -355,6 +355,14 @@ describe('MarketSimulator', () => {
     expect(sim.quotes()).toEqual([]);
   });
 
+  it('SIM-20 pairs every universe entry with its quote', () => {
+    const sim = makeSim();
+    run(sim, 5);
+    const snapshot = sim.snapshot();
+    expect(snapshot.map((item) => item.entry)).toEqual(STOCK_UNIVERSE);
+    expect(snapshot.map((item) => item.quote)).toEqual(sim.quotes());
+  });
+
   it('SIM-19 returns copies', () => {
     const sim = makeSim();
     const quote = must(sim.quotes()[0]);
