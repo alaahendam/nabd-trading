@@ -121,7 +121,7 @@ function StockDetailBody({
         {stats.map((stat) => (
           <div key={stat.label}>
             <dt className="text-sm text-content-muted">{stat.label}</dt>
-            <dd className="font-medium numeric">{stat.value}</dd>
+            <dd className="numeric font-medium">{stat.value}</dd>
           </div>
         ))}
       </dl>

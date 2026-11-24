@@ -45,3 +45,10 @@ Modules: `apps/web/src/lib/theme` (`theme.ts`, `theme-hooks.tsx`), `src/styles/t
 ## Out of scope
 
 Visual regression of the real pages (checked by eye in the browser run, Task 12), the theme toggle component (shell, Task 11).
+
+## Base styles
+
+| ID     | Behavior                         | Input               | Expected                                                                                                   | Level |
+| ------ | -------------------------------- | ------------------- | ---------------------------------------------------------------------------------------------------------- | ----- |
+| STY-01 | Buttons show they are clickable  | the real stylesheet | enabled buttons get a pointer cursor and disabled ones a not-allowed cursor                                | unit  |
+| STY-02 | Figures are placed by the parent | the numeric utility | it is an inline block, left to right and isolated with tabular digits, so a right-to-left parent aligns it | unit  |

@@ -29,7 +29,7 @@ export function PriceFlash({ price, direction, freshness, tickKey, large }: Pric
         key={tickKey}
         data-direction={direction}
         className={clsx(
-          'rounded-sm px-1 font-semibold numeric',
+          'numeric rounded-sm px-1 font-semibold',
           large === true ? 'text-3xl' : 'text-lg',
           FLASH[direction],
         )}

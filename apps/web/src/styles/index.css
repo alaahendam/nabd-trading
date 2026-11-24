@@ -88,6 +88,16 @@
     outline-offset: 2px;
   }
 
+  /* Tailwind 4 no longer makes buttons look clickable. */
+  button:not(:disabled),
+  [role='button']:not([aria-disabled='true']) {
+    cursor: pointer;
+  }
+
+  button:disabled {
+    cursor: not-allowed;
+  }
+
   @media (prefers-reduced-motion: reduce) {
     *,
     ::before,
@@ -103,9 +113,12 @@
 /*
  * Figures that change: tabular numerals so digits never jump, and always left to right, even
  * inside a right-to-left layout, isolated so neighboring Arabic text cannot reorder them. It is
- * a utility, so the Tailwind lint rules know the class.
+ * an inline box, so the parent's direction decides where it sits: as a block it aligned to the
+ * left in a right-to-left cell, away from its label. It is a utility, so the Tailwind lint rules
+ * know the class.
  */
 @utility numeric {
+  display: inline-block;
   font-variant-numeric: tabular-nums;
   direction: ltr;
   unicode-bidi: isolate;
