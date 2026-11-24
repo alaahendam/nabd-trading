@@ -19,8 +19,10 @@
     "@fontsource/ibm-plex-sans-arabic": "^5.3.0",
     "@nabd/shared": "workspace:*",
     "@tailwindcss/vite": "^4.3.5",
+    "i18next": "^27.2.5",
     "react": "^19.3.1",
     "react-dom": "^19.3.1",
+    "react-i18next": "^18.0.3",
     "socket.io-client": "^4.8.4",
     "tailwindcss": "^4.3.5",
     "zod": "^4.6.7"

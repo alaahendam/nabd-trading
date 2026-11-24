@@ -221,6 +221,7 @@ describe('the pre-paint script in index.html', () => {
         },
       },
       matchMedia: () => ({ matches: dark }),
+      navigator: { languages: [] },
       document: { documentElement: { dataset } },
     });
     return dataset['theme'];

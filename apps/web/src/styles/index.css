@@ -64,9 +64,14 @@
     outline-offset: 2px;
   }
 
-  /* Numbers that change use tabular numerals so digits never jump. */
+  /*
+   * Figures that change: tabular numerals so digits never jump, and always left to right, even
+   * inside a right-to-left layout, isolated so neighboring Arabic text cannot reorder them.
+   */
   .numeric {
     font-variant-numeric: tabular-nums;
+    direction: ltr;
+    unicode-bidi: isolate;
   }
 
   @media (prefers-reduced-motion: reduce) {

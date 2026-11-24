@@ -19,6 +19,21 @@ export default defineConfig({
         branches: 90,
         functions: 90,
         lines: 90,
+        'src/lib/i18n/language.ts': { statements: 100, branches: 100, functions: 100, lines: 100 },
+        'src/lib/i18n/language-store.ts': {
+          statements: 100,
+          branches: 100,
+          functions: 100,
+          lines: 100,
+        },
+        'src/lib/i18n/i18n-provider.tsx': {
+          statements: 100,
+          branches: 100,
+          functions: 100,
+          lines: 100,
+        },
+        'src/lib/i18n/i18n.ts': { statements: 100, branches: 100, functions: 100, lines: 100 },
+        'src/lib/format/format.ts': { statements: 100, branches: 100, functions: 100, lines: 100 },
         'src/lib/theme/theme.ts': { statements: 100, branches: 100, functions: 100, lines: 100 },
         'src/lib/theme/theme-hooks.tsx': {
           statements: 100,
