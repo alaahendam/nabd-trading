@@ -31,3 +31,13 @@ describe('queryKeys', () => {
     );
   });
 });
+
+describe('history keys for a range', () => {
+  it('QRY-09 gives a custom range its own key under the stock, apart from the periods', () => {
+    const key = queryKeys.history('AAPL', { from: 1000, to: 9000 });
+    expect(key).toEqual(['stocks', 'AAPL', 'history', 'custom', 1000, 9000]);
+    expect(key).not.toEqual(queryKeys.history('AAPL', { from: 1000, to: 9001 }));
+    expect(key).not.toEqual(queryKeys.history('AAPL', '1D'));
+    expect(key.slice(0, 2)).toEqual(queryKeys.stock('AAPL'));
+  });
+});

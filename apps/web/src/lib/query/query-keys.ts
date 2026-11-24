@@ -1,4 +1,4 @@
-import type { Period } from '@nabd/shared';
+import type { HistoryRange } from '../api/endpoints';
 
 export const queryKeys = {
   stocks: () => ['stocks'] as const,
@@ -8,6 +8,9 @@ export const queryKeys = {
   stocksBySymbols: (symbols: readonly string[]) =>
     ['stocks', 'by-symbols', [...new Set(symbols)].sort().join(',')] as const,
   stock: (symbol: string) => ['stocks', symbol] as const,
-  history: (symbol: string, period: Period) => ['stocks', symbol, 'history', period] as const,
+  history: (symbol: string, range: HistoryRange) =>
+    typeof range === 'string'
+      ? (['stocks', symbol, 'history', range] as const)
+      : (['stocks', symbol, 'history', 'custom', range.from, range.to] as const),
   watchlist: () => ['watchlist'] as const,
 };

@@ -1,9 +1,9 @@
-import type { HistoryData } from '@nabd/shared';
+import { type HistoryData, PERIOD_CONFIG } from '@nabd/shared';
 import { act, render, renderHook, screen } from '@testing-library/react';
 import userEvent from '@testing-library/user-event';
 import { afterEach, describe, expect, it, vi } from 'vitest';
 
-import { ApiClientError } from '../../lib/api';
+import { ApiClientError, type HistoryRange } from '../../lib/api';
 import { createFeatureHarness } from '../../test/feature-harness';
 import { aaplHistory } from '../../test/fixtures';
 import { useChartLoader } from './chart-context';
@@ -12,16 +12,18 @@ import { StockChart } from './stock-chart';
 const LAST_POINT_MS = 1_700_000_000_000;
 const FIVE_MINUTES = 300_000;
 
-const historyFor = (symbol: string, period: HistoryData['period']): HistoryData => ({
+/** What the server answers: a period has its own candle size, a custom range 30 minutes here. */
+const historyFor = (symbol: string, range: HistoryRange): HistoryData => ({
   ...aaplHistory,
   symbol,
-  period,
+  period: typeof range === 'string' ? range : 'custom',
+  bucketMs: typeof range === 'string' ? PERIOD_CONFIG[range].bucketMs : 1_800_000,
 });
 
 function renderChart(language?: 'en' | 'ar') {
   const harness = createFeatureHarness(language === undefined ? {} : { language });
-  harness.api.getHistory.mockImplementation((symbol, period) =>
-    Promise.resolve(historyFor(symbol, period)),
+  harness.api.getHistory.mockImplementation((symbol, range) =>
+    Promise.resolve(historyFor(symbol, range)),
   );
   const view = render(<StockChart symbol="AAPL" />, { wrapper: harness.Wrapper });
   return { ...harness, ...view };

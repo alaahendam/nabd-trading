@@ -94,3 +94,9 @@ The screens that use these (Phase 5), optimistic watchlist updates (Phase 5), a 
 | ------ | ------------------------------------------- | --------------------------------------------------------------------- | --------------------------------------------------------------------------------------------------- | ----- |
 | EPT-08 | The list sends its query and returns a page | `listStocks({ limit: 10, cursor: 'MSFT', symbols: ['AAPL','NVDA'] })` | `limit`, `cursor` and `symbols=AAPL,NVDA` in the query string; `{ stocks, nextCursor, total }` back | unit  |
 | EPT-09 | Nothing is sent for an empty query          | `listStocks({})`                                                      | no query string                                                                                     | unit  |
+
+## Custom history range (design polish)
+
+| ID     | Behavior                                  | Input                                             | Expected                                                                 | Level |
+| ------ | ----------------------------------------- | ------------------------------------------------- | ------------------------------------------------------------------------ | ----- |
+| EPT-10 | A custom range is sent as `from` and `to` | `getHistory('AAPL', { from: 1000, to: 9000000 })` | `from` and `to` in the query string and no `period`; the data comes back | unit  |

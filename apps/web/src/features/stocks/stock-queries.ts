@@ -1,7 +1,6 @@
-import type { Period } from '@nabd/shared';
 import { keepPreviousData, useInfiniteQuery, useQuery } from '@tanstack/react-query';
 
-import { useApi } from '../../lib/api';
+import { type HistoryRange, useApi } from '../../lib/api';
 import { queryKeys } from '../../lib/query';
 
 /** How many stocks one page of the list holds. */
@@ -44,10 +43,10 @@ export function useStock(symbol: string) {
   });
 }
 
-export function useHistory(symbol: string, period: Period) {
+export function useHistory(symbol: string, range: HistoryRange) {
   const api = useApi();
   return useQuery({
-    queryKey: queryKeys.history(symbol, period),
-    queryFn: ({ signal }) => api.getHistory(symbol, period, signal),
+    queryKey: queryKeys.history(symbol, range),
+    queryFn: ({ signal }) => api.getHistory(symbol, range, signal),
   });
 }

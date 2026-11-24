@@ -85,8 +85,12 @@ describe('stock queries', () => {
 
   it('STK-05 caches history per symbol and period', async () => {
     const api = createFakeApi();
-    api.getHistory.mockImplementation((symbol, period) =>
-      Promise.resolve({ ...aaplHistory, symbol, period }),
+    api.getHistory.mockImplementation((symbol, range) =>
+      Promise.resolve({
+        ...aaplHistory,
+        symbol,
+        period: typeof range === 'string' ? range : 'custom',
+      }),
     );
     const { wrapper } = createQueryWrapper(api);
 
@@ -279,5 +283,37 @@ describe('stock list sources', () => {
     await waitFor(() => {
       expect(result.current.data?.stocks).toEqual([aapl, brkb]);
     });
+  });
+});
+
+describe('history for a range', () => {
+  it('STK-19 asks for a custom range, and caches it apart from the periods', async () => {
+    const api = createFakeApi();
+    api.getHistory.mockImplementation((symbol, range) =>
+      Promise.resolve({
+        ...aaplHistory,
+        symbol,
+        period: typeof range === 'string' ? range : 'custom',
+      }),
+    );
+    const { wrapper } = createQueryWrapper(api);
+    const range = { from: 1_000, to: 9_000_000 };
+    const { result, rerender } = renderHook(
+      ({ value }: { value: '1D' | { from: number; to: number } }) => useHistory('AAPL', value),
+      { wrapper, initialProps: { value: range as '1D' | { from: number; to: number } } },
+    );
+    await waitFor(() => {
+      expect(result.current.data?.period).toBe('custom');
+    });
+    expect(api.getHistory.mock.calls[0]?.[1]).toEqual(range);
+
+    rerender({ value: '1D' });
+    await waitFor(() => {
+      expect(result.current.data?.period).toBe('1D');
+    });
+
+    rerender({ value: range });
+    expect(result.current.data?.period).toBe('custom');
+    expect(api.getHistory).toHaveBeenCalledTimes(2);
   });
 });

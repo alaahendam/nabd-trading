@@ -11,6 +11,9 @@ import {
 
 import type { HttpClient } from './http-client';
 
+/** A fixed period ("1D", "1W"…), or a custom range of epoch milliseconds. */
+export type HistoryRange = Period | { from: number; to: number };
+
 export interface StocksListQuery {
   /** Page size. Without it the whole list comes back. */
   limit?: number;
@@ -30,7 +33,7 @@ export interface StocksPage {
 export interface Api {
   listStocks(query: StocksListQuery, signal?: AbortSignal): Promise<StocksPage>;
   getStock(symbol: string, signal?: AbortSignal): Promise<StockWithQuote>;
-  getHistory(symbol: string, period: Period, signal?: AbortSignal): Promise<HistoryData>;
+  getHistory(symbol: string, range: HistoryRange, signal?: AbortSignal): Promise<HistoryData>;
   listWatchlist(signal?: AbortSignal): Promise<WatchlistItem[]>;
   addToWatchlist(symbol: string, signal?: AbortSignal): Promise<WatchlistItem>;
   removeFromWatchlist(symbol: string, signal?: AbortSignal): Promise<void>;
@@ -67,11 +70,14 @@ export function createApi(client: HttpClient): Api {
       });
       return body.data;
     },
-    async getHistory(symbol, period, signal) {
+    async getHistory(symbol, range, signal) {
       const body = await client.request(historyResponseSchema, {
         method: 'GET',
         path: symbolRoute(ROUTES.history, symbol),
-        query: { period },
+        query:
+          typeof range === 'string'
+            ? { period: range }
+            : { from: String(range.from), to: String(range.to) },
         ...withSignal(signal),
       });
       return body.data;

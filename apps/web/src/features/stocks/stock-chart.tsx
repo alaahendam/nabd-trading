@@ -1,4 +1,4 @@
-import { DEFAULT_PERIOD, type Period, PERIOD_CONFIG } from '@nabd/shared';
+import { DEFAULT_PERIOD } from '@nabd/shared';
 import { useEffect, useRef, useState } from 'react';
 import { useTranslation } from 'react-i18next';
 
@@ -10,7 +10,8 @@ import { readChartColors } from './chart-colors';
 import { useChartLoader } from './chart-context';
 import { chartLocale } from './chart-locale';
 import type { Candle, ChartPort } from './chart-port';
-import { PeriodSwitcher } from './period-switcher';
+import { type ChartRange, describeCustomRange, toHistoryRange } from './custom-range';
+import { RangeSwitcher } from './range-switcher';
 import { useHistory } from './stock-queries';
 
 /** A candlestick chart with volume, a period switcher, and the live price on the last candle. */
@@ -19,8 +20,10 @@ export function StockChart({ symbol }: { symbol: string }) {
   const locale = chartLocale(i18n.resolvedLanguage);
   const loader = useChartLoader();
   const { resolved: theme } = useTheme();
-  const [period, setPeriod] = useState<Period>(DEFAULT_PERIOD);
-  const history = useHistory(symbol, period);
+  const [range, setRange] = useState<ChartRange>({ kind: 'period', period: DEFAULT_PERIOD });
+  const history = useHistory(symbol, toHistoryRange(range));
+  // A custom range that ended in the past has no live candle; a period and a range ending today do.
+  const followsLive = range.kind === 'period' || range.range.live;
   const live = useLivePrice(symbol);
 
   // The element is kept in state so effects run once it exists.
@@ -74,17 +77,17 @@ export function StockChart({ symbol }: { symbol: string }) {
   }, [port, history.data]);
 
   useEffect(() => {
-    if (port === undefined || history.data === undefined || live === undefined) {
+    if (port === undefined || history.data === undefined || live === undefined || !followsLive) {
       return;
     }
     const candle = applyLivePrice(lastCandle.current, {
       price: live.price,
       timestamp: live.timestamp,
-      bucketMs: PERIOD_CONFIG[period].bucketMs,
+      bucketMs: history.data.bucketMs,
     });
     lastCandle.current = candle;
     port.updateCandle(candle);
-  }, [port, history.data, live, period]);
+  }, [port, history.data, live, followsLive]);
 
   useEffect(() => {
     if (port === undefined || element === null) {
@@ -96,6 +99,9 @@ export function StockChart({ symbol }: { symbol: string }) {
   useEffect(() => {
     port?.applyLocale(locale);
   }, [port, locale]);
+
+  const rangeName =
+    range.kind === 'period' ? t(`chart.period.${range.period}`) : describeCustomRange(range.range);
 
   const retry = (action: () => void) => <Button onClick={action}>{t('errors.retry')}</Button>;
 
@@ -133,13 +139,13 @@ export function StockChart({ symbol }: { symbol: string }) {
 
   return (
     <section className="flex flex-col gap-3">
-      <PeriodSwitcher value={period} onChange={setPeriod} />
+      <RangeSwitcher value={range} onChange={setRange} />
       <div className="relative overflow-hidden rounded-lg border border-line bg-surface-raised p-2 shadow-raised">
         <div
           ref={setElement}
           role="img"
           dir="ltr"
-          aria-label={t('chart.label', { symbol, period: t(`chart.period.${period}`) })}
+          aria-label={t('chart.label', { symbol, period: rangeName })}
           className="block-80 inline-full"
         />
         {overlay === null ? null : (

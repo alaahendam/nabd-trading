@@ -83,6 +83,21 @@ describe('createApi', () => {
     expect(period).toBe('1W');
   });
 
+  it('EPT-10 sends a custom range as from and to, without a period', async () => {
+    let params = new URLSearchParams();
+    server.use(
+      http.get(`${API_URL}/api/stocks/AAPL/history`, ({ request }) => {
+        params = new URL(request.url).searchParams;
+        return HttpResponse.json({ data: { ...aaplHistory, period: 'custom' } });
+      }),
+    );
+    const history = await api.getHistory('AAPL', { from: 1000, to: 9_000_000 });
+    expect(params.get('from')).toBe('1000');
+    expect(params.get('to')).toBe('9000000');
+    expect(params.has('period')).toBe(false);
+    expect(history.period).toBe('custom');
+  });
+
   it('EPT-04 lists, adds and removes watchlist items', async () => {
     const calls: string[] = [];
     server.use(

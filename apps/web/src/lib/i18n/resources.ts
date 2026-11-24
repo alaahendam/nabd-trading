@@ -83,6 +83,18 @@ const en = {
     loading: 'Loading chart…',
     empty: 'No chart data for this period',
     error: 'Could not load the chart',
+    custom: {
+      label: 'Custom',
+      from: 'From',
+      to: 'To',
+      apply: 'Apply',
+      problem: {
+        invalid: 'Enter both dates',
+        order: 'The start date must not be after the end date',
+        future: 'Dates in the future are not available',
+        tooOld: 'Dates older than a year are not available',
+      },
+    },
     label: '{{symbol}} price chart: {{period}}',
     period: {
       label: 'Chart period',
@@ -177,6 +189,18 @@ const ar: Tree = {
     loading: 'جارٍ تحميل الرسم البياني…',
     empty: 'لا توجد بيانات لهذه الفترة',
     error: 'تعذّر تحميل الرسم البياني',
+    custom: {
+      label: 'مخصص',
+      from: 'من',
+      to: 'إلى',
+      apply: 'تطبيق',
+      problem: {
+        invalid: 'أدخل تاريخَي البداية والنهاية',
+        order: 'يجب ألا يكون تاريخ البداية بعد تاريخ النهاية',
+        future: 'التواريخ المستقبلية غير متاحة',
+        tooOld: 'التواريخ الأقدم من سنة غير متاحة',
+      },
+    },
     label: '{{symbol}}: رسم بياني للسعر، {{period}}',
     period: {
       label: 'فترة الرسم البياني',
