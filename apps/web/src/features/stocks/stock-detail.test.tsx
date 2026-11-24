@@ -175,9 +175,8 @@ describe('StockDetail', () => {
   it('DET-11 marks a price as delayed after ten silent seconds', async () => {
     vi.useFakeTimers({ toFake: ['Date', 'setInterval', 'clearInterval'] });
     const { connect, tick } = renderDetail();
-    await act(async () => {
-      await vi.advanceTimersByTimeAsync(10);
-    });
+    // Wait for the page itself, not for a few fake milliseconds (see LST-07).
+    await screen.findByRole('heading', { name: 'AAPL' });
     connect();
     tick([{ symbol: 'AAPL', price: 231 }]);
     expect(screen.queryByText('Delayed')).not.toBeInTheDocument();
