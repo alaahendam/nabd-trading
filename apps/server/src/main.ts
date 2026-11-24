@@ -9,5 +9,5 @@ const app = await NestFactory.create(AppModule);
 const config = app.get<ConfigService<Env, true>>(ConfigService);
 
 configureApp(app);
-app.enableCors({ origin: config.get('CORS_ORIGIN', { infer: true }) });
+app.enableShutdownHooks();
 await app.listen(config.get('PORT', { infer: true }));
