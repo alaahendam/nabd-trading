@@ -40,6 +40,13 @@ const en = {
   pages: { stocks: 'Stocks', watchlist: 'Watchlist', stock: 'Stock details' },
   loading: { page: 'Loading…' },
   change: { up: 'Up', down: 'Down', flat: 'Unchanged' },
+  stocks: {
+    loading: 'Loading stocks…',
+    empty: 'No stocks to show',
+    error: 'Could not load stocks',
+    errorHint: 'Check your connection and try again.',
+    stale: 'Delayed',
+  },
   count: { stocks_one: '{{count}} stock', stocks_other: '{{count}} stocks' },
 } as const;
 
@@ -81,6 +88,13 @@ const ar: Tree = {
   pages: { stocks: 'الأسهم', watchlist: 'قائمة المراقبة', stock: 'تفاصيل السهم' },
   loading: { page: 'جارٍ التحميل…' },
   change: { up: 'ارتفاع', down: 'انخفاض', flat: 'دون تغيير' },
+  stocks: {
+    loading: 'جارٍ تحميل الأسهم…',
+    empty: 'لا توجد أسهم لعرضها',
+    error: 'تعذّر تحميل الأسهم',
+    errorHint: 'تحقق من اتصالك ثم حاول مرة أخرى.',
+    stale: 'متأخر',
+  },
   count: {
     stocks_zero: 'لا أسهم',
     stocks_one: 'سهم واحد',

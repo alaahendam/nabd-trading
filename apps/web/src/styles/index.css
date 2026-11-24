@@ -42,6 +42,30 @@
   --radius-sm: 0.25rem;
   --radius-md: 0.5rem;
   --radius-lg: 0.75rem;
+
+  /* A short wash of the market color when a price changes. Reduced motion shortens it (below). */
+  --animate-flash-up: flash-up 700ms ease-out;
+  --animate-flash-down: flash-down 700ms ease-out;
+
+  @keyframes flash-up {
+    from {
+      background-color: var(--positive-subtle);
+    }
+
+    to {
+      background-color: transparent;
+    }
+  }
+
+  @keyframes flash-down {
+    from {
+      background-color: var(--negative-subtle);
+    }
+
+    to {
+      background-color: transparent;
+    }
+  }
 }
 
 @layer base {

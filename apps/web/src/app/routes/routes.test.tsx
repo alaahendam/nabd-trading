@@ -6,6 +6,7 @@ import { RouterProvider } from 'react-router/dom';
 import { afterEach, beforeEach, describe, expect, it, vi } from 'vitest';
 
 import { createTestServices } from '../../test/app-services';
+import { server, stocksHandler } from '../../test/msw';
 import { Shell } from '../layout/shell';
 import { Providers } from '../providers/providers';
 import { createAppRoutes } from './routes';
@@ -27,6 +28,7 @@ const mount = (
 
 beforeEach(() => {
   document.title = '';
+  server.use(stocksHandler);
 });
 
 afterEach(() => {
@@ -109,19 +111,19 @@ describe('app routes and shell', () => {
   });
 
   it('APP-08 follows the realtime connection', async () => {
-    const { socket, services } = mount();
-    expect(await screen.findByRole('status')).toHaveTextContent('Connecting…');
+    const { socket } = mount();
+    const connection = async () => within(await screen.findByRole('banner')).getByRole('status');
+    expect(await connection()).toHaveTextContent('Connecting…');
 
     act(() => {
       socket.simulateConnect();
     });
-    expect(screen.getByRole('status')).toHaveTextContent('Live');
+    expect(await connection()).toHaveTextContent('Live');
 
     act(() => {
       socket.simulateDisconnect('transport close');
     });
-    expect(screen.getByRole('status')).toHaveTextContent('Reconnecting…');
-    expect(services.realtime).toBeDefined();
+    expect(await connection()).toHaveTextContent('Reconnecting…');
   });
 
   it('APP-09 says the data is simulated', async () => {
