@@ -1,70 +1,93 @@
-# Implementation Plan: Phase 2, `packages/shared`
+# Implementation Plan: Phase 3, backend
 
-Source: `docs/PLAN.md` section 6, Phase 2. Working agreement: `CLAUDE.md`. The Phase 1 plan was fully checked off and is kept in git history.
+Source: `docs/PLAN.md` section 6, Phase 3. Working agreement: `CLAUDE.md`. Earlier phase plans are fully checked off and kept in git history. Decisions: ADR 0003 (in-memory watchlist), ADR 0004 (simulation design).
 
 ## Overview
 
-`@nabd/shared` is the single source of truth for every contract between web and server: Zod schemas with the types derived from them, REST routes, the API error shape, the anonymous identity header, socket event names with typed payloads, and the period configuration. No runtime behavior beyond validation. It must be fully tested (100% coverage) before Phase 3 builds the server against it.
+Build the whole backend before any frontend feature: a seeded market simulator with deterministic history, REST for stocks, a Socket.IO gateway with rooms and batched ticks, an anonymous-identity watchlist, a global validation pipe and error filter, CORS, a health endpoint and optional chaos flags. Everything speaks the contracts in `@nabd/shared`. Domain logic (simulator, history generator, watchlist service, tick batcher) is covered at 100%.
 
-## Interface design (api-and-interface-design)
+## Threat model (security-and-hardening)
 
-- **Contract first.** Schemas are written and tested before any consumer exists. Types are only ever `z.infer` of a schema.
-- **One time convention.** Every timestamp is epoch milliseconds (integer). The chart layer converts as needed.
-- **One error shape.** `{ error: { code, message, details? } }` with a closed set of codes and a code to HTTP status map, so server filter and client agree.
-- **Envelopes are additive.** Lists return `{ data: [...] }` so pagination can be added later as an optional field without breaking clients. The stock universe is fixed and small, so no pagination now (decision recorded here, not an oversight).
-- **Input and output are separate.** `AddWatchlistInput` is not `WatchlistItem`.
-- **Validate at boundaries only.** Server validates request bodies, queries and socket payloads; web validates responses and socket payloads from the network. Internal code trusts the types.
-- **Closed vocabularies.** Periods, error codes, exchanges and socket events are `as const` values, never loose strings.
-- **Refined schemas are final.** Zod 4 `.extend()` throws on refined objects, so OHLC consistency refinements sit on the schemas that are not extended.
-- **One entry point.** Only `.` is exported; the architecture rule already forbids deep imports.
+Trust boundaries: HTTP params, query and headers; socket payloads; env. Everything crossing them is validated with the shared Zod schemas before use.
 
-## Packaging decision
+- **Spoofing:** the client ID is anonymous by design (documented). A watchlist is only reachable with its own ID; the guard rejects a missing or malformed ID. Swapping in a JWT guard keeps the same `@CurrentUser()` contract.
+- **Tampering / injection:** no database, no shell, no file paths from input. Path params and query are parsed by schemas.
+- **Information disclosure:** one error shape; unknown errors answer a generic message and never a stack trace; details only for validation failures.
+- **Denial of service:** socket subscribe limited to 50 symbols per message; unknown symbols rejected; batching bounds emit rate; JSON body size is Nest's default limit and there are no body endpoints. No rate limiting (single instance, demo), noted as a gap in the README.
+- **CORS:** explicit single origin from env, never `*`.
+- **Security headers:** `helmet` on the HTTP app.
 
-Built with `tsc` to `dist` (ESM, NodeNext, declarations). Nest runs compiled JS and Vite resolves ESM, so a compiled package is the one form both consume. Turbo already runs `^build` before lint, typecheck and test. A new `library` tsconfig base goes in `@nabd/config`. `dev` is `tsc --watch`.
+## Interface design
+
+Controllers are thin. Routes come from `ROUTES`, bodies and responses from shared schemas, errors from `createApiError`/`ERROR_STATUS`. Server modules talk only through exported providers (`index.ts`), enforced by lint.
 
 ## Task list
 
-### Slice 1: Foundation and market contracts
+### Slice 1: Foundation (vertical through the stack)
 
-- [x] Task 1: `library` tsconfig base in `@nabd/config`
-  - Acceptance: strict, NodeNext, declarations, no DOM or Node types. Verify: `@nabd/config` typecheck.
+- [ ] Task 1: `@nabd/shared` health contract (`ROUTES.health`, `healthResponseSchema`), test-first.
   - Scope: XS
-- [x] Task 2: `@nabd/shared` package with `Stock`, `Quote`, `PriceTick`, `HistoryPoint`, `Period` and period config
-  - Acceptance: matrix `docs/testing/shared-market.md` first; valid and invalid payloads for every schema; OHLC consistency refinement; 100% coverage; builds to `dist`.
-  - Verify: `pnpm --filter @nabd/shared lint typecheck test build`.
-  - Files: `package.json`, `tsconfig*.json`, `vitest.config.ts`, `eslint.config.js`, `src/{index,market,period}.ts` and tests.
+- [ ] Task 2: common foundation and health endpoint
+  - Acceptance: `ApiException`, catch-all filter producing the shared error shape (unknown errors generic, no stack), `ZodValidationPipe`, global prefix `/api`, helmet, `GET /api/health`; env gains `MARKET_SEED`, `CHAOS_LATENCY_MS`, `CHAOS_ERROR_RATE`; matrix `docs/testing/server-common.md` first.
+  - Verify: supertest e2e on 404 route, validation failure, unknown error, health.
   - Scope: M
 
-### Checkpoint: Market contracts
+### Slice 2: Market domain (pure, 100% coverage)
 
-- [x] Gates green for `@nabd/shared`, committed.
-
-### Slice 2: Watchlist, identity and errors
-
-- [x] Task 3: `WatchlistItem`, add input, client ID header and schema, API error shape, error code to status map, routes
-  - Acceptance: matrix `docs/testing/shared-api.md` first; error codes closed; routes build escaped symbol paths; 100% coverage.
+- [ ] Task 3: seeded RNG and stock universe
+  - Acceptance: deterministic streams per seed, normal and exponential draws, stable string hash; universe of real tickers, every entry passes `stockSchema` and has a positive snapshot price, beta and volatility; matrix `server-market-rng.md`.
+  - Scope: M
+- [ ] Task 4: live simulator
+  - Acceptance: every quote passes shared `quoteSchema` after any number of steps; deterministic per seed; positive cent-rounded prices; shared market factor correlates stocks; volatility clusters; irregular tick times; day rollover sets previous close; matrix `server-market-simulator.md`.
+  - Scope: L, split in two commits (state and stepping, then day rollover and ticks).
+- [ ] Task 5: history generator
+  - Acceptance: every result passes `historyDataSchema`; last close equals the current price; deterministic for the same inputs; ascending, bucket-aligned times; day gaps at UTC boundaries; correct point count per period; matrix `server-market-history.md`.
   - Scope: M
 
-### Slice 3: Realtime contracts
+### Checkpoint: Market domain
 
-- [x] Task 4: Socket event names, payload schemas, typed event maps, room name helper
-  - Acceptance: matrix `docs/testing/shared-socket.md` first; subscribe/unsubscribe payload limits; batched tick payload; event maps usable with `socket.io` generics; 100% coverage.
+- [ ] Domain tests green at 100%, committed.
+
+### Slice 3: Stocks REST
+
+- [ ] Task 6: market service (clock, tick stream) and stocks controller
+  - Acceptance: `GET /api/stocks`, `/api/stocks/:symbol`, `/api/stocks/:symbol/history?period=`; responses validate against shared response schemas; unknown symbol 404, bad symbol or period 422; matrix `server-stocks.md`.
   - Scope: M
 
-### Checkpoint: Complete
+### Slice 4: Watchlist
 
-- [x] Task 5: Whole-repo gates; a throwaway import of `@nabd/shared` proves it resolves in Nest (NodeNext), Vite and Vitest; the deep-import rule rejects `@nabd/shared/...`; README and docs updated.
+- [ ] Task 7: identity guard, `@CurrentUser()`, watchlist service, repository and controller
+  - Acceptance: missing or malformed `x-client-id` gives 401 `CLIENT_ID_REQUIRED`; `PUT` adds idempotently (keeps first `addedAt`), `DELETE` removes idempotently, `GET` lists in added order; unknown symbol 404; clients are isolated from each other; matrix `server-watchlist.md`; service at 100%.
+  - Scope: M
+
+### Checkpoint: REST complete
+
+- [ ] All REST e2e green, committed.
+
+### Slice 5: Realtime
+
+- [ ] Task 8: tick batcher and gateway
+  - Acceptance: subscribe/unsubscribe join and leave per-symbol rooms; invalid payloads and unknown symbols answer `server:error` and never crash; the current tick is sent on subscribe; live ticks are batched per flush interval and sent per room; disconnect cleans up; matrix `server-realtime.md`; batcher at 100%; end-to-end with `socket.io-client`.
+  - Scope: L, split in two commits (batcher, then gateway).
+
+### Slice 6: Operations
+
+- [ ] Task 9: chaos interceptor (latency and error rate from env, never on health)
+  - Scope: S
+- [ ] Task 10: `main.ts` wiring (prefix, helmet, CORS also for Socket.IO through an adapter, shutdown hooks), manual run with curl and a socket client, README and docs, whole-repo gates
   - Scope: S
 
 ## Risks and mitigations
 
-| Risk                                                        | Impact | Mitigation                                                                |
-| ----------------------------------------------------------- | ------ | ------------------------------------------------------------------------- |
-| Compiled ESM package not resolvable by Nest, Vite or Vitest | High   | Throwaway import in each consumer in Task 5, before Phase 3 depends on it |
-| Schema churn after Phase 3 starts                           | Med    | Additive-only rule, 100% tests, envelopes, closed enums documented above  |
-| `dist` stale during development                             | Low    | `dev` runs `tsc --watch`; turbo builds dependencies before test and lint  |
-| Zod refinement limits (no `.extend` on refined objects)     | Low    | Refine only terminal schemas; documented above                            |
+| Risk                                               | Impact | Mitigation                                                                |
+| -------------------------------------------------- | ------ | ------------------------------------------------------------------------- |
+| Simulator output violates the shared refinements   | High   | Property-style tests parse every quote and candle with the shared schemas |
+| Gateway is not covered by global filters and pipes | High   | Validate and answer inside the gateway explicitly; test invalid payloads  |
+| Socket.IO CORS not applied through Nest            | Med    | Custom IoAdapter; test the CORS header on the polling handshake           |
+| Gateway e2e without documented pattern             | Med    | `app.listen(0)` plus `socket.io-client`; proven in the first gateway test |
+| Timers make tests flaky                            | Med    | Injected clock and fake timers; no real sleeps in unit tests              |
+| Plan size: this is the largest phase               | Med    | One commit per task, green at each, checkpoints after slices 2, 4         |
 
 ## Open questions
 
-- None blocking. Stock symbols and the universe belong to the server (Phase 3), not to shared.
+- None blocking. Stock prices are an approximate snapshot, labeled as simulated.
