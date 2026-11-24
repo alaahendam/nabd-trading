@@ -1,15 +1,10 @@
-# Phase 5 task list
+# Phase 6 task list
 
 Details and acceptance criteria: `tasks/plan.md`.
 
-- [x] Task 1: shared atoms (Skeleton, ChangeBadge, StateMessage)
-- [x] Task 2: stocks data hooks
-- [x] Task 3: stock list
-- [x] Checkpoint: list works against the real server
-- [x] Task 4: detail header and stats
-- [x] Task 5: chart, period switcher, history
-- [x] Task 6: routes, titles, attribution
-- [x] Checkpoint: detail works against the real server
-- [x] Task 7: watchlist data hooks, optimistic updates
-- [x] Task 8: star toggle, watchlist view, composition
-- [x] Task 9: browser verification, gates, docs
+- [ ] Task 1: E2E harness
+- [ ] Task 2: E2E main flow
+- [ ] Task 3: E2E states
+- [ ] Task 4: accessibility pass with axe
+- [ ] Task 5: route-level code splitting
+- [ ] Task 6: CI job, gates, docs
