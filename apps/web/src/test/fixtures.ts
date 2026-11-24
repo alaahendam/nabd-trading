@@ -46,6 +46,7 @@ export const brkb: StockWithQuote = {
 export const aaplHistory: HistoryData = {
   symbol: 'AAPL',
   period: '1W',
+  bucketMs: 1_800_000,
   points: [
     { time: 1_699_999_000_000, open: 228, high: 231, low: 227, close: 230, volume: 5000 },
     { time: 1_700_000_000_000, open: 230, high: 232, low: 229, close: 231, volume: 6000 },

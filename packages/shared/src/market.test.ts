@@ -186,7 +186,7 @@ describe('stockWithQuoteSchema', () => {
 });
 
 describe('historyDataSchema', () => {
-  const base = { symbol: 'AAPL', period: '1D' };
+  const base = { symbol: 'AAPL', period: '1D', bucketMs: 300_000 };
   const at = (time: number) => ({ ...candle, time });
 
   it('MKT-19 parses ascending points', () => {
@@ -218,7 +218,7 @@ describe('historyQuerySchema', () => {
 
 describe('response schemas', () => {
   const item = { ...stock, quote };
-  const history = { symbol: 'AAPL', period: '1D', points: [candle] };
+  const history = { symbol: 'AAPL', period: '1D', bucketMs: 300_000, points: [candle] };
 
   it.each([
     ['stock', stockResponseSchema, item],
@@ -274,5 +274,49 @@ describe('stocks list paging', () => {
     expect(stocksResponseSchema.safeParse({ data: [item] }).success).toBe(false);
     expect(stocksResponseSchema.safeParse({ ...page, total: -1 }).success).toBe(false);
     expect(stocksResponseSchema.safeParse({ ...page, nextCursor: 'aapl' }).success).toBe(false);
+  });
+});
+
+describe('history range', () => {
+  const HOUR = 3_600_000;
+  const DAY = 24 * HOUR;
+  const range = (from: number, to: number) => ({ from: String(from), to: String(to) });
+
+  it('MKT-29 parses a period, a default, and a range with its numbers coerced', () => {
+    expect(historyQuerySchema.parse({ period: '1W' })).toEqual({ period: '1W' });
+    expect(historyQuerySchema.parse(range(1000, 1000 + DAY))).toEqual({
+      from: 1000,
+      to: 1000 + DAY,
+    });
+    expect(historyQuerySchema.parse(range(0, HOUR))).toEqual({ from: 0, to: HOUR });
+    expect(historyQuerySchema.parse(range(0, 365 * DAY))).toEqual({ from: 0, to: 365 * DAY });
+  });
+
+  it.each([
+    ['a period with a range', { period: '1W', ...range(0, DAY) }],
+    ['only from', { from: '0' }],
+    ['only to', { to: String(DAY) }],
+    ['from after to', range(DAY, 0)],
+    ['from equal to to', range(DAY, DAY)],
+    ['a span under an hour', range(0, HOUR - 1)],
+    ['a span over a year', range(0, 365 * DAY + 1)],
+    ['a fraction', { from: '0.5', to: String(DAY) }],
+    ['a negative start', range(-1, DAY)],
+    ['not a number', { from: 'x', to: 'y' }],
+    ['an unknown field', { period: '1D', extra: '1' }],
+  ])('MKT-29 refuses %s', (_label, query) => {
+    expect(historyQuerySchema.safeParse(query).success).toBe(false);
+  });
+
+  it('MKT-30 names the candle size and accepts a custom period', () => {
+    const points = [candle];
+    const custom = { symbol: 'AAPL', period: 'custom', bucketMs: 1800000, points };
+    expect(historyDataSchema.parse(custom)).toEqual(custom);
+    expect(historyDataSchema.safeParse({ ...custom, bucketMs: 0 }).success).toBe(false);
+    expect(historyDataSchema.safeParse({ ...custom, bucketMs: 1.5 }).success).toBe(false);
+    expect(historyDataSchema.safeParse({ ...custom, period: '2D' }).success).toBe(false);
+    expect(historyDataSchema.safeParse({ symbol: 'AAPL', period: '1D', points }).success).toBe(
+      false,
+    );
   });
 });

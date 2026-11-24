@@ -43,7 +43,10 @@ export class StocksController {
     @Param('symbol', symbolPipe) symbol: string,
     @Query(new ZodValidationPipe(historyQuerySchema)) query: HistoryQuery,
   ): HistoryResponse {
-    const history = this.market.history(symbol, query.period);
+    const history =
+      'period' in query
+        ? this.market.history(symbol, query.period)
+        : this.market.rangeHistory(symbol, query);
     if (!history) {
       throw notFound(symbol);
     }

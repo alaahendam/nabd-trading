@@ -25,3 +25,22 @@ export const PERIOD_CONFIG: Readonly<Record<Period, PeriodConfig>> = {
   '3M': { lookbackMs: 90 * DAY, bucketMs: DAY },
   '1Y': { lookbackMs: 365 * DAY, bucketMs: DAY },
 };
+
+/** The shortest and the longest span a custom range may cover. */
+export const MIN_RANGE_MS = HOUR;
+export const MAX_RANGE_MS = 365 * DAY;
+
+/** The longest span each candle size serves: the same sizes as the fixed periods, by span. */
+const RANGE_BUCKET_TIERS = [
+  { maxSpanMs: DAY, bucketMs: 5 * MINUTE },
+  { maxSpanMs: 7 * DAY, bucketMs: 30 * MINUTE },
+  { maxSpanMs: 30 * DAY, bucketMs: 2 * HOUR },
+] as const;
+
+/**
+ * The candle size for a custom range, so it reads like the fixed period of a similar length and
+ * never has more than a few hundred candles. Beyond the last tier a candle is a day.
+ */
+export function bucketForSpan(spanMs: number): number {
+  return RANGE_BUCKET_TIERS.find((tier) => spanMs <= tier.maxSpanMs)?.bucketMs ?? DAY;
+}

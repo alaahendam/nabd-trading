@@ -72,6 +72,61 @@ describe('stocks API', () => {
     },
   );
 
+  describe('custom history ranges', () => {
+    const DAY = 86_400_000;
+    const range = (fromOffset: number, toOffset: number) => {
+      const now = Date.now();
+      return 'from=' + String(now - fromOffset) + '&to=' + String(now - toOffset);
+    };
+
+    it('STK-12 serves a custom range', async () => {
+      const response = await request(server)
+        .get('/api/stocks/AAPL/history?' + range(3 * DAY, DAY))
+        .expect(200);
+      const { data } = historyResponseSchema.parse(response.body);
+      expect(data).toMatchObject({ symbol: 'AAPL', period: 'custom', bucketMs: 1_800_000 });
+      expect(data.points.length).toBeGreaterThan(90);
+      for (const [index, point] of data.points.entries()) {
+        if (index > 0) {
+          expect(point.time).toBeGreaterThan(data.points[index - 1]?.time ?? 0);
+        }
+      }
+    });
+
+    it.each([
+      [
+        'to in the future',
+        'from=' + String(Date.now() - DAY) + '&to=' + String(Date.now() + 2 * DAY),
+      ],
+      [
+        'from over a year ago',
+        'from=' + String(Date.now() - 400 * DAY) + '&to=' + String(Date.now() - 399 * DAY),
+      ],
+      ['a span under an hour', 'from=' + String(Date.now() - 60_000) + '&to=' + String(Date.now())],
+      ['only from', 'from=' + String(Date.now() - DAY)],
+      ['a period with a range', 'period=1D&' + range(DAY, 0)],
+    ])('STK-13 refuses %s', async (_label, query) => {
+      const response = await request(server)
+        .get('/api/stocks/AAPL/history?' + query)
+        .expect(422);
+      expect(response.body).toMatchObject({ error: { code: 'VALIDATION_ERROR' } });
+    });
+
+    it('STK-14 answers a period with its candle size', async () => {
+      const response = await request(server).get('/api/stocks/AAPL/history?period=1W').expect(200);
+      expect(historyResponseSchema.parse(response.body).data).toMatchObject({
+        period: '1W',
+        bucketMs: 1_800_000,
+      });
+    });
+
+    it('STK-15 answers 404 for an unknown symbol with a valid range', async () => {
+      await request(server)
+        .get('/api/stocks/NOPE/history?' + range(3 * DAY, DAY))
+        .expect(404);
+    });
+  });
+
   it('STK-02 returns one stock', async () => {
     const response = await request(server).get('/api/stocks/AAPL').expect(200);
     expect(stockResponseSchema.parse(response.body).data.symbol).toBe('AAPL');

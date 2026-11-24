@@ -1,7 +1,7 @@
 import { historyDataSchema, PERIOD_CONFIG, PERIODS } from '@nabd/shared';
 import { describe, expect, it } from 'vitest';
 
-import { dayRegime, generateHistory } from './history.js';
+import { dayRegime, generateHistory, generateRangeHistory } from './history.js';
 import { STOCK_UNIVERSE, type UniverseEntry } from './universe.js';
 
 const DAY_MS = 86_400_000;
@@ -200,5 +200,69 @@ describe('dayRegime', () => {
     }
     expect(new Set(regimes).size).toBeGreaterThan(100);
     expect(days.map((day) => dayRegime('MSFT', day))).not.toEqual(regimes);
+  });
+});
+
+describe('range history', () => {
+  const HOUR_MS = 3_600_000;
+  const from = NOW - 5 * DAY_MS;
+  const to = NOW - 2 * DAY_MS;
+
+  it.each(PERIODS)('HIS-15 %s names its candle size', (period) => {
+    expect(generateHistory(AAPL, period, NOW, 230).bucketMs).toBe(PERIOD_CONFIG[period].bucketMs);
+  });
+
+  it('HIS-16 returns the candles inside the range', () => {
+    const history = generateRangeHistory(AAPL, { from, to }, NOW, 230);
+    const bucket = 30 * 60_000;
+    expect(history).toMatchObject({ symbol: 'AAPL', period: 'custom', bucketMs: bucket });
+    expect(historyDataSchema.safeParse(history).success).toBe(true);
+    expect(must(history.points[0]).time).toBe(Math.floor(from / bucket) * bucket);
+    expect(must(history.points.at(-1)).time).toBe(Math.floor(to / bucket) * bucket);
+    for (const [index, point] of history.points.entries()) {
+      expect(point.time % bucket).toBe(0);
+      if (index > 0) {
+        expect(point.time - must(history.points[index - 1]).time).toBe(bucket);
+      }
+    }
+  });
+
+  it('HIS-17 agrees with the 1W period for a range that ends now', () => {
+    const week = generateHistory(AAPL, '1W', NOW, 230);
+    const range = generateRangeHistory(AAPL, { from: NOW - 7 * DAY_MS, to: NOW }, NOW, 230);
+    expect(range.bucketMs).toBe(week.bucketMs);
+    expect(range.points).toHaveLength(week.points.length + 1);
+    expect(range.points.slice(1)).toEqual(week.points);
+  });
+
+  it('HIS-18 returns the same candle whichever way it is asked for', () => {
+    const day = generateHistory(AAPL, '1D', NOW, 230);
+    const range = generateRangeHistory(AAPL, { from: NOW - 2 * HOUR_MS, to: NOW }, NOW, 230);
+    expect(range.bucketMs).toBe(day.bucketMs);
+    expect(range.points).toEqual(day.points.slice(-range.points.length));
+  });
+
+  it('HIS-19 ends at the current price when the range ends now', () => {
+    const history = generateRangeHistory(AAPL, { from: NOW - DAY_MS, to: NOW }, NOW, 231.37);
+    expect(must(history.points.at(-1)).close).toBe(231.37);
+  });
+
+  it('HIS-20 uses 5-minute candles for a one-hour range', () => {
+    const history = generateRangeHistory(AAPL, { from: NOW - HOUR_MS, to: NOW }, NOW, 230);
+    expect(history.bucketMs).toBe(300_000);
+    expect([12, 13]).toContain(history.points.length);
+  });
+
+  it.each([
+    ['to after now', { from: NOW - DAY_MS, to: NOW + 1 }],
+    ['from older than a year', { from: NOW - 366 * DAY_MS, to: NOW - 300 * DAY_MS }],
+    ['a span under an hour', { from: NOW - HOUR_MS + 1, to: NOW }],
+    ['from not before to', { from: NOW - DAY_MS, to: NOW - DAY_MS }],
+  ])('HIS-21 refuses %s', (_label, range) => {
+    expect(() => generateRangeHistory(AAPL, range, NOW, 230)).toThrow(RangeError);
+  });
+
+  it('HIS-21 refuses a non-positive current price for a range too', () => {
+    expect(() => generateRangeHistory(AAPL, { from, to }, NOW, 0)).toThrow(RangeError);
   });
 });

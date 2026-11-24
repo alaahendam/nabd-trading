@@ -1,6 +1,6 @@
 import { z } from 'zod';
 
-import { DEFAULT_PERIOD, periodSchema } from './period.js';
+import { DEFAULT_PERIOD, MAX_RANGE_MS, MIN_RANGE_MS, periodSchema } from './period.js';
 
 /** Prices are rounded to cents, so a cent of disagreement is rounding, not an error. */
 const CENT = 0.01;
@@ -122,7 +122,10 @@ export type StockWithQuote = z.infer<typeof stockWithQuoteSchema>;
 export const historyDataSchema = z
   .object({
     symbol: symbolSchema,
-    period: periodSchema,
+    /** The fixed period asked for, or `custom` for a from and to range. */
+    period: z.union([periodSchema, z.literal('custom')]),
+    /** Width of one candle in milliseconds, so a live tick can find the candle it belongs to. */
+    bucketMs: z.int().positive(),
     points: z.array(historyPointSchema),
   })
   .superRefine((history, ctx) => {
@@ -141,9 +144,21 @@ export const historyDataSchema = z
   });
 export type HistoryData = z.infer<typeof historyDataSchema>;
 
-export const historyQuerySchema = z.object({
-  period: periodSchema.default(DEFAULT_PERIOD),
-});
+/** A custom range in epoch milliseconds, between an hour and a year long. */
+const rangeQuerySchema = z
+  .strictObject({
+    from: z.coerce.number().int().nonnegative(),
+    to: z.coerce.number().int().nonnegative(),
+  })
+  .refine(({ from, to }) => to - from >= MIN_RANGE_MS && to - from <= MAX_RANGE_MS, {
+    message: 'The range must be between one hour and one year long',
+    path: ['to'],
+  });
+
+const periodQuerySchema = z.strictObject({ period: periodSchema.default(DEFAULT_PERIOD) });
+
+/** Either a fixed period (default 1D) or a `from` and `to` range, never both. */
+export const historyQuerySchema = z.union([rangeQuerySchema, periodQuerySchema]);
 export type HistoryQuery = z.infer<typeof historyQuerySchema>;
 
 /** Every successful response wraps its payload, so fields can be added next to `data` later. */

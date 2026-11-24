@@ -8,6 +8,7 @@ import {
 } from '@nabd/shared';
 import { afterEach, beforeEach, describe, expect, it, vi } from 'vitest';
 
+import { ApiException } from '../../common/api-exception.js';
 import type { Clock } from '../../common/clock.js';
 import { MarketService } from './market.service.js';
 import { STOCK_UNIVERSE } from './universe.js';
@@ -141,5 +142,46 @@ describe('MarketService', () => {
       expect(priceTickSchema.safeParse(tick).success).toBe(true);
     }
     expect(service.latestTicks([])).toEqual([]);
+  });
+});
+
+describe('MarketService range history', () => {
+  const DAY = 86_400_000;
+
+  beforeEach(() => {
+    vi.useFakeTimers();
+  });
+
+  afterEach(() => {
+    vi.useRealTimers();
+  });
+
+  it('SVC-06 serves a custom range', () => {
+    const { service, clock } = make();
+    const history = must(
+      service.rangeHistory('AAPL', { from: clock.time - 3 * DAY, to: clock.time - DAY }),
+    );
+    expect(historyDataSchema.safeParse(history).success).toBe(true);
+    expect(history.period).toBe('custom');
+  });
+
+  it('SVC-07 has no range history for an unknown symbol', () => {
+    const { service, clock } = make();
+    expect(
+      service.rangeHistory('NOPE', { from: clock.time - DAY, to: clock.time }),
+    ).toBeUndefined();
+  });
+
+  it('SVC-08 turns a bad range into a validation error', () => {
+    const { service, clock } = make();
+    try {
+      service.rangeHistory('AAPL', { from: clock.time - DAY, to: clock.time + DAY });
+      expect.unreachable('a range in the future must be refused');
+    } catch (error) {
+      expect(error).toBeInstanceOf(ApiException);
+      expect((error as ApiException).getResponse()).toMatchObject({
+        error: { code: 'VALIDATION_ERROR', message: expect.stringContaining('future') as unknown },
+      });
+    }
   });
 });

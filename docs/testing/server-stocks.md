@@ -68,3 +68,12 @@ Broadcasting ticks to sockets (realtime module), chaos behavior, identity and th
 | STK-09 | Paged list over HTTP                      | `GET /api/stocks?limit=10`, then each `nextCursor`                       | pages of 10, 10, 1 that together equal the universe in order; the last has `nextCursor` null | e2e   |
 | STK-10 | Filtered list over HTTP                   | `GET /api/stocks?symbols=NVDA,AAPL`                                      | the two stocks in list order                                                                 | e2e   |
 | STK-11 | Bad paging input over HTTP                | `?limit=0`, `?limit=101`, `?cursor=aapl`, `?cursor=ZZZ`, `?symbols=aapl` | 422 `VALIDATION_ERROR` for each                                                              | e2e   |
+
+## Custom history range over HTTP (design polish)
+
+| ID     | Behavior                              | Input                                                                                                        | Expected                                                                                                    | Level |
+| ------ | ------------------------------------- | ------------------------------------------------------------------------------------------------------------ | ----------------------------------------------------------------------------------------------------------- | ----- |
+| STK-12 | A custom range                        | `GET /api/stocks/AAPL/history?from=<3 days ago>&to=<1 day ago>` in milliseconds                              | 200, passes `historyResponseSchema`, `period` `custom`, 30-minute candles, ascending times inside the range | e2e   |
+| STK-13 | A bad range                           | `to` in the future; `from` over a year ago; a span under an hour; only `from`; `period` with `from` and `to` | 422 `VALIDATION_ERROR` for each                                                                             | e2e   |
+| STK-14 | A period answers with its candle size | `?period=1W`                                                                                                 | `bucketMs` is 30 minutes and `period` is `1W`                                                               | e2e   |
+| STK-15 | An unknown symbol with a valid range  | `/api/stocks/NOPE/history?from=..&to=..`                                                                     | 404 `NOT_FOUND`                                                                                             | e2e   |

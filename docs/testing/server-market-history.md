@@ -37,3 +37,25 @@ Note on HIS-10: the expected ratio is the root mean square of the day regime (ab
 ## Out of scope
 
 Serving history over HTTP (stocks module) and the live simulator.
+
+## Custom ranges and `bucketMs` (design polish)
+
+`generateRangeHistory(entry, { from, to }, now, currentPrice)` serves any range from the same deterministic walk as the fixed periods: the path is built backward from the current price at `now`, and only the candles inside the range are returned.
+
+| ID     | Behavior                                           | Input                                                                                                 | Expected                                                                                                                                                          | Level |
+| ------ | -------------------------------------------------- | ----------------------------------------------------------------------------------------------------- | ----------------------------------------------------------------------------------------------------------------------------------------------------------------- | ----- |
+| HIS-15 | Every history names its candle size                | each period                                                                                           | `bucketMs` equals the period's configured size                                                                                                                    | unit  |
+| HIS-16 | A range returns the candles inside it              | a 3-day range ending two days ago                                                                     | `period` is `custom`; `bucketMs` is 30 min; candle times are aligned, ascending, from the one holding `from` to the one holding `to`; valid per the shared schema | unit  |
+| HIS-17 | A range ending now agrees with the period          | `{ now - 7 d, now }` against the 1W period                                                            | the same candles for the same times (the range has one extra candle at the start)                                                                                 | unit  |
+| HIS-18 | A candle is the same whichever way it is asked for | the last two hours as a range against the 1D period                                                   | identical candles for the shared times                                                                                                                            | unit  |
+| HIS-19 | A range ending now ends at the current price       | `to` equal to `now`                                                                                   | the last close is the current price exactly                                                                                                                       | unit  |
+| HIS-20 | A one-hour range uses 5-minute candles             | a range of one hour                                                                                   | 5-minute candles, 12 or 13 of them                                                                                                                                | unit  |
+| HIS-21 | Bad ranges are refused                             | `to` after `now`; `from` older than a year; a span under an hour; over a year; `from` not before `to` | throws `RangeError`                                                                                                                                               | unit  |
+
+`rangeProblem(range, now)` returns a sentence naming what is wrong with a range, or `undefined`; the generator throws it as a `RangeError` and the service as a `VALIDATION_ERROR`, so the rules live in one place.
+
+| ID     | Behavior                               | Input                        | Expected                                                          | Level |
+| ------ | -------------------------------------- | ---------------------------- | ----------------------------------------------------------------- | ----- |
+| SVC-06 | The service serves a range             | a symbol and a past range    | `custom` history that passes the shared schema                    | unit  |
+| SVC-07 | An unknown symbol has no range history | `NOPE` and a range           | `undefined`                                                       | unit  |
+| SVC-08 | A bad range is a validation error      | a range ending in the future | an `ApiException` with code `VALIDATION_ERROR` naming the problem | unit  |

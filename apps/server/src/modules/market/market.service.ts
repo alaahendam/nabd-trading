@@ -2,8 +2,9 @@ import { type HistoryData, type Period, type PriceTick, type StockWithQuote } fr
 import { Inject, Injectable, type OnModuleDestroy, type OnModuleInit } from '@nestjs/common';
 import { Observable, Subject } from 'rxjs';
 
+import { ApiException } from '../../common/api-exception.js';
 import { CLOCK, type Clock } from '../../common/clock.js';
-import { generateHistory } from './history.js';
+import { generateHistory, generateRangeHistory, rangeProblem } from './history.js';
 import { MARKET_OPTIONS, type MarketOptions } from './market.options.js';
 import { MarketSimulator } from './simulator.js';
 import { getUniverseEntry, STOCK_UNIVERSE, toStock } from './universe.js';
@@ -73,6 +74,21 @@ export class MarketService implements OnModuleInit, OnModuleDestroy {
     return entry && quote
       ? generateHistory(entry, period, this.clock.now(), quote.price)
       : undefined;
+  }
+
+  /** History for a custom range. A range that is not allowed is a validation error. */
+  rangeHistory(symbol: string, range: { from: number; to: number }): HistoryData | undefined {
+    const entry = getUniverseEntry(symbol);
+    const quote = this.simulator.quote(symbol);
+    if (!entry || !quote) {
+      return undefined;
+    }
+    const now = this.clock.now();
+    const problem = rangeProblem(range, now);
+    if (problem !== undefined) {
+      throw new ApiException('VALIDATION_ERROR', problem, range);
+    }
+    return generateRangeHistory(entry, range, now, quote.price);
   }
 
   latestTick(symbol: string): PriceTick | undefined {
