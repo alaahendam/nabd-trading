@@ -22,7 +22,11 @@ const caught = async (promise: Promise<unknown>) => {
 
 describe('createApi', () => {
   it('EPT-01 lists stocks with their quotes', async () => {
-    server.use(http.get(`${API_URL}/api/stocks`, () => HttpResponse.json({ data: [aapl, brkb] })));
+    server.use(
+      http.get(`${API_URL}/api/stocks`, () =>
+        HttpResponse.json({ data: [aapl, brkb], nextCursor: null, total: 2 }),
+      ),
+    );
     expect(await api.listStocks()).toEqual([aapl, brkb]);
   });
 
@@ -95,7 +99,11 @@ describe('createApi', () => {
   });
 
   it('EPT-07 can be aborted', async () => {
-    server.use(http.get(`${API_URL}/api/stocks`, () => HttpResponse.json({ data: [] })));
+    server.use(
+      http.get(`${API_URL}/api/stocks`, () =>
+        HttpResponse.json({ data: [], nextCursor: null, total: 0 }),
+      ),
+    );
     const controller = new AbortController();
     controller.abort();
     const error = await caught(api.listStocks(controller.signal));

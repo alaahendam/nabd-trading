@@ -4,6 +4,8 @@ import {
   type HistoryResponse,
   ROUTES,
   type StockResponse,
+  type StocksQuery,
+  stocksQuerySchema,
   type StocksResponse,
   symbolSchema,
 } from '@nabd/shared';
@@ -12,6 +14,7 @@ import { Controller, Get, Param, Query } from '@nestjs/common';
 import { ApiException } from '../../common/api-exception.js';
 import { ZodValidationPipe } from '../../common/zod-validation.pipe.js';
 import { MarketService } from '../market/index.js';
+import { paginateStocks } from './stocks.pagination.js';
 
 const symbolPipe = new ZodValidationPipe(symbolSchema);
 const notFound = (symbol: string) =>
@@ -22,8 +25,8 @@ export class StocksController {
   constructor(private readonly market: MarketService) {}
 
   @Get(ROUTES.stocks)
-  list(): StocksResponse {
-    return { data: this.market.stocks() };
+  list(@Query(new ZodValidationPipe(stocksQuerySchema)) query: StocksQuery): StocksResponse {
+    return paginateStocks(this.market.stocks(), query);
   }
 
   @Get(ROUTES.stock)

@@ -25,5 +25,5 @@ export const historyHandler = http.get(`${API_URL}/api/stocks/AAPL/history`, () 
 
 /** The stock list, for tests that render a screen showing it. */
 export const stocksHandler = http.get(`${API_URL}/api/stocks`, () =>
-  HttpResponse.json({ data: [aapl, brkb] }),
+  HttpResponse.json({ data: [aapl, brkb], nextCursor: null, total: 2 }),
 );

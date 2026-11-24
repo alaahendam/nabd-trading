@@ -61,3 +61,11 @@ Modules: `packages/shared/src/period.ts` and `packages/shared/src/market.ts`.
 ## Out of scope
 
 The stock universe, price generation and history generation (server, Phase 3). Watchlist, errors, routes and socket contracts have their own matrices (`shared-api.md`, `shared-socket.md`).
+
+## Stock list paging (design polish)
+
+| ID     | Behavior                                | Input                                                                      | Expected                                                                                                   | Level |
+| ------ | --------------------------------------- | -------------------------------------------------------------------------- | ---------------------------------------------------------------------------------------------------------- | ----- |
+| MKT-26 | The list query is optional and strict   | `{}`; `limit` `'10'` and `'0'`, `'101'`, `'x'`; a cursor `AAPL` and `aapl` | `{}` parses; the limit is coerced to a number and must be 1 to 100; a cursor must be a valid symbol        | unit  |
+| MKT-27 | The symbols filter is a list of symbols | `symbols` `'AAPL,MSFT'`, `''`, `'AAPL,aapl'`, 101 symbols                  | a list of valid symbols, at least one and at most 100; anything else fails                                 | unit  |
+| MKT-28 | The list response carries paging info   | `{ data, nextCursor, total }` and variants                                 | `nextCursor` is a symbol or `null`, `total` is a non-negative integer; a bare array or missing fields fail | unit  |

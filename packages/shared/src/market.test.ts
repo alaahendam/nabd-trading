@@ -10,6 +10,7 @@ import {
   quoteSchema,
   stockResponseSchema,
   stockSchema,
+  stocksQuerySchema,
   stocksResponseSchema,
   stockWithQuoteSchema,
   symbolSchema,
@@ -220,7 +221,6 @@ describe('response schemas', () => {
   const history = { symbol: 'AAPL', period: '1D', points: [candle] };
 
   it.each([
-    ['stocks', stocksResponseSchema, [item]],
     ['stock', stockResponseSchema, item],
     ['history', historyResponseSchema, history],
   ])('MKT-25 %s response wraps its payload in { data }', (_name, schema, payload) => {
@@ -236,5 +236,43 @@ describe('dataEnvelope', () => {
     expect(schema.parse({ data: stock })).toEqual({ data: stock });
     expect(schema.safeParse(stock).success).toBe(false);
     expect(schema.safeParse({ data: { ...stock, exchange: 'LSE' } }).success).toBe(false);
+  });
+});
+
+describe('stocks list paging', () => {
+  const item = { ...stock, quote };
+
+  it('MKT-26 accepts no query, coerces the limit and checks it and the cursor', () => {
+    expect(stocksQuerySchema.parse({})).toEqual({});
+    expect(stocksQuerySchema.parse({ limit: '10' })).toEqual({ limit: 10 });
+    expect(stocksQuerySchema.parse({ cursor: 'AAPL', limit: '1' })).toEqual({
+      cursor: 'AAPL',
+      limit: 1,
+    });
+    for (const limit of ['0', '101', 'x', '1.5']) {
+      expect(stocksQuerySchema.safeParse({ limit }).success).toBe(false);
+    }
+    expect(stocksQuerySchema.safeParse({ cursor: 'aapl' }).success).toBe(false);
+  });
+
+  it('MKT-27 turns the symbols filter into a list of valid symbols', () => {
+    expect(stocksQuerySchema.parse({ symbols: 'AAPL,MSFT' })).toEqual({
+      symbols: ['AAPL', 'MSFT'],
+    });
+    expect(stocksQuerySchema.parse({ symbols: 'BRK.B' })).toEqual({ symbols: ['BRK.B'] });
+    expect(stocksQuerySchema.safeParse({ symbols: '' }).success).toBe(false);
+    expect(stocksQuerySchema.safeParse({ symbols: 'AAPL,aapl' }).success).toBe(false);
+    const tooMany = Array.from({ length: 101 }, () => 'AAPL').join(',');
+    expect(stocksQuerySchema.safeParse({ symbols: tooMany }).success).toBe(false);
+  });
+
+  it('MKT-28 wraps the list with its paging information', () => {
+    const page = { data: [item], nextCursor: 'AAPL', total: 21 };
+    expect(stocksResponseSchema.parse(page)).toEqual(page);
+    expect(stocksResponseSchema.parse({ ...page, nextCursor: null }).nextCursor).toBeNull();
+    expect(stocksResponseSchema.safeParse([item]).success).toBe(false);
+    expect(stocksResponseSchema.safeParse({ data: [item] }).success).toBe(false);
+    expect(stocksResponseSchema.safeParse({ ...page, total: -1 }).success).toBe(false);
+    expect(stocksResponseSchema.safeParse({ ...page, nextCursor: 'aapl' }).success).toBe(false);
   });
 });

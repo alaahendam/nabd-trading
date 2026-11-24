@@ -149,7 +149,30 @@ export type HistoryQuery = z.infer<typeof historyQuerySchema>;
 /** Every successful response wraps its payload, so fields can be added next to `data` later. */
 export const dataEnvelope = <T extends z.ZodType>(schema: T) => z.object({ data: schema });
 
-export const stocksResponseSchema = dataEnvelope(z.array(stockWithQuoteSchema));
+/** The largest page, and the most symbols one filtered request may name. */
+export const STOCKS_MAX_LIMIT = 100;
+
+/**
+ * Query of the stock list. Without `limit` the list is not paged. A page starts after the
+ * `cursor` symbol. `symbols` (comma separated) returns just those stocks, in list order.
+ */
+export const stocksQuerySchema = z.object({
+  limit: z.coerce.number().int().min(1).max(STOCKS_MAX_LIMIT).optional(),
+  cursor: symbolSchema.optional(),
+  symbols: z
+    .string()
+    .transform((value) => value.split(','))
+    .pipe(z.array(symbolSchema).min(1).max(STOCKS_MAX_LIMIT))
+    .optional(),
+});
+export type StocksQuery = z.infer<typeof stocksQuerySchema>;
+
+/** A page of the list: `nextCursor` is the last symbol of the page, or null at the end. */
+export const stocksResponseSchema = z.object({
+  data: z.array(stockWithQuoteSchema),
+  nextCursor: symbolSchema.nullable(),
+  total: z.int().nonnegative(),
+});
 export type StocksResponse = z.infer<typeof stocksResponseSchema>;
 
 export const stockResponseSchema = dataEnvelope(stockWithQuoteSchema);

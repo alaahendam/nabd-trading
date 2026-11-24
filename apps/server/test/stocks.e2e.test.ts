@@ -39,6 +39,39 @@ describe('stocks API', () => {
     expect(data.map((item) => item.symbol)).toEqual(STOCK_UNIVERSE.map((entry) => entry.symbol));
   });
 
+  it('STK-09 pages the list with a cursor until the end', async () => {
+    const universe = STOCK_UNIVERSE.map((entry) => entry.symbol);
+    const seen: string[] = [];
+    const sizes: number[] = [];
+    let cursor: string | null = null;
+    do {
+      const query = cursor === null ? 'limit=10' : `limit=10&cursor=${cursor}`;
+      const response = await request(server).get(`/api/stocks?${query}`).expect(200);
+      const page = stocksResponseSchema.parse(response.body);
+      expect(page.total).toBe(universe.length);
+      seen.push(...page.data.map((item) => item.symbol));
+      sizes.push(page.data.length);
+      cursor = page.nextCursor;
+    } while (cursor !== null);
+    expect(seen).toEqual(universe);
+    expect(sizes).toEqual([10, 10, universe.length - 20]);
+  });
+
+  it('STK-10 filters the list by symbols, in list order', async () => {
+    const response = await request(server).get('/api/stocks?symbols=NVDA,AAPL').expect(200);
+    const page = stocksResponseSchema.parse(response.body);
+    expect(page.data.map((item) => item.symbol)).toEqual(['AAPL', 'NVDA']);
+    expect(page).toMatchObject({ nextCursor: null, total: 2 });
+  });
+
+  it.each(['limit=0', 'limit=101', 'cursor=aapl', 'cursor=ZZZ', 'symbols=aapl'])(
+    'STK-11 refuses the bad paging input %s',
+    async (query) => {
+      const response = await request(server).get(`/api/stocks?${query}`).expect(422);
+      expect(response.body).toMatchObject({ error: { code: 'VALIDATION_ERROR' } });
+    },
+  );
+
   it('STK-02 returns one stock', async () => {
     const response = await request(server).get('/api/stocks/AAPL').expect(200);
     expect(stockResponseSchema.parse(response.body).data.symbol).toBe('AAPL');

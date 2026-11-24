@@ -49,3 +49,22 @@ Modules: `src/common/clock.ts`, `src/modules/market/market.service.ts` (and `mar
 ## Out of scope
 
 Broadcasting ticks to sockets (realtime module), chaos behavior, identity and the watchlist.
+
+## Paging and filtering the list (design polish)
+
+`stocks.pagination.ts` is a pure function over the ordered list; the controller only calls it.
+
+| ID     | Behavior                                  | Input                                                                    | Expected                                                                                     | Level |
+| ------ | ----------------------------------------- | ------------------------------------------------------------------------ | -------------------------------------------------------------------------------------------- | ----- |
+| PAG-01 | No limit means everything                 | 5 stocks, `{}`                                                           | all 5 in order, `nextCursor` null, `total` 5                                                 | unit  |
+| PAG-02 | A limit returns a page and a cursor       | 5 stocks, `limit` 2                                                      | the first 2, `nextCursor` the symbol of the second, `total` 5                                | unit  |
+| PAG-03 | The cursor continues after that symbol    | `limit` 2 with the cursor from page one, then page two's cursor          | the next 2, then the last 1 with `nextCursor` null                                           | unit  |
+| PAG-04 | A limit that ends exactly at the end      | `limit` 5 on 5 stocks; `limit` 2 with cursor of the third                | a full last page has `nextCursor` null; no empty extra page                                  | unit  |
+| PAG-05 | A cursor without a limit                  | cursor of the second                                                     | everything after it, `nextCursor` null                                                       | unit  |
+| PAG-06 | An unknown cursor is refused              | cursor `ZZZ`                                                             | a `VALIDATION_ERROR` naming the cursor                                                       | unit  |
+| PAG-07 | The symbols filter keeps list order       | `symbols` `['MSFT','AAPL']` on a list ordered AAPL, MSFT                 | AAPL then MSFT, `nextCursor` null, `total` 2                                                 | unit  |
+| PAG-08 | Unknown symbols in the filter are skipped | `symbols` `['AAPL','ZZZ']`                                               | only AAPL, `total` 1                                                                         | unit  |
+| PAG-09 | The filter ignores paging                 | `symbols` with `limit` 1 and a cursor                                    | all matches, `nextCursor` null: a filtered list is not paged                                 | unit  |
+| STK-09 | Paged list over HTTP                      | `GET /api/stocks?limit=10`, then each `nextCursor`                       | pages of 10, 10, 1 that together equal the universe in order; the last has `nextCursor` null | e2e   |
+| STK-10 | Filtered list over HTTP                   | `GET /api/stocks?symbols=NVDA,AAPL`                                      | the two stocks in list order                                                                 | e2e   |
+| STK-11 | Bad paging input over HTTP                | `?limit=0`, `?limit=101`, `?cursor=aapl`, `?cursor=ZZZ`, `?symbols=aapl` | 422 `VALIDATION_ERROR` for each                                                              | e2e   |
