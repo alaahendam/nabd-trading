@@ -53,3 +53,10 @@ wraps the tree in an i18next instance. Queries are by role and accessible name, 
 | UI-16 | ChangeBadge tolerates bad numbers       | `NaN`                                                                        | dashes, "Unchanged", no throw                                                                        | component |
 | UI-17 | ChangeBadge speaks Arabic               | `ar`, up and down                                                            | the Arabic words for up and down, figures still Latin                                                | component |
 | UI-18 | StateMessage empty and error            | `tone="empty"`; `tone="error"`; with and without an action and a description | empty is a `status`, error is an `alert`; title always shown; description and action only when given | component |
+
+## Chart attribution
+
+| ID     | Behavior                                   | Input            | Expected                                                                                                   | Level     |
+| ------ | ------------------------------------------ | ---------------- | ---------------------------------------------------------------------------------------------------------- | --------- |
+| APP-18 | The chart library is credited              | render the shell | the footer links to tradingview.com with the library's notice text, opening safely in a new tab            | component |
+| APP-18 | The notice stays English and left to right | render in Arabic | the notice carries `lang="en"` and `dir="ltr"`, so the legal text and the trademark sign are not reordered | component |

@@ -34,17 +34,17 @@ shared atoms (Skeleton, ChangeBadge, StateMessage)
 
 ### Slice 1: stock list
 
-- [ ] Task 1: shared atoms: `Skeleton`, `ChangeBadge` (arrow, sign and color, never color alone), `StateMessage` (empty and error with retry)
-- [ ] Task 2: `features/stocks` data hooks over the API client and query keys
-- [ ] Task 3: stock list: rows with live price and flash, change vs previous close, freshness, loading, empty, error, reconnecting
-- [ ] Checkpoint: list works against the real server
+- [x] Task 1: shared atoms: `Skeleton`, `ChangeBadge` (arrow, sign and color, never color alone), `StateMessage` (empty and error with retry)
+- [x] Task 2: `features/stocks` data hooks over the API client and query keys
+- [x] Task 3: stock list: rows with live price and flash, change vs previous close, freshness, loading, empty, error, reconnecting
+- [x] Checkpoint: list works against the real server
 
 ### Slice 2: stock detail and chart
 
-- [ ] Task 4: detail header and stats (price, change, open, high, low, volume, previous close)
-- [ ] Task 5: chart: `ChartPort`, real adapter, period switcher, history query, live last-candle update, theme colors, loading and error
-- [ ] Task 6: routes (lazy detail), page titles, attribution footer
-- [ ] Checkpoint: detail works against the real server
+- [x] Task 4: detail header and stats (price, change, open, high, low, volume, previous close)
+- [x] Task 5: chart: `ChartPort`, real adapter, period switcher, history query, live last-candle update, theme colors, loading and error
+- [x] Task 6: page titles and the attribution footer (the chart library is code-split by its loader, so the route itself is not lazy)
+- [x] Checkpoint: detail works against the real server
 
 ### Slice 3: watchlist
 

@@ -14,7 +14,7 @@ import { createAppRoutes } from './routes';
 
 const mount = (
   path = '/stocks',
-  { language = 'en' as const, onError = vi.fn() } = {},
+  { language = 'en', onError = vi.fn() }: { language?: 'en' | 'ar'; onError?: () => void } = {},
   routes = createAppRoutes({ onError }),
 ) => {
   const test = createTestServices({ language });
@@ -138,6 +138,23 @@ describe('app routes and shell', () => {
       socket.simulateDisconnect('transport close');
     });
     expect(await connection()).toHaveTextContent('Reconnecting…');
+  });
+
+  it('APP-18 credits the chart library with its notice and a link, as its license asks', async () => {
+    mount();
+    const footer = await screen.findByRole('contentinfo');
+    const credit = within(footer).getByRole('link', { name: /TradingView Lightweight Charts/ });
+    expect(credit).toHaveTextContent('Copyright © 2025 TradingView, Inc.');
+    expect(credit).toHaveAttribute('href', 'https://www.tradingview.com/');
+    expect(credit).toHaveAttribute('rel', 'noopener noreferrer');
+    expect(credit).toHaveAttribute('target', '_blank');
+  });
+
+  it('APP-18 keeps the notice in English and left to right in the Arabic layout', async () => {
+    mount('/stocks', { language: 'ar' });
+    const credit = await screen.findByRole('link', { name: /TradingView Lightweight Charts/ });
+    expect(credit).toHaveAttribute('lang', 'en');
+    expect(credit).toHaveAttribute('dir', 'ltr');
   });
 
   it('APP-09 says the data is simulated', async () => {

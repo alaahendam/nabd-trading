@@ -27,6 +27,9 @@ const en = {
     badge: 'Simulated market data',
     description: 'All prices are simulated and are not real market data.',
   },
+  attribution: {
+    chartNotice: 'TradingView Lightweight Charts™ · Copyright © 2025 TradingView, Inc.',
+  },
   errors: {
     title: 'Something went wrong',
     description: 'An unexpected error occurred. You can try again.',
@@ -103,6 +106,9 @@ const ar: Tree = {
   simulated: {
     badge: 'بيانات سوق محاكاة',
     description: 'جميع الأسعار محاكاة وليست بيانات سوق حقيقية.',
+  },
+  attribution: {
+    chartNotice: 'TradingView Lightweight Charts™ · Copyright © 2025 TradingView, Inc.',
   },
   errors: {
     title: 'حدث خطأ ما',
