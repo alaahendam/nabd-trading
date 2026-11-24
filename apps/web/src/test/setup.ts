@@ -1,6 +1,19 @@
 import '@testing-library/jest-dom/vitest';
 
 import { cleanup } from '@testing-library/react';
-import { afterEach } from 'vitest';
+import { afterAll, afterEach, beforeAll } from 'vitest';
 
-afterEach(cleanup);
+import { server } from './msw';
+
+beforeAll(() => {
+  server.listen({ onUnhandledFrame: 'error' });
+});
+
+afterEach(() => {
+  cleanup();
+  server.resetHandlers();
+});
+
+afterAll(() => {
+  server.close();
+});

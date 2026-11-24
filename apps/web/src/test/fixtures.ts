@@ -1,0 +1,53 @@
+import type { HistoryData, StockWithQuote, WatchlistItem } from '@nabd/shared';
+
+/** Valid contract data for tests, so every test starts from something the schemas accept. */
+export const aapl: StockWithQuote = {
+  symbol: 'AAPL',
+  name: 'Apple Inc.',
+  exchange: 'NASDAQ',
+  sector: 'Technology',
+  currency: 'USD',
+  quote: {
+    symbol: 'AAPL',
+    price: 230,
+    previousClose: 228,
+    open: 229,
+    high: 231,
+    low: 227.5,
+    volume: 1_000_000,
+    change: 2,
+    changePercent: 0.88,
+    timestamp: 1_700_000_000_000,
+  },
+};
+
+export const brkb: StockWithQuote = {
+  symbol: 'BRK.B',
+  name: 'Berkshire Hathaway Inc.',
+  exchange: 'NYSE',
+  sector: 'Financials',
+  currency: 'USD',
+  quote: {
+    symbol: 'BRK.B',
+    price: 460,
+    previousClose: 458,
+    open: 459,
+    high: 461,
+    low: 457,
+    volume: 400_000,
+    change: 2,
+    changePercent: 0.44,
+    timestamp: 1_700_000_000_000,
+  },
+};
+
+export const aaplHistory: HistoryData = {
+  symbol: 'AAPL',
+  period: '1W',
+  points: [
+    { time: 1_699_999_000_000, open: 228, high: 231, low: 227, close: 230, volume: 5000 },
+    { time: 1_700_000_000_000, open: 230, high: 232, low: 229, close: 231, volume: 6000 },
+  ],
+};
+
+export const watchlistItem: WatchlistItem = { symbol: 'AAPL', addedAt: 1_700_000_000_000 };
