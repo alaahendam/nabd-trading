@@ -5,7 +5,7 @@ import { useDocumentTitle } from '../use-document-title';
 
 export function StocksPage() {
   const { t } = useTranslation();
-  useDocumentTitle('pages.stocks');
+  useDocumentTitle(t('pages.stocks'));
   return (
     <>
       <h1 className="pbe-4 text-2xl font-semibold">{t('pages.stocks')}</h1>

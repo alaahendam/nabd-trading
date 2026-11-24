@@ -5,6 +5,9 @@ import { type Freshness, useFreshness, useLivePrice } from '../market-data';
 
 export interface LiveQuote {
   price: number;
+  /** The day's range, widened when the live price goes beyond the quote's. */
+  high: number;
+  low: number;
   volume: number;
   change: number;
   changePercent: number;
@@ -28,6 +31,8 @@ export function useLiveQuote(quote: Quote): LiveQuote {
 
   return {
     price,
+    high: Math.max(quote.high, live?.high ?? price),
+    low: Math.min(quote.low, live?.low ?? price),
     volume: live?.volume ?? quote.volume,
     change,
     changePercent: (change / quote.previousClose) * 100,

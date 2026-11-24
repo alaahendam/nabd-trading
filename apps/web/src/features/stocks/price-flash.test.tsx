@@ -29,6 +29,16 @@ describe('PriceFlash', () => {
     expect(price.className).not.toContain('animate-flash');
   });
 
+  it('PF-04 can be shown large', () => {
+    const { rerender } = renderWithI18n(
+      <PriceFlash price={10} direction="flat" freshness="fresh" tickKey={1} large />,
+    );
+    expect(screen.getByText('$10.00')).toHaveClass('text-3xl');
+
+    rerender(<PriceFlash price={10} direction="flat" freshness="fresh" tickKey={1} />);
+    expect(screen.getByText('$10.00')).not.toHaveClass('text-3xl');
+  });
+
   it('PF-03 shows the delayed label only when the price is stale', () => {
     const { rerender } = renderWithI18n(
       <PriceFlash price={10} direction="flat" freshness="stale" tickKey={1} />,

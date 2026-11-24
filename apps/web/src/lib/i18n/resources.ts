@@ -47,6 +47,21 @@ const en = {
     errorHint: 'Check your connection and try again.',
     stale: 'Delayed',
   },
+  stock: {
+    loading: 'Loading stock…',
+    error: 'Could not load this stock',
+    notFound: {
+      title: 'Stock not found',
+      description: 'There is no stock with the symbol {{symbol}}.',
+    },
+    stats: {
+      open: 'Open',
+      high: 'High',
+      low: 'Low',
+      previousClose: 'Previous close',
+      volume: 'Volume',
+    },
+  },
   count: { stocks_one: '{{count}} stock', stocks_other: '{{count}} stocks' },
 } as const;
 
@@ -94,6 +109,21 @@ const ar: Tree = {
     error: 'تعذّر تحميل الأسهم',
     errorHint: 'تحقق من اتصالك ثم حاول مرة أخرى.',
     stale: 'متأخر',
+  },
+  stock: {
+    loading: 'جارٍ تحميل السهم…',
+    error: 'تعذّر تحميل هذا السهم',
+    notFound: {
+      title: 'السهم غير موجود',
+      description: 'لا يوجد سهم بالرمز {{symbol}}.',
+    },
+    stats: {
+      open: 'الافتتاح',
+      high: 'الأعلى',
+      low: 'الأدنى',
+      previousClose: 'الإغلاق السابق',
+      volume: 'حجم التداول',
+    },
   },
   count: {
     stocks_zero: 'لا أسهم',

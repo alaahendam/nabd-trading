@@ -6,7 +6,7 @@ import { useDocumentTitle } from '../use-document-title';
 
 export function NotFoundPage() {
   const { t } = useTranslation();
-  useDocumentTitle('notFound.title');
+  useDocumentTitle(t('notFound.title'));
   return (
     <div className="flex flex-col items-start gap-3 py-8">
       <h1 className="text-2xl font-semibold">{t('notFound.title')}</h1>

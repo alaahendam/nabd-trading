@@ -62,6 +62,19 @@ describe('useLiveQuote', () => {
     expect(result.current.tickKey).not.toBe(first);
   });
 
+  it('LQ-06 widens the day range with a tick and never narrows it', () => {
+    const { result, connect, tick } = setup();
+    connect();
+    expect(result.current).toMatchObject({ high: 231, low: 227.5 });
+
+    tick([{ symbol: 'AAPL', price: 233 }]);
+    expect(result.current).toMatchObject({ high: 233, low: 227.5 });
+    tick([{ symbol: 'AAPL', price: 225 }]);
+    expect(result.current).toMatchObject({ high: 233, low: 225 });
+    tick([{ symbol: 'AAPL', price: 229 }]);
+    expect(result.current).toMatchObject({ high: 233, low: 225 });
+  });
+
   it('LQ-05 follows the connection and the silence in freshness', () => {
     vi.useFakeTimers({ toFake: ['Date', 'setInterval', 'clearInterval'] });
     const { result, connect, tick, socket } = setup();

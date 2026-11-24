@@ -16,10 +16,11 @@ interface PriceFlashProps {
   freshness: Freshness;
   /** A new key restarts the flash, so every tick flashes once. */
   tickKey: number | undefined;
+  large?: boolean;
 }
 
 /** The price figure, washed in the market color for a moment after it changes. */
-export function PriceFlash({ price, direction, freshness, tickKey }: PriceFlashProps) {
+export function PriceFlash({ price, direction, freshness, tickKey, large }: PriceFlashProps) {
   const { t } = useTranslation();
 
   return (
@@ -27,7 +28,11 @@ export function PriceFlash({ price, direction, freshness, tickKey }: PriceFlashP
       <span
         key={tickKey}
         data-direction={direction}
-        className={clsx('rounded-sm px-1 text-lg font-semibold numeric', FLASH[direction])}
+        className={clsx(
+          'rounded-sm px-1 font-semibold numeric',
+          large === true ? 'text-3xl' : 'text-lg',
+          FLASH[direction],
+        )}
       >
         {formatPrice(price)}
       </span>

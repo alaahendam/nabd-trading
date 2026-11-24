@@ -6,9 +6,10 @@ import { RouterProvider } from 'react-router/dom';
 import { afterEach, beforeEach, describe, expect, it, vi } from 'vitest';
 
 import { createTestServices } from '../../test/app-services';
-import { server, stocksHandler } from '../../test/msw';
+import { server, stockHandler, stocksHandler } from '../../test/msw';
 import { Shell } from '../layout/shell';
 import { Providers } from '../providers/providers';
+import { StockPage } from './pages/stock-page';
 import { createAppRoutes } from './routes';
 
 const mount = (
@@ -76,10 +77,23 @@ describe('app routes and shell', () => {
     expect(router.state.location.pathname).toBe('/stocks');
   });
 
-  it('APP-04 shows the symbol on a stock page', async () => {
+  it('APP-04 opens the stock page for a symbol and titles the tab with it', async () => {
+    server.use(stockHandler);
     mount('/stocks/AAPL');
-    expect(await screen.findByRole('heading', { level: 1, name: 'Stock details' })).toBeVisible();
-    expect(screen.getByText('AAPL')).toBeVisible();
+    expect(await screen.findByRole('heading', { level: 1, name: 'AAPL' })).toBeVisible();
+    expect(screen.getByText('Apple Inc.')).toBeVisible();
+    expect(document.title).toBe('AAPL · Nabd');
+  });
+
+  it('APP-17 shows the not found page when the stock route has no symbol', async () => {
+    mount('/anything', {}, [
+      {
+        element: <Shell onError={vi.fn()} />,
+        children: [{ path: 'anything', element: <StockPage /> }],
+      },
+    ]);
+    expect(await screen.findByRole('heading', { level: 1, name: 'Page not found' })).toBeVisible();
+    expect(document.title).toBe('Page not found · Nabd');
   });
 
   it('APP-05 shows the not found page for an unknown route', async () => {
