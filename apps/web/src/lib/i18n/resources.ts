@@ -30,6 +30,17 @@ const en = {
   attribution: {
     chartNotice: 'TradingView Lightweight Charts™ · Copyright © 2025 TradingView, Inc.',
   },
+  watchlist: {
+    toggle: 'Watch {{symbol}}',
+    toggleError: 'Could not update your watchlist',
+    loading: 'Loading watchlist…',
+    error: 'Could not load your watchlist',
+    empty: {
+      title: 'Your watchlist is empty',
+      description: 'Star a stock to follow it here.',
+      action: 'Browse stocks',
+    },
+  },
   errors: {
     title: 'Something went wrong',
     description: 'An unexpected error occurred. You can try again.',
@@ -109,6 +120,17 @@ const ar: Tree = {
   },
   attribution: {
     chartNotice: 'TradingView Lightweight Charts™ · Copyright © 2025 TradingView, Inc.',
+  },
+  watchlist: {
+    toggle: 'متابعة {{symbol}}',
+    toggleError: 'تعذّر تحديث قائمة المراقبة',
+    loading: 'جارٍ تحميل قائمة المراقبة…',
+    error: 'تعذّر تحميل قائمة المراقبة',
+    empty: {
+      title: 'قائمة المراقبة فارغة',
+      description: 'ضع نجمة على سهم لمتابعته هنا.',
+      action: 'تصفّح الأسهم',
+    },
   },
   errors: {
     title: 'حدث خطأ ما',

@@ -2,6 +2,7 @@ import { useTranslation } from 'react-i18next';
 import { useParams } from 'react-router';
 
 import { StockDetail } from '../../../features/stocks';
+import { WatchlistToggle } from '../../../features/watchlist';
 import { useDocumentTitle } from '../use-document-title';
 import { NotFoundPage } from './not-found-page';
 
@@ -13,5 +14,5 @@ export function StockPage() {
   if (symbol === undefined) {
     return <NotFoundPage />;
   }
-  return <StockDetail symbol={symbol} />;
+  return <StockDetail symbol={symbol} renderAction={(own) => <WatchlistToggle symbol={own} />} />;
 }

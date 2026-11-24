@@ -50,6 +50,12 @@ export default defineConfig({
           lines: 100,
         },
         'src/app/**/*.{ts,tsx}': { statements: 100, branches: 100, functions: 100, lines: 100 },
+        'src/features/watchlist/**/*.{ts,tsx}': {
+          statements: 100,
+          branches: 100,
+          functions: 100,
+          lines: 100,
+        },
         'src/features/stocks/**/*.{ts,tsx}': {
           statements: 100,
           branches: 100,

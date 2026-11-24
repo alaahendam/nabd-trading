@@ -1,10 +1,15 @@
 import { useTranslation } from 'react-i18next';
 
+import { WatchlistView } from '../../../features/watchlist';
 import { useDocumentTitle } from '../use-document-title';
 
-/** Placeholder: the watchlist feature replaces the body in Phase 5. */
 export function WatchlistPage() {
   const { t } = useTranslation();
   useDocumentTitle(t('pages.watchlist'));
-  return <h1 className="text-2xl font-semibold">{t('pages.watchlist')}</h1>;
+  return (
+    <>
+      <h1 className="pbe-4 text-2xl font-semibold">{t('pages.watchlist')}</h1>
+      <WatchlistView />
+    </>
+  );
 }

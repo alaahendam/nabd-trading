@@ -6,7 +6,14 @@ import { RouterProvider } from 'react-router/dom';
 import { afterEach, beforeEach, describe, expect, it, vi } from 'vitest';
 
 import { createTestServices } from '../../test/app-services';
-import { historyHandler, server, stockHandler, stocksHandler } from '../../test/msw';
+import { aapl, watchlistItem } from '../../test/fixtures';
+import {
+  historyHandler,
+  server,
+  stockHandler,
+  stocksHandler,
+  watchlistHandler,
+} from '../../test/msw';
 import { Shell } from '../layout/shell';
 import { Providers } from '../providers/providers';
 import { StockPage } from './pages/stock-page';
@@ -29,7 +36,7 @@ const mount = (
 
 beforeEach(() => {
   document.title = '';
-  server.use(stocksHandler);
+  server.use(stocksHandler, watchlistHandler());
 });
 
 afterEach(() => {
@@ -83,6 +90,27 @@ describe('app routes and shell', () => {
     expect(await screen.findByRole('heading', { level: 1, name: 'AAPL' })).toBeVisible();
     expect(screen.getByText('Apple Inc.')).toBeVisible();
     expect(document.title).toBe('AAPL · Nabd');
+  });
+
+  it('APP-19 puts a star on every row of the stock list', async () => {
+    mount('/stocks');
+    await screen.findByText('Apple Inc.');
+    expect(await screen.findAllByRole('button', { name: /^Watch / })).toHaveLength(2);
+  });
+
+  it('APP-20 puts the star beside the symbol on the stock page', async () => {
+    server.use(stockHandler, historyHandler);
+    mount('/stocks/AAPL');
+    await screen.findByRole('heading', { level: 1, name: 'AAPL' });
+    expect(await screen.findByRole('button', { name: 'Watch AAPL' })).toBeVisible();
+  });
+
+  it('APP-21 lists the watched stocks on the watchlist page', async () => {
+    server.use(watchlistHandler([watchlistItem]));
+    mount('/watchlist');
+    expect(await screen.findByRole('heading', { level: 1, name: 'Watchlist' })).toBeVisible();
+    expect(await screen.findByText(aapl.name)).toBeVisible();
+    expect(screen.queryByText('Berkshire Hathaway Inc.')).not.toBeInTheDocument();
   });
 
   it('APP-17 shows the not found page when the stock route has no symbol', async () => {

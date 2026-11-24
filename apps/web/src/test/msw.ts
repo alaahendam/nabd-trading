@@ -1,3 +1,4 @@
+import type { WatchlistItem } from '@nabd/shared';
 import { http, HttpResponse } from 'msw';
 import { setupServer } from 'msw/node';
 
@@ -7,6 +8,10 @@ import { aapl, aaplHistory, brkb } from './fixtures';
 export const server = setupServer();
 
 export const API_URL = 'http://api.test';
+
+/** The watchlist, empty unless a test says otherwise. */
+export const watchlistHandler = (items: WatchlistItem[] = []) =>
+  http.get(`${API_URL}/api/watchlist`, () => HttpResponse.json({ data: items }));
 
 /** One stock, for tests that render its detail page. */
 export const stockHandler = http.get(`${API_URL}/api/stocks/AAPL`, () =>
