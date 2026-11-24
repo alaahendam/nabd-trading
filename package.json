@@ -13,17 +13,19 @@
   "scripts": {
     "dev": "turbo run dev",
     "build": "turbo run build",
-    "lint": "turbo run lint",
+    "lint": "turbo run lint && pnpm lint:css",
     "typecheck": "turbo run typecheck",
     "test": "turbo run test",
     "format": "prettier --write .",
-    "format:check": "prettier --check ."
+    "format:check": "prettier --check .",
+    "lint:css": "stylelint --allow-empty-input \"**/*.css\""
   },
   "devDependencies": {
     "@nabd/config": "workspace:*",
     "@types/node": "^24.19.2",
     "eslint": "^9.39.5",
     "prettier": "^3.10.1",
+    "stylelint": "^17.16.0",
     "turbo": "^2.11.13",
     "typescript": "~6.0.3"
   }

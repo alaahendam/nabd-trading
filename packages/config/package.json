@@ -15,7 +15,8 @@
     "./eslint/architecture": "./eslint/architecture.js",
     "./eslint/design-system": "./eslint/design-system.js",
     "./eslint/i18n": "./eslint/i18n.js",
-    "./eslint/node": "./eslint/node.js"
+    "./eslint/node": "./eslint/node.js",
+    "./stylelint": "./stylelint/index.js"
   },
   "dependencies": {
     "@eslint/js": "^9.39.5",
@@ -32,6 +33,9 @@
     "globals": "^17.14.0",
     "prettier": "^3.10.1",
     "prettier-plugin-tailwindcss": "^0.8.1",
+    "stylelint": "^17.16.0",
+    "stylelint-config-standard": "^40.0.0",
+    "stylelint-use-logical": "^2.1.3",
     "typescript-eslint": "^8.73.0"
   },
   "scripts": {
