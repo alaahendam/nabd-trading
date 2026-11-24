@@ -149,6 +149,13 @@ describe('app routes and shell', () => {
     expect(screen.getByRole('combobox', { name: 'اللغة' })).toHaveValue('ar');
   });
 
+  it('APP-23 leads home from the logo, named with the app name', async () => {
+    mount('/watchlist');
+    const banner = await screen.findByRole('banner');
+    const home = within(banner).getByRole('link', { name: 'Nabd' });
+    expect(home).toHaveAttribute('href', '/stocks');
+  });
+
   it('APP-22 ignores a language value that is not offered', async () => {
     const { languageRoot } = mount();
     const select = await screen.findByRole('combobox', { name: 'Language' });

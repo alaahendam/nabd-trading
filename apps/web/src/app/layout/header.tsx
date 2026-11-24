@@ -1,8 +1,8 @@
 import { useTranslation } from 'react-i18next';
-import { NavLink } from 'react-router';
+import { Link, NavLink } from 'react-router';
 
 import { useConnectionStatus } from '../../features/market-data';
-import { buttonVariants, ConnectionBadge } from '../../shared/ui';
+import { buttonVariants, ConnectionBadge, Logo } from '../../shared/ui';
 import { LanguageSwitcher } from './language-switcher';
 import { ThemeSwitcher } from './theme-switcher';
 
@@ -18,7 +18,9 @@ export function Header() {
   return (
     <header className="border-be border-line bg-surface-raised">
       <div className="mx-auto flex flex-wrap items-center gap-x-6 gap-y-3 px-4 py-3 inline-full max-inline-6xl">
-        <p className="text-lg font-semibold text-brand">{t('app.name')}</p>
+        <Link to="/stocks" className="rounded-md">
+          <Logo />
+        </Link>
         <nav aria-label={t('nav.label')} className="flex gap-1">
           {NAV_ITEMS.map((item) => (
             <NavLink

@@ -19,7 +19,7 @@ Requested by the user after seeing the app. Decisions confirmed with them: the c
 - [x] D1: small fixes: pointer cursor, RTL stat alignment, smaller footer attribution
 - [x] D2: sharper light theme (tokens, chart card, contrast test)
 - [x] D3: theme and language selects with icons
-- [ ] D4: the logo
+- [x] D4: the logo
 - [ ] D5: chart axis and crosshair in the app language
 - [ ] D6: stock list pagination with infinite scroll (shared, server, web)
 - [ ] D7: custom date range for the chart (shared, server, web)

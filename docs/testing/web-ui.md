@@ -73,3 +73,11 @@ wraps the tree in an i18next instance. Queries are by role and accessible name, 
 | UI-24  | Icons                            | each of sun, moon, monitor, globe and chevron       | an svg that is hidden from assistive technology, takes its color from the text, and is not focusable | component |
 | APP-06 | Theme select                     | choose Dark in the theme select                     | the preference changes and the select shows the choice with the matching icon                        | component |
 | APP-07 | Language select                  | choose Arabic in the language select                | text is Arabic and `document.documentElement.dir` is `rtl`                                           | component |
+
+## Logo
+
+| ID     | Behavior                         | Input                | Expected                                                                       | Level     |
+| ------ | -------------------------------- | -------------------- | ------------------------------------------------------------------------------ | --------- |
+| UI-25  | The logo shows the mark and name | English, then Arabic | the translated app name beside a mark that is hidden from assistive technology | component |
+| UI-26  | The mark uses the theme tokens   | the mark             | its colors come from semantic token classes, so it follows light and dark      | component |
+| APP-23 | The logo leads home              | render the shell     | the banner has one link named with the app name, pointing at the stock list    | component |
