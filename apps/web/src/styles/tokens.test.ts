@@ -87,6 +87,36 @@ describe('design tokens', () => {
     });
   });
 
+  describe('light theme sharpness', () => {
+    const ratio = (foreground: string, background: string) =>
+      contrastRatio(resolve(themes[0][1], foreground), resolve(themes[0][1], background));
+
+    it('TOK-06 borders and dividers are clearly visible on a card', () => {
+      expect(ratio('--line', '--surface-raised')).toBeGreaterThanOrEqual(1.7);
+      expect(ratio('--line', '--surface')).toBeGreaterThanOrEqual(1.5);
+    });
+
+    it('TOK-06 the chart grid is visible but lighter than a border', () => {
+      expect(ratio('--grid', '--surface-raised')).toBeGreaterThanOrEqual(1.2);
+      expect(ratio('--grid', '--surface-raised')).toBeLessThan(ratio('--line', '--surface-raised'));
+    });
+
+    it('TOK-07 muted text meets the AAA level of 7:1 on every surface', () => {
+      for (const surface of ['--surface', '--surface-raised', '--surface-sunken']) {
+        expect(ratio('--content-muted', surface)).toBeGreaterThanOrEqual(7);
+      }
+    });
+
+    it('TOK-08 the market colors are strong on a card', () => {
+      expect(ratio('--positive', '--surface-raised')).toBeGreaterThanOrEqual(5.5);
+      expect(ratio('--negative', '--surface-raised')).toBeGreaterThanOrEqual(5.5);
+    });
+
+    it('TOK-09 white cards stand out from the page', () => {
+      expect(ratio('--surface-raised', '--surface')).toBeGreaterThanOrEqual(1.05);
+    });
+  });
+
   it('TOK-03 dark redefines every semantic token of the light layer', () => {
     const stillLight = SEMANTIC_COLORS.filter((name) => !dark.has(name));
     expect(stillLight).toEqual([]);

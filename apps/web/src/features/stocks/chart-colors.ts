@@ -13,7 +13,7 @@ export function readChartColors(style: StyleReader): ChartColors {
   return {
     background: read('--surface-raised'),
     text: read('--content-muted'),
-    grid: read('--line'),
+    grid: read('--grid'),
     up: read('--positive'),
     down: read('--negative'),
   };

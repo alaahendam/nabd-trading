@@ -7,7 +7,7 @@ describe('readChartColors', () => {
     const tokens: Record<string, string> = {
       '--surface-raised': ' light-background ',
       '--content-muted': 'light-text',
-      '--line': ' light-grid',
+      '--grid': ' light-grid',
       '--positive': 'light-up ',
       '--negative': 'light-down',
     };

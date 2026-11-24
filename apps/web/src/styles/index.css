@@ -23,6 +23,7 @@
   --color-on-brand: var(--on-brand);
   --color-on-accent: var(--on-accent);
   --color-line: var(--line);
+  --color-grid: var(--grid);
   --color-line-strong: var(--line-strong);
   --color-brand: var(--brand);
   --color-accent: var(--accent);

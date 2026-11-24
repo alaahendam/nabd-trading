@@ -117,7 +117,7 @@ function StockDetailBody({
         </div>
       </div>
 
-      <dl className="grid grid-cols-2 gap-4 sm:grid-cols-5">
+      <dl className="grid grid-cols-2 gap-4 rounded-lg border border-line bg-surface-raised p-4 shadow-raised sm:grid-cols-5">
         {stats.map((stat) => (
           <div key={stat.label}>
             <dt className="text-sm text-content-muted">{stat.label}</dt>

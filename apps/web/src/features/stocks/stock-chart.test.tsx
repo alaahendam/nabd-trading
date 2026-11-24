@@ -176,7 +176,7 @@ describe('StockChart', () => {
     expect(chart.loader.mock.calls[0]?.[1]).toEqual({
       background: 'light--surface-raised',
       text: 'light--content-muted',
-      grid: 'light--line',
+      grid: 'light--grid',
       up: 'light--positive',
       down: 'light--negative',
     });
@@ -188,7 +188,7 @@ describe('StockChart', () => {
     expect(chart.port.applyColors).toHaveBeenLastCalledWith({
       background: 'dark--surface-raised',
       text: 'dark--content-muted',
-      grid: 'dark--line',
+      grid: 'dark--grid',
       up: 'dark--positive',
       down: 'dark--negative',
     });

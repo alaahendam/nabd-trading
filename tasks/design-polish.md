@@ -16,8 +16,8 @@ Requested by the user after seeing the app. Decisions confirmed with them: the c
 
 ## Tasks
 
-- [ ] D1: small fixes: pointer cursor, RTL stat alignment, smaller footer attribution
-- [ ] D2: sharper light theme (tokens, chart card, contrast test)
+- [x] D1: small fixes: pointer cursor, RTL stat alignment, smaller footer attribution
+- [x] D2: sharper light theme (tokens, chart card, contrast test)
 - [ ] D3: theme and language selects with icons
 - [ ] D4: the logo
 - [ ] D5: chart axis and crosshair in the app language

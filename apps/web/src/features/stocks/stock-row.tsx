@@ -16,7 +16,7 @@ export function StockRow({ stock, renderAction }: StockRowProps) {
   const live = useLiveQuote(stock.quote);
 
   return (
-    <li className="flex items-center gap-4 border-be border-line py-3">
+    <li className="flex items-center gap-4 border-be border-line py-3 last:border-be-0">
       <Link to={`/stocks/${stock.symbol}`} className="flex-1 rounded-sm min-inline-0">
         <span className="block font-semibold">{stock.symbol}</span>{' '}
         <span className="block truncate text-sm text-content-muted">{stock.name}</span>

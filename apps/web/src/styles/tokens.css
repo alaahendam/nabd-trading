@@ -11,15 +11,17 @@
   --palette-forest-900: #07351a;
   --palette-ink-950: #0a140a;
   --palette-canvas-50: #f8f9f9;
-  --palette-sage-200: #cfdacd;
+  --palette-sage-200: #b4c3b2;
   --palette-lime-300: #c5ff94;
   --palette-amber-400: #ffb932;
 
   /* Light neutrals */
   --palette-white: #fff;
-  --palette-sage-100: #eef1ee;
-  --palette-sage-500: #6f806e;
-  --palette-sage-700: #455645;
+  --palette-sage-50: #eff3ef;
+  --palette-sage-100: #e0e7e0;
+  --palette-sage-150: #d9e2d8;
+  --palette-sage-500: #566b55;
+  --palette-sage-700: #2f402f;
 
   /* Dark neutrals, tinted green like the brand */
   --palette-night-950: #070d08;
@@ -33,11 +35,11 @@
   /* Market colors: a green and a red that are not the brand green */
   --palette-green-50: #e2f3e7;
   --palette-green-400: #3ddc84;
-  --palette-green-700: #0b7a3b;
+  --palette-green-700: #067236;
   --palette-green-900: #12301c;
   --palette-red-50: #fbe7e4;
   --palette-red-400: #ff7b72;
-  --palette-red-700: #bf2a1c;
+  --palette-red-700: #c21d0b;
   --palette-red-900: #3a1815;
 
   /* Focus and the watch star in light mode */
@@ -45,11 +47,11 @@
   --palette-amber-700: #a8620a;
 
   /* Elevation shadows are colors too */
-  --elevation-light-raised: 0 1px 2px rgb(10 20 10 / 8%), 0 1px 3px rgb(10 20 10 / 6%);
+  --elevation-light-raised: 0 1px 2px rgb(10 20 10 / 12%), 0 2px 6px rgb(10 20 10 / 8%);
   --elevation-dark-raised: 0 1px 2px rgb(0 0 0 / 50%), 0 1px 3px rgb(0 0 0 / 40%);
 
   /* Semantic tokens, light */
-  --surface: var(--palette-canvas-50);
+  --surface: var(--palette-sage-50);
   --surface-raised: var(--palette-white);
   --surface-sunken: var(--palette-sage-100);
   --content: var(--palette-ink-950);
@@ -57,6 +59,7 @@
   --on-brand: var(--palette-canvas-50);
   --on-accent: var(--palette-ink-950);
   --line: var(--palette-sage-200);
+  --grid: var(--palette-sage-150);
   --line-strong: var(--palette-sage-500);
   --brand: var(--palette-forest-900);
   --accent: var(--palette-lime-300);
@@ -78,6 +81,7 @@
   --on-brand: var(--palette-ink-950);
   --on-accent: var(--palette-ink-950);
   --line: var(--palette-night-700);
+  --grid: var(--palette-night-700);
   --line-strong: var(--palette-night-500);
   --brand: var(--palette-lime-300);
   --accent: var(--palette-lime-300);

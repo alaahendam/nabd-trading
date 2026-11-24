@@ -67,7 +67,7 @@ export function StockList({ symbols, renderAction }: StockListProps) {
       <p className="pbe-2 text-sm text-content-muted">
         {t('count.stocks', { count: visible.length })}
       </p>
-      <ul>
+      <ul className="rounded-lg border border-line bg-surface-raised px-4 shadow-raised">
         {visible.map((stock) => (
           <StockRow
             key={stock.symbol}

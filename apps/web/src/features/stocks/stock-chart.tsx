@@ -122,7 +122,7 @@ export function StockChart({ symbol }: { symbol: string }) {
   return (
     <section className="flex flex-col gap-3">
       <PeriodSwitcher value={period} onChange={setPeriod} />
-      <div className="relative">
+      <div className="relative overflow-hidden rounded-lg border border-line bg-surface-raised p-2 shadow-raised">
         <div
           ref={setElement}
           role="img"
