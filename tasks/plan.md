@@ -25,56 +25,56 @@ Controllers are thin. Routes come from `ROUTES`, bodies and responses from share
 
 ### Slice 1: Foundation (vertical through the stack)
 
-- [ ] Task 1: `@nabd/shared` health contract (`ROUTES.health`, `healthResponseSchema`), test-first.
+- [x] Task 1: `@nabd/shared` health contract (`ROUTES.health`, `healthResponseSchema`), test-first.
   - Scope: XS
-- [ ] Task 2: common foundation and health endpoint
+- [x] Task 2: common foundation and health endpoint
   - Acceptance: `ApiException`, catch-all filter producing the shared error shape (unknown errors generic, no stack), `ZodValidationPipe`, global prefix `/api`, helmet, `GET /api/health`; env gains `MARKET_SEED`, `CHAOS_LATENCY_MS`, `CHAOS_ERROR_RATE`; matrix `docs/testing/server-common.md` first.
   - Verify: supertest e2e on 404 route, validation failure, unknown error, health.
   - Scope: M
 
 ### Slice 2: Market domain (pure, 100% coverage)
 
-- [ ] Task 3: seeded RNG and stock universe
+- [x] Task 3: seeded RNG and stock universe
   - Acceptance: deterministic streams per seed, normal and exponential draws, stable string hash; universe of real tickers, every entry passes `stockSchema` and has a positive snapshot price, beta and volatility; matrix `server-market-rng.md`.
   - Scope: M
-- [ ] Task 4: live simulator
+- [x] Task 4: live simulator
   - Acceptance: every quote passes shared `quoteSchema` after any number of steps; deterministic per seed; positive cent-rounded prices; shared market factor correlates stocks; volatility clusters; irregular tick times; day rollover sets previous close; matrix `server-market-simulator.md`.
   - Scope: L, split in two commits (state and stepping, then day rollover and ticks).
-- [ ] Task 5: history generator
+- [x] Task 5: history generator
   - Acceptance: every result passes `historyDataSchema`; last close equals the current price; deterministic for the same inputs; ascending, bucket-aligned times; day gaps at UTC boundaries; correct point count per period; matrix `server-market-history.md`.
   - Scope: M
 
 ### Checkpoint: Market domain
 
-- [ ] Domain tests green at 100%, committed.
+- [x] Domain tests green at 100%, committed.
 
 ### Slice 3: Stocks REST
 
-- [ ] Task 6: market service (clock, tick stream) and stocks controller
+- [x] Task 6: market service (clock, tick stream) and stocks controller
   - Acceptance: `GET /api/stocks`, `/api/stocks/:symbol`, `/api/stocks/:symbol/history?period=`; responses validate against shared response schemas; unknown symbol 404, bad symbol or period 422; matrix `server-stocks.md`.
   - Scope: M
 
 ### Slice 4: Watchlist
 
-- [ ] Task 7: identity guard, `@CurrentUser()`, watchlist service, repository and controller
+- [x] Task 7: identity guard, `@CurrentUser()`, watchlist service, repository and controller
   - Acceptance: missing or malformed `x-client-id` gives 401 `CLIENT_ID_REQUIRED`; `PUT` adds idempotently (keeps first `addedAt`), `DELETE` removes idempotently, `GET` lists in added order; unknown symbol 404; clients are isolated from each other; matrix `server-watchlist.md`; service at 100%.
   - Scope: M
 
 ### Checkpoint: REST complete
 
-- [ ] All REST e2e green, committed.
+- [x] All REST e2e green, committed.
 
 ### Slice 5: Realtime
 
-- [ ] Task 8: tick batcher and gateway
+- [x] Task 8: tick batcher and gateway
   - Acceptance: subscribe/unsubscribe join and leave per-symbol rooms; invalid payloads and unknown symbols answer `server:error` and never crash; the current tick is sent on subscribe; live ticks are batched per flush interval and sent per room; disconnect cleans up; matrix `server-realtime.md`; batcher at 100%; end-to-end with `socket.io-client`.
   - Scope: L, split in two commits (batcher, then gateway).
 
 ### Slice 6: Operations
 
-- [ ] Task 9: chaos interceptor (latency and error rate from env, never on health)
+- [x] Task 9: chaos interceptor (latency and error rate from env, never on health)
   - Scope: S
-- [ ] Task 10: `main.ts` wiring (prefix, helmet, CORS also for Socket.IO through an adapter, shutdown hooks), manual run with curl and a socket client, README and docs, whole-repo gates
+- [x] Task 10: `main.ts` wiring (prefix, helmet, CORS also for Socket.IO through an adapter, shutdown hooks), manual run with curl and a socket client, README and docs, whole-repo gates
   - Scope: S
 
 ## Risks and mitigations
