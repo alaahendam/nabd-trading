@@ -78,4 +78,9 @@ export class MarketService implements OnModuleInit, OnModuleDestroy {
   latestTick(symbol: string): PriceTick | undefined {
     return this.simulator.latestTick(symbol);
   }
+
+  /** The current tick of each known symbol, in the order given. Unknown symbols are skipped. */
+  latestTicks(symbols: readonly string[]): PriceTick[] {
+    return symbols.flatMap((symbol) => this.simulator.latestTick(symbol) ?? []);
+  }
 }

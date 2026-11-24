@@ -27,6 +27,7 @@ Modules: `src/common/clock.ts`, `src/modules/market/market.service.ts` (and `mar
 | SVC-04 | Stocks with quotes                      | `stocks()`, `stock('AAPL')`, `stock('NOPE')`             | every item passes `stockWithQuoteSchema`, one per universe stock; unknown gives `undefined`         | unit  |
 | SVC-05 | History                                 | every period for a known symbol; unknown symbol          | passes `historyDataSchema`, last close equals the current price; unknown gives `undefined`          | unit  |
 | SVC-06 | Lookups                                 | `hasSymbol`, `latestTick`, `symbols`                     | true/false, a valid tick or `undefined`, the universe symbols                                       | unit  |
+| SVC-07 | Latest ticks of several symbols         | `latestTicks(['MSFT', 'NOPE', 'AAPL'])`, `[]`            | valid ticks for the known symbols in the given order; `[]` for none                                 | unit  |
 
 ## Cases: HTTP
 

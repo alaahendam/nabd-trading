@@ -8,6 +8,7 @@ export const envSchema = z.object({
   MARKET_SEED: z.string().min(1).default('nabd'),
   SIM_VOLATILITY_SCALE: z.coerce.number().positive().default(3),
   SIM_STEP_MS: z.coerce.number().int().min(10).max(5000).default(100),
+  TICK_FLUSH_MS: z.coerce.number().int().min(10).max(5000).default(250),
 });
 
 export type Env = z.infer<typeof envSchema>;

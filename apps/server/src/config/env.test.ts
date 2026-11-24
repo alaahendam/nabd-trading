@@ -16,6 +16,7 @@ describe('envSchema', () => {
       MARKET_SEED: 'nabd',
       SIM_VOLATILITY_SCALE: 3,
       SIM_STEP_MS: 100,
+      TICK_FLUSH_MS: 250,
     });
   });
 
@@ -27,6 +28,7 @@ describe('envSchema', () => {
       MARKET_SEED: 'abc',
       SIM_VOLATILITY_SCALE: 2.5,
       SIM_STEP_MS: 250,
+      TICK_FLUSH_MS: 500,
     };
     expect(envSchema.parse(input)).toEqual(input);
   });
@@ -66,6 +68,16 @@ describe('simulation env', () => {
     expect(envSchema.parse({ SIM_STEP_MS: '250' }).SIM_STEP_MS).toBe(250);
     for (const bad of ['9', '5001', '1.5']) {
       expect(issuePaths({ SIM_STEP_MS: bad })).toEqual(['SIM_STEP_MS']);
+    }
+  });
+});
+
+describe('realtime env', () => {
+  it('ENV-18 requires a flush interval of 10 to 5000 ms', () => {
+    expect(envSchema.parse({}).TICK_FLUSH_MS).toBe(250);
+    expect(envSchema.parse({ TICK_FLUSH_MS: '500' }).TICK_FLUSH_MS).toBe(500);
+    for (const bad of ['9', '5001', '1.5']) {
+      expect(issuePaths({ TICK_FLUSH_MS: bad })).toEqual(['TICK_FLUSH_MS']);
     }
   });
 });

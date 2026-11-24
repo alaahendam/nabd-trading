@@ -132,4 +132,14 @@ describe('MarketService', () => {
     expect(priceTickSchema.parse(tick)).toEqual(tick);
     expect(service.latestTick('NOPE')).toBeUndefined();
   });
+
+  it('SVC-07 returns the latest ticks of the known symbols only', () => {
+    const { service } = make();
+    const ticks = service.latestTicks(['MSFT', 'NOPE', 'AAPL']);
+    expect(ticks.map((tick) => tick.symbol)).toEqual(['MSFT', 'AAPL']);
+    for (const tick of ticks) {
+      expect(priceTickSchema.safeParse(tick).success).toBe(true);
+    }
+    expect(service.latestTicks([])).toEqual([]);
+  });
 });
