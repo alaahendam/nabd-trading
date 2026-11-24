@@ -1,27 +1,38 @@
-# 0009. Route-level code splitting was measured and not kept
+# 0009. Route splitting was measured and not kept; vendor chunks instead
 
 - Status: accepted
 - Date: 2026-11-24
 
 ## Context
 
-The Phase 6 plan carried one item over from Phase 5: the single main chunk (about 570 kB, 180 kB gzipped) makes Vite warn, and splitting the three pages with `lazy` routes was expected to shrink it.
+The Phase 5 build had one main chunk of 585.5 kB (180.1 kB gzipped), which makes Vite warn (limit 500 kB). The Phase 6 plan expected route-level splitting to shrink it.
 
 ## Decision
 
-Keep one main chunk and the chart chunk. The pages are not split.
+**Pages are not split by route.** I made the three pages lazy routes and built it. The page chunks came out at 0.34 to 0.37 kB each: everything the pages share (React, the router, TanStack Query, i18next, the socket client, zod and the stocks feature) moved into one 355 kB shared chunk beside a 227 kB entry. A first visit still downloaded 582 kB, now in two dependent requests instead of one, and each first visit to a page added a third. It cost a request waterfall and gave nothing, so it was reverted.
 
-I made the three pages lazy routes and built it. The page chunks came out at 0.34 to 0.37 kB each. Everything the pages share (React, the router, TanStack Query, i18next, the socket client, zod and the stocks feature) moved into one 355 kB shared chunk next to a 227 kB entry. A first visit still downloads 582 kB, in two requests that depend on each other instead of one, and every first visit to a page adds a third. The change cost a request waterfall and bought nothing, so it was reverted.
+**Stable dependencies get their own chunks.** `build.rolldownOptions.output.codeSplitting.groups` (Vite 8 uses Rolldown, where `manualChunks` is deprecated in favor of this option) puts the dependencies that rarely change in three files. The point is long-term caching: a release that only changes app code re-downloads the 51 kB entry, and the browser keeps the other 533 kB.
 
-What is already split is the part that is large and not needed at first paint: `lightweight-charts` (165 kB, 54 kB gzipped) loads on the stock page only, through the chart port.
+| Chunk                       |          Raw |         Gzip | Holds                                                 |
+| --------------------------- | -----------: | -----------: | ----------------------------------------------------- |
+| `react`                     |     313.9 kB |      98.8 kB | react, react-dom, scheduler, react-router             |
+| `data`                      |     163.8 kB |      47.3 kB | TanStack Query, Socket.IO client and parser, zod      |
+| `i18n`                      |      55.6 kB |      18.1 kB | i18next, react-i18next                                |
+| `index` (the app)           |      51.5 kB |      16.9 kB | the app's own code and the shared contracts           |
+| runtime                     |       0.7 kB |       0.4 kB |                                                       |
+| **First load**              | **585.2 kB** | **181.6 kB** | five files, fetched in parallel                       |
+| `lightweight-chart-adapter` |     165.5 kB |      53.6 kB | loaded on the stock page only, through the chart port |
+
+The total is the same as before (585.5 kB raw, 180.1 kB gzip), because the dependencies are what they are. What changed is that no file is over the limit, so the warning is gone without raising the limit, and that the app's own code, the part that changes on each release, is 51 kB instead of 585 kB.
 
 ## Alternatives considered
 
-- **Manual vendor chunks.** They help long-term caching (a release that only changes app code keeps the React chunk cached), not the first load. Worth doing when releases are frequent; not now.
+- **Raising `chunkSizeWarningLimit`.** Not needed once the chunks are split; it would only hide a number.
 - **Lazy-loading the Arabic resources.** A few kilobytes for one language; not worth the extra state.
-- **Raising the warning limit.** Hides the number instead of explaining it; the number is explained here.
+- **A lazy socket client.** The list is live on first paint, so it is needed at once.
 
 ## Consequences
 
-- The production build keeps its chunk size warning. It is expected, and this note is its explanation.
-- If the app grows pages that do not share the core (an admin area, say), splitting those routes becomes worthwhile and the router already supports it through `lazy`.
+- The build is warning-free. If a chunk grows past 500 kB the warning returns, which is the signal to look again.
+- Dependencies not listed in a group (clsx, class-variance-authority, and so on) stay in the app chunk; they are small. A new large dependency should be added to a group or lazy-loaded.
+- If the app grows pages that do not share the core (an admin area, say), splitting those routes becomes worthwhile; the router already supports it through `lazy`.
