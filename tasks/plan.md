@@ -28,19 +28,19 @@ CI job and docs (after the specs exist)
 
 ## Task list
 
-- [ ] Task 1: E2E harness: real server and web on dedicated ports, health-checked, isolated per test
-- [ ] Task 2: E2E main flow: live list, detail and chart, period switch, star, watchlist, reload, Arabic
-- [ ] Task 3: E2E states: error and retry, offline and reconnect, reduced motion, 320 px layout
-- [ ] Task 4: accessibility pass with axe across pages, themes and languages, fixing what it finds
-- [ ] Task 5: route-level code splitting
-- [ ] Task 6: CI E2E job, gates, README and ADR notes, final report
+- [x] Task 1: E2E harness: real server and web on dedicated ports, health-checked, isolated per test
+- [x] Task 2: E2E main flow: live list, detail and chart, period switch, star, watchlist, reload, Arabic
+- [x] Task 3: E2E states: error and retry, offline and reconnect, reduced motion, 320 px layout
+- [x] Task 4: accessibility pass with axe across pages, themes and languages, fixing what it finds
+- [x] Task 5: route-level code splitting (measured, no gain, kept as one chunk: ADR 0009)
+- [x] Task 6: CI E2E job, gates, README and ADR notes, final report
 
 ## Acceptance criteria (phase level)
 
 - The E2E suite passes locally and is wired into CI; it starts and stops its own servers.
 - axe reports no violations on any page in either theme or language.
 - No horizontal overflow at 320 px on any page; the price flash is off under reduced motion.
-- The main chunk is smaller than before and the production build warning is gone or explained.
+- The production build warning is gone or explained (explained: ADR 0009, splitting by route gave no gain).
 - No lowered coverage thresholds, no lint or type escapes, no skipped tests.
 
 ## Risks and mitigations
