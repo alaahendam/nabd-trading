@@ -64,16 +64,6 @@
     outline-offset: 2px;
   }
 
-  /*
-   * Figures that change: tabular numerals so digits never jump, and always left to right, even
-   * inside a right-to-left layout, isolated so neighboring Arabic text cannot reorder them.
-   */
-  .numeric {
-    font-variant-numeric: tabular-nums;
-    direction: ltr;
-    unicode-bidi: isolate;
-  }
-
   @media (prefers-reduced-motion: reduce) {
     *,
     ::before,
@@ -84,4 +74,15 @@
       scroll-behavior: auto !important;
     }
   }
+}
+
+/*
+ * Figures that change: tabular numerals so digits never jump, and always left to right, even
+ * inside a right-to-left layout, isolated so neighboring Arabic text cannot reorder them. It is
+ * a utility, so the Tailwind lint rules know the class.
+ */
+@utility numeric {
+  font-variant-numeric: tabular-nums;
+  direction: ltr;
+  unicode-bidi: isolate;
 }

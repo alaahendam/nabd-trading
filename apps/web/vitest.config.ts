@@ -49,6 +49,8 @@ export default defineConfig({
           functions: 100,
           lines: 100,
         },
+        'src/app/**/*.{ts,tsx}': { statements: 100, branches: 100, functions: 100, lines: 100 },
+        'src/shared/**/*.{ts,tsx}': { statements: 100, branches: 100, functions: 100, lines: 100 },
         'src/lib/query/query-client.ts': {
           statements: 100,
           branches: 100,
