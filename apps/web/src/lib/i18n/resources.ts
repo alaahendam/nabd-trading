@@ -60,6 +60,9 @@ const en = {
     error: 'Could not load stocks',
     errorHint: 'Check your connection and try again.',
     stale: 'Delayed',
+    loadMore: 'Load more stocks',
+    loadingMore: 'Loading…',
+    loadMoreError: 'Could not load more stocks',
   },
   stock: {
     loading: 'Loading stock…',
@@ -151,6 +154,9 @@ const ar: Tree = {
     error: 'تعذّر تحميل الأسهم',
     errorHint: 'تحقق من اتصالك ثم حاول مرة أخرى.',
     stale: 'متأخر',
+    loadMore: 'تحميل المزيد من الأسهم',
+    loadingMore: 'جارٍ التحميل…',
+    loadMoreError: 'تعذّر تحميل المزيد من الأسهم',
   },
   stock: {
     loading: 'جارٍ تحميل السهم…',

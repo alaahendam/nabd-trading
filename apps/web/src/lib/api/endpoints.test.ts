@@ -27,7 +27,35 @@ describe('createApi', () => {
         HttpResponse.json({ data: [aapl, brkb], nextCursor: null, total: 2 }),
       ),
     );
-    expect(await api.listStocks()).toEqual([aapl, brkb]);
+    expect(await api.listStocks({})).toEqual({ stocks: [aapl, brkb], nextCursor: null, total: 2 });
+  });
+
+  it('EPT-08 sends the paging query and returns the page', async () => {
+    let search = '';
+    server.use(
+      http.get(`${API_URL}/api/stocks`, ({ request }) => {
+        search = new URL(request.url).search;
+        return HttpResponse.json({ data: [brkb], nextCursor: 'BRK.B', total: 21 });
+      }),
+    );
+    const page = await api.listStocks({ limit: 10, cursor: 'MSFT', symbols: ['AAPL', 'NVDA'] });
+    const params = new URLSearchParams(search);
+    expect(params.get('limit')).toBe('10');
+    expect(params.get('cursor')).toBe('MSFT');
+    expect(params.get('symbols')).toBe('AAPL,NVDA');
+    expect(page).toEqual({ stocks: [brkb], nextCursor: 'BRK.B', total: 21 });
+  });
+
+  it('EPT-09 sends no query string for an empty query', async () => {
+    let search = 'untouched';
+    server.use(
+      http.get(`${API_URL}/api/stocks`, ({ request }) => {
+        search = new URL(request.url).search;
+        return HttpResponse.json({ data: [], nextCursor: null, total: 0 });
+      }),
+    );
+    await api.listStocks({});
+    expect(search).toBe('');
   });
 
   it('EPT-02 gets one stock, keeping a dotted symbol readable in the path', async () => {
@@ -106,7 +134,7 @@ describe('createApi', () => {
     );
     const controller = new AbortController();
     controller.abort();
-    const error = await caught(api.listStocks(controller.signal));
+    const error = await caught(api.listStocks({}, controller.signal));
     expect((error as Error).name).toBe('AbortError');
   });
 });

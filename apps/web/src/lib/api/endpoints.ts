@@ -11,8 +11,24 @@ import {
 
 import type { HttpClient } from './http-client';
 
+export interface StocksListQuery {
+  /** Page size. Without it the whole list comes back. */
+  limit?: number;
+  /** The last symbol of the previous page. */
+  cursor?: string;
+  /** Only these stocks, in list order. A filtered list is not paged. */
+  symbols?: readonly string[];
+}
+
+export interface StocksPage {
+  stocks: StockWithQuote[];
+  /** The cursor of the next page, or `null` at the end. */
+  nextCursor: string | null;
+  total: number;
+}
+
 export interface Api {
-  listStocks(signal?: AbortSignal): Promise<StockWithQuote[]>;
+  listStocks(query: StocksListQuery, signal?: AbortSignal): Promise<StocksPage>;
   getStock(symbol: string, signal?: AbortSignal): Promise<StockWithQuote>;
   getHistory(symbol: string, period: Period, signal?: AbortSignal): Promise<HistoryData>;
   listWatchlist(signal?: AbortSignal): Promise<WatchlistItem[]>;
@@ -24,13 +40,24 @@ export function createApi(client: HttpClient): Api {
   const withSignal = (signal: AbortSignal | undefined) => (signal === undefined ? {} : { signal });
 
   return {
-    async listStocks(signal) {
+    async listStocks({ limit, cursor, symbols }, signal) {
+      const query: Record<string, string> = {};
+      if (limit !== undefined) {
+        query['limit'] = String(limit);
+      }
+      if (cursor !== undefined) {
+        query['cursor'] = cursor;
+      }
+      if (symbols !== undefined) {
+        query['symbols'] = symbols.join(',');
+      }
       const body = await client.request(stocksResponseSchema, {
         method: 'GET',
         path: ROUTES.stocks,
+        query,
         ...withSignal(signal),
       });
-      return body.data;
+      return { stocks: body.data, nextCursor: body.nextCursor, total: body.total };
     },
     async getStock(symbol, signal) {
       const body = await client.request(stockResponseSchema, {

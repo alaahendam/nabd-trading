@@ -87,3 +87,10 @@ Modules: `apps/web/src/lib/api` (`client-id.ts`, `api-error.ts`, `http-client.ts
 ## Out of scope
 
 The screens that use these (Phase 5), optimistic watchlist updates (Phase 5), a real network.
+
+## Stock list paging (design polish)
+
+| ID     | Behavior                                    | Input                                                                 | Expected                                                                                            | Level |
+| ------ | ------------------------------------------- | --------------------------------------------------------------------- | --------------------------------------------------------------------------------------------------- | ----- |
+| EPT-08 | The list sends its query and returns a page | `listStocks({ limit: 10, cursor: 'MSFT', symbols: ['AAPL','NVDA'] })` | `limit`, `cursor` and `symbols=AAPL,NVDA` in the query string; `{ stocks, nextCursor, total }` back | unit  |
+| EPT-09 | Nothing is sent for an empty query          | `listStocks({})`                                                      | no query string                                                                                     | unit  |

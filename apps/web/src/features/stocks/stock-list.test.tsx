@@ -6,7 +6,7 @@ import { afterEach, describe, expect, it, vi } from 'vitest';
 
 import { ApiClientError } from '../../lib/api';
 import { createFeatureHarness } from '../../test/feature-harness';
-import { aapl, brkb } from '../../test/fixtures';
+import { aapl, brkb, fakeStocksServer } from '../../test/fixtures';
 import { StockList } from './stock-list';
 
 const msft: StockWithQuote = {
@@ -107,7 +107,7 @@ describe('StockList', () => {
       );
     }
     const harness = createFeatureHarness();
-    harness.api.listStocks.mockResolvedValue([aapl, msft]);
+    harness.api.listStocks.mockImplementation(fakeStocksServer([aapl, msft]));
     render(<Screen />, { wrapper: harness.Wrapper });
     const { connect, socket } = harness;
     await screen.findByText('Apple Inc.');
@@ -263,7 +263,7 @@ function renderFeatureWith(stocks: StockWithQuote[], options: Options = {}) {
   if (firstFailure) {
     harness.api.listStocks.mockRejectedValueOnce(firstFailure);
   }
-  harness.api.listStocks.mockResolvedValue(stocks);
+  harness.api.listStocks.mockImplementation(fakeStocksServer(stocks));
   const view = render(<StockList {...listProps} />, { wrapper: harness.Wrapper });
   return { ...harness, ...view };
 }

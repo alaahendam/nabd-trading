@@ -4,12 +4,12 @@ import { describe, expect, it } from 'vitest';
 
 import { ApiClientError } from '../../lib/api';
 import { createFeatureHarness } from '../../test/feature-harness';
-import { aapl, brkb, watchlistItem } from '../../test/fixtures';
+import { aapl, brkb, fakeStocksServer, watchlistItem } from '../../test/fixtures';
 import { WatchlistView } from './watchlist-view';
 
 function renderView() {
   const harness = createFeatureHarness();
-  harness.api.listStocks.mockResolvedValue([aapl, brkb]);
+  harness.api.listStocks.mockImplementation(fakeStocksServer([aapl, brkb]));
   harness.api.removeFromWatchlist.mockResolvedValue(undefined);
   return harness;
 }

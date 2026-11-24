@@ -21,7 +21,7 @@ Requested by the user after seeing the app. Decisions confirmed with them: the c
 - [x] D3: theme and language selects with icons
 - [x] D4: the logo
 - [x] D5: chart axis and crosshair in the app language
-- [ ] D6: stock list pagination with infinite scroll (shared, server, web)
+- [x] D6: stock list pagination with infinite scroll (shared, server, web)
 - [ ] D7: custom date range for the chart (shared, server, web)
 
 Each task: test matrix first where behavior changes, tests, code, gates, one commit, and a look in the real browser for the visual ones.
