@@ -49,6 +49,18 @@ export default defineConfig({
           functions: 100,
           lines: 100,
         },
+        'src/lib/query/query-client.ts': {
+          statements: 100,
+          branches: 100,
+          functions: 100,
+          lines: 100,
+        },
+        'src/lib/query/query-keys.ts': {
+          statements: 100,
+          branches: 100,
+          functions: 100,
+          lines: 100,
+        },
         'src/lib/theme/theme.ts': { statements: 100, branches: 100, functions: 100, lines: 100 },
         'src/lib/theme/theme-hooks.tsx': {
           statements: 100,
