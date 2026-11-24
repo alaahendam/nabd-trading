@@ -22,6 +22,15 @@ Run: `pnpm --filter @nabd/web test:e2e`. CI runs it as its own job and keeps the
 
 Each check was shown to be able to fail: without the emulation the transitions are real, and the overflow measurement reports a deliberately wide element.
 
+## Arabic and keyboard
+
+| ID     | Behavior                 | Steps                                                                      | Expected                                                                                                                                                        |
+| ------ | ------------------------ | -------------------------------------------------------------------------- | --------------------------------------------------------------------------------------------------------------------------------------------------------------- |
+| E2E-09 | Arabic on the stock page | open AAPL, switch the language to Arabic                                   | `dir=rtl`, the chart keeps `dir=ltr` and is described in Arabic, no Arabic-Indic digits, the logo is right of the selector, details start on their title's edge |
+| E2E-10 | Tab order on every page  | press Tab to the end of each page                                          | skip link first, a name and a focus indicator at every stop, no trap, the footer link last                                                                      |
+| E2E-11 | Keyboard actions         | skip link, open a stock, star with Space, periods, custom range with Enter | focus moves to `main`, the page opens, the star toggles, the period and range apply                                                                             |
+| E2E-12 | Prices and live regions  | watch the list while a price changes                                       | no price is inside a live region, and nothing containing a price is announced                                                                                   |
+
 ## Accessibility (`accessibility.spec.ts`)
 
 | ID     | Behavior               | Steps                                                                                               | Expected                                |
