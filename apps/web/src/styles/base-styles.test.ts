@@ -12,6 +12,7 @@ const block = (selector: string) => {
 describe('base styles', () => {
   it('STY-01 gives enabled buttons a pointer cursor, and leaves disabled ones alone', () => {
     expect(indexCss).toMatch(/button:not\(:disabled\)[^{]*\{[^}]*cursor:\s*pointer/);
+    expect(indexCss).toMatch(/select:not\(:disabled\)[^{]*\{[^}]*cursor:\s*pointer/);
     expect(indexCss).toMatch(/:disabled[^{]*\{[^}]*cursor:\s*not-allowed/);
   });
 

@@ -60,3 +60,16 @@ wraps the tree in an i18next instance. Queries are by role and accessible name, 
 | ------ | ------------------------------------------ | ---------------- | ---------------------------------------------------------------------------------------------------------- | --------- |
 | APP-18 | The chart library is credited              | render the shell | the footer links to tradingview.com with the library's notice text, opening safely in a new tab            | component |
 | APP-18 | The notice stays English and left to right | render in Arabic | the notice carries `lang="en"` and `dir="ltr"`, so the legal text and the trademark sign are not reordered | component |
+
+## Select and icons
+
+| ID     | Behavior                         | Input                                               | Expected                                                                                             | Level     |
+| ------ | -------------------------------- | --------------------------------------------------- | ---------------------------------------------------------------------------------------------------- | --------- |
+| UI-19  | A labeled native select          | label, value and three options                      | a combobox with that accessible name, the options in order, and the value selected                   | component |
+| UI-20  | Choosing reports the value       | pick another option with the keyboard and the mouse | `onChange` is called once with that option's value                                                   | component |
+| UI-21  | The icons are decorative         | an icon and the built-in chevron                    | both are hidden from assistive technology and do not take clicks                                     | component |
+| UI-22  | An option can carry its language | an option with `lang="ar"`                          | the option element has that `lang`, so it is spoken and shaped correctly                             | component |
+| UI-23  | Disabled                         | `disabled`                                          | the select is disabled                                                                               | component |
+| UI-24  | Icons                            | each of sun, moon, monitor, globe and chevron       | an svg that is hidden from assistive technology, takes its color from the text, and is not focusable | component |
+| APP-06 | Theme select                     | choose Dark in the theme select                     | the preference changes and the select shows the choice with the matching icon                        | component |
+| APP-07 | Language select                  | choose Arabic in the language select                | text is Arabic and `document.documentElement.dir` is `rtl`                                           | component |

@@ -91,11 +91,13 @@
 
   /* Tailwind 4 no longer makes buttons look clickable. */
   button:not(:disabled),
+  select:not(:disabled),
   [role='button']:not([aria-disabled='true']) {
     cursor: pointer;
   }
 
-  button:disabled {
+  button:disabled,
+  select:disabled {
     cursor: not-allowed;
   }
 

@@ -1,4 +1,4 @@
-import { act, render, screen, within } from '@testing-library/react';
+import { act, fireEvent, render, screen, within } from '@testing-library/react';
 import userEvent from '@testing-library/user-event';
 import { use } from 'react';
 import { createMemoryRouter } from 'react-router';
@@ -132,24 +132,28 @@ describe('app routes and shell', () => {
 
   it('APP-06 switches the theme and reports the choice', async () => {
     const { services } = mount();
-    const group = await screen.findByRole('group', { name: 'Theme' });
-    const dark = within(group).getByRole('button', { name: 'Dark' });
-    expect(within(group).getByRole('button', { name: 'System' })).toHaveAttribute(
-      'aria-pressed',
-      'true',
-    );
-    await userEvent.click(dark);
+    const select = await screen.findByRole('combobox', { name: 'Theme' });
+    expect(select).toHaveValue('system');
+    await userEvent.selectOptions(select, 'dark');
     expect(services.themeStore.getState().preference).toBe('dark');
-    expect(dark).toHaveAttribute('aria-pressed', 'true');
+    expect(select).toHaveValue('dark');
   });
 
   it('APP-07 switches to Arabic: text, direction and the document', async () => {
     const { languageRoot } = mount();
-    const group = await screen.findByRole('group', { name: 'Language' });
-    await userEvent.click(within(group).getByRole('button', { name: 'العربية' }));
+    const select = await screen.findByRole('combobox', { name: 'Language' });
+    expect(select).toHaveValue('en');
+    await userEvent.selectOptions(select, 'ar');
     expect(await screen.findByRole('heading', { level: 1, name: 'الأسهم' })).toBeVisible();
     expect(languageRoot).toMatchObject({ lang: 'ar', dir: 'rtl' });
-    expect(screen.getByRole('group', { name: 'اللغة' })).toBeVisible();
+    expect(screen.getByRole('combobox', { name: 'اللغة' })).toHaveValue('ar');
+  });
+
+  it('APP-22 ignores a language value that is not offered', async () => {
+    const { languageRoot } = mount();
+    const select = await screen.findByRole('combobox', { name: 'Language' });
+    fireEvent.change(select, { target: { value: 'xx' } });
+    expect(languageRoot).toMatchObject({ lang: 'en', dir: 'ltr' });
   });
 
   it('APP-08 follows the realtime connection', async () => {
@@ -238,7 +242,7 @@ describe('app routes and shell', () => {
     await screen.findByRole('heading', { level: 1, name: 'Watchlist' });
     expect(document.title).toBe('Watchlist · Nabd');
 
-    await userEvent.click(screen.getByRole('button', { name: 'العربية' }));
+    await userEvent.selectOptions(screen.getByRole('combobox', { name: 'Language' }), 'ar');
     expect(document.title).toBe('قائمة المراقبة · نبض');
   });
 

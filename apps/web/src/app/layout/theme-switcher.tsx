@@ -1,27 +1,32 @@
 import { useTranslation } from 'react-i18next';
 
-import { THEME_PREFERENCES } from '../../lib/theme/theme';
+import {
+  parseThemePreference,
+  THEME_PREFERENCES,
+  type ThemePreference,
+} from '../../lib/theme/theme';
 import { useTheme } from '../../lib/theme/theme-hooks';
-import { Button } from '../../shared/ui';
+import { MonitorIcon, MoonIcon, Select, SunIcon } from '../../shared/ui';
+
+/** The icon follows the choice, so the control shows what is in force at a glance. */
+const ICONS: Readonly<Record<ThemePreference, React.ReactNode>> = {
+  light: <SunIcon />,
+  dark: <MoonIcon />,
+  system: <MonitorIcon />,
+};
 
 export function ThemeSwitcher() {
   const { t } = useTranslation();
   const { preference, setPreference } = useTheme();
   return (
-    <div role="group" aria-label={t('theme.label')} className="flex gap-1">
-      {THEME_PREFERENCES.map((option) => (
-        <Button
-          key={option}
-          size="sm"
-          variant={option === preference ? 'primary' : 'ghost'}
-          aria-pressed={option === preference}
-          onClick={() => {
-            setPreference(option);
-          }}
-        >
-          {t(`theme.${option}`)}
-        </Button>
-      ))}
-    </div>
+    <Select
+      label={t('theme.label')}
+      icon={ICONS[preference]}
+      value={preference}
+      options={THEME_PREFERENCES.map((option) => ({ value: option, label: t(`theme.${option}`) }))}
+      onChange={(value) => {
+        setPreference(parseThemePreference(value));
+      }}
+    />
   );
 }

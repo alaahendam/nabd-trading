@@ -3,5 +3,8 @@ export { Button, buttonVariants } from './button';
 export { ChangeBadge } from './change-badge';
 export type { ConnectionState } from './connection-badge';
 export { ConnectionBadge } from './connection-badge';
+export { ChevronDownIcon, GlobeIcon, MonitorIcon, MoonIcon, SunIcon } from './icons';
+export type { SelectOption } from './select';
+export { Select } from './select';
 export { Skeleton } from './skeleton';
 export { StateMessage } from './state-message';
