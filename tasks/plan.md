@@ -23,63 +23,63 @@ React 19.3, React Router 8 (`react-router`, `RouterProvider` from `react-router/
 
 ### Slice 1: Realtime layer (highest risk, pure logic first)
 
-- [ ] Task 1: `PriceStore` and staleness
+- [x] Task 1: `PriceStore` and staleness
   - Acceptance: coalesces ticks per symbol, publishes once per scheduled frame; older or equal timestamps ignored; per-symbol subscribers notified only for their symbol; snapshots stable until a change; previous price kept for direction; staleness is a pure function of time, connection and last receipt; matrix `docs/testing/web-realtime.md` first; 100% coverage.
   - Scope: M
-- [ ] Task 2: `RealtimeClient`, connection status, socket adapter
+- [x] Task 2: `RealtimeClient`, connection status, socket adapter
   - Acceptance: one socket; `acquire` is reference-counted and idempotent to release; subscribe only when connected, resubscribe all active symbols on every `connect`, in chunks of 50; payloads validated with `ticksPayloadSchema`; status `connecting`, `connected`, `reconnecting`, `offline`; `server:error` reported; the only file importing `socket.io-client` wraps it; 100% coverage.
   - Scope: L, two commits (client and status, then the adapter)
-- [ ] Task 3: React bindings
+- [x] Task 3: React bindings
   - Acceptance: `RealtimeProvider`, `useLivePrice`, `useConnectionStatus`, `useSubscription`, `useIsStale`; StrictMode safe (connect, disconnect, connect); a component re-renders only for its symbol.
   - Scope: M
 
 ### Checkpoint: Realtime
 
-- [ ] Gates green, committed.
+- [x] Gates green, committed.
 
 ### Slice 2: Look and feel
 
-- [ ] Task 4: tokens, theme and Tailwind mapping
+- [x] Task 4: tokens, theme and Tailwind mapping
   - Acceptance: `tokens.css` (primitives, light and dark semantic layers), `@theme inline` mapping with the default palette removed, `dark` custom variant on `data-theme`, theme store (`light`, `dark`, `system`, persisted, follows system), pre-paint script, contrast test over every UI pairing in both themes.
   - Scope: M
-- [ ] Task 5: fonts and base styles
+- [x] Task 5: fonts and base styles
   - Acceptance: IBM Plex Sans and IBM Plex Sans Arabic via Fontsource, font stack token, tabular numerals utility use, focus ring from token, reduced motion respected.
   - Scope: S
 
 ### Slice 3: Language
 
-- [ ] Task 6: i18n and RTL
+- [x] Task 6: i18n and RTL
   - Acceptance: typed English and Arabic resources, language detection (stored, then browser, then English), persistence, `lang` and `dir` on `<html>` kept in sync, plural forms for Arabic, no missing keys between languages (tested).
   - Scope: M
-- [ ] Task 7: formatters
+- [x] Task 7: formatters
   - Acceptance: price, signed change, percent, compact volume, direction, in both languages with Latin digits; 100% coverage.
   - Scope: S
 
 ### Slice 4: Data access
 
-- [ ] Task 8: API client, client ID and endpoints
+- [x] Task 8: API client, client ID and endpoints
   - Acceptance: parses every response with the shared schemas; adds `x-client-id`; maps failures to `ApiClientError` (`network`, `http`, `parse`) with the server's code; 204 handled; abort supported; tested with MSW; 100% coverage.
   - Scope: M
-- [ ] Task 9: query client and API provider
+- [x] Task 9: query client and API provider
   - Acceptance: retries only network and 5xx errors with backoff, never 4xx; sensible stale times; fresh client per test.
   - Scope: S
 
 ### Checkpoint: Foundations
 
-- [ ] Gates green, committed.
+- [x] Gates green, committed.
 
 ### Slice 5: The app
 
-- [ ] Task 10: shared UI atoms
+- [x] Task 10: shared UI atoms
   - Acceptance: `Button` (cva variants), `Badge`, `ConnectionStatus` (presentational), icons, `cn`; keyboard and name checks.
   - Scope: M
-- [ ] Task 11: providers, router, error boundary, shell, placeholder pages
+- [x] Task 11: providers, router, error boundary, shell, placeholder pages
   - Acceptance: provider tree; routes `/`, `/stocks/:symbol`, `/watchlist`, catch-all 404; skip link, landmarks, nav with `aria-current`; theme and language toggles; connection indicator and simulated-data badge; error boundary with retry and a router error element; the existing `App` test updated.
   - Scope: L, split into two commits
 
 ### Checkpoint: Complete
 
-- [ ] Task 12: browser verification and gates
+- [x] Task 12: browser verification and gates
   - Acceptance: the built app against the running server in a real browser: live connection indicator, dark theme, Arabic with RTL, 404, reload keeps preferences, no console errors, mobile width; whole-repo gates; every deferred rule re-checked (`no-literal-string` in JSX, Tailwind rules against the real theme, boundaries, `socket.io-client` restriction); README and docs.
   - Scope: M
 
