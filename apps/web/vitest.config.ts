@@ -6,6 +6,8 @@ export default defineConfig({
   test: {
     environment: 'jsdom',
     setupFiles: ['./src/test/setup.ts'],
+    // Vitest stubs CSS imports with empty modules; tests that read the token files as text opt in.
+    css: { include: [/\?raw$/] },
     include: ['src/**/*.test.{ts,tsx}'],
     coverage: {
       provider: 'v8',
@@ -17,6 +19,13 @@ export default defineConfig({
         branches: 90,
         functions: 90,
         lines: 90,
+        'src/lib/theme/theme.ts': { statements: 100, branches: 100, functions: 100, lines: 100 },
+        'src/lib/theme/theme-hooks.tsx': {
+          statements: 100,
+          branches: 100,
+          functions: 100,
+          lines: 100,
+        },
         'src/features/market-data/realtime-hooks.tsx': {
           statements: 100,
           branches: 100,

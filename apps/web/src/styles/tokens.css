@@ -1,0 +1,91 @@
+/*
+ * Design tokens. The only file with color literals (ADR 0006).
+ *
+ * Primitives are the raw palette. Semantic tokens say what a color is for and are the only
+ * layer the rest of the app sees. Light is the default; dark redefines the semantic layer only.
+ * Every text and background pairing the UI uses is checked for WCAG contrast in tokens.test.ts.
+ */
+
+:root {
+  /* Brand */
+  --palette-forest-900: #07351a;
+  --palette-ink-950: #0a140a;
+  --palette-canvas-50: #f8f9f9;
+  --palette-sage-200: #cfdacd;
+  --palette-lime-300: #c5ff94;
+  --palette-amber-400: #ffb932;
+
+  /* Light neutrals */
+  --palette-white: #fff;
+  --palette-sage-100: #eef1ee;
+  --palette-sage-500: #6f806e;
+  --palette-sage-700: #455645;
+
+  /* Dark neutrals, tinted green like the brand */
+  --palette-night-950: #070d08;
+  --palette-night-900: #0b120c;
+  --palette-night-800: #121c14;
+  --palette-night-700: #243326;
+  --palette-night-500: #5c715d;
+  --palette-night-300: #9daf9d;
+  --palette-night-100: #eef3ee;
+
+  /* Market colors: a green and a red that are not the brand green */
+  --palette-green-50: #e2f3e7;
+  --palette-green-400: #3ddc84;
+  --palette-green-700: #0b7a3b;
+  --palette-green-900: #12301c;
+  --palette-red-50: #fbe7e4;
+  --palette-red-400: #ff7b72;
+  --palette-red-700: #bf2a1c;
+  --palette-red-900: #3a1815;
+
+  /* Focus and the watch star in light mode */
+  --palette-blue-600: #1d5fd6;
+  --palette-amber-700: #a8620a;
+
+  /* Elevation shadows are colors too */
+  --elevation-light-raised: 0 1px 2px rgb(10 20 10 / 8%), 0 1px 3px rgb(10 20 10 / 6%);
+  --elevation-dark-raised: 0 1px 2px rgb(0 0 0 / 50%), 0 1px 3px rgb(0 0 0 / 40%);
+
+  /* Semantic tokens, light */
+  --surface: var(--palette-canvas-50);
+  --surface-raised: var(--palette-white);
+  --surface-sunken: var(--palette-sage-100);
+  --content: var(--palette-ink-950);
+  --content-muted: var(--palette-sage-700);
+  --on-brand: var(--palette-canvas-50);
+  --on-accent: var(--palette-ink-950);
+  --line: var(--palette-sage-200);
+  --line-strong: var(--palette-sage-500);
+  --brand: var(--palette-forest-900);
+  --accent: var(--palette-lime-300);
+  --positive: var(--palette-green-700);
+  --positive-subtle: var(--palette-green-50);
+  --negative: var(--palette-red-700);
+  --negative-subtle: var(--palette-red-50);
+  --watch: var(--palette-amber-700);
+  --focus: var(--palette-blue-600);
+  --elevation-raised: var(--elevation-light-raised);
+}
+
+[data-theme='dark'] {
+  --surface: var(--palette-night-900);
+  --surface-raised: var(--palette-night-800);
+  --surface-sunken: var(--palette-night-950);
+  --content: var(--palette-night-100);
+  --content-muted: var(--palette-night-300);
+  --on-brand: var(--palette-ink-950);
+  --on-accent: var(--palette-ink-950);
+  --line: var(--palette-night-700);
+  --line-strong: var(--palette-night-500);
+  --brand: var(--palette-lime-300);
+  --accent: var(--palette-lime-300);
+  --positive: var(--palette-green-400);
+  --positive-subtle: var(--palette-green-900);
+  --negative: var(--palette-red-400);
+  --negative-subtle: var(--palette-red-900);
+  --watch: var(--palette-amber-400);
+  --focus: var(--palette-lime-300);
+  --elevation-raised: var(--elevation-dark-raised);
+}

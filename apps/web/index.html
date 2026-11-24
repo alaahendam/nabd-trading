@@ -4,6 +4,25 @@
     <meta charset="UTF-8" />
     <meta name="viewport" content="width=device-width, initial-scale=1.0" />
     <title>Nabd</title>
+    <script>
+      // Runs before first paint so the page never flashes the wrong theme. The same rules live
+      // in src/lib/theme/theme.ts, and a test checks the two agree.
+      (function () {
+        var preference = 'system';
+        try {
+          var stored = localStorage.getItem('nabd.theme');
+          if (stored === 'light' || stored === 'dark') {
+            preference = stored;
+          }
+        } catch (error) {
+          // Storage can be blocked; fall back to the system setting.
+        }
+        var dark =
+          preference === 'dark' ||
+          (preference === 'system' && matchMedia('(prefers-color-scheme: dark)').matches);
+        document.documentElement.dataset.theme = dark ? 'dark' : 'light';
+      })();
+    </script>
   </head>
   <body>
     <div id="root"></div>
