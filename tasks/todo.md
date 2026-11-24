@@ -1,16 +1,18 @@
-# Phase 3 task list
+# Phase 4 task list
 
 Details and acceptance criteria: `tasks/plan.md`.
 
-- [x] Task 1: shared health contract
-- [x] Task 2: common foundation and health endpoint
-- [x] Task 3: seeded RNG and stock universe
-- [x] Task 4: live simulator
-- [x] Task 5: history generator
-- [x] Checkpoint: market domain green at 100%
-- [x] Task 6: market service and stocks REST
-- [x] Task 7: identity and watchlist
-- [x] Checkpoint: REST complete
-- [x] Task 8: tick batcher and realtime gateway
-- [x] Task 9: chaos interceptor
-- [x] Task 10: main.ts wiring, manual run, docs, whole-repo gates
+- [ ] Task 1: PriceStore and staleness
+- [ ] Task 2: RealtimeClient, connection status, socket adapter
+- [ ] Task 3: React bindings for realtime
+- [ ] Checkpoint: realtime green
+- [ ] Task 4: tokens, theme, Tailwind mapping
+- [ ] Task 5: fonts and base styles
+- [ ] Task 6: i18n and RTL
+- [ ] Task 7: formatters
+- [ ] Task 8: API client, client ID, endpoints
+- [ ] Task 9: query client and API provider
+- [ ] Checkpoint: foundations green
+- [ ] Task 10: shared UI atoms
+- [ ] Task 11: providers, router, error boundary, shell
+- [ ] Task 12: browser verification, gates, docs

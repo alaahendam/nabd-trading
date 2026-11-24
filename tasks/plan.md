@@ -1,93 +1,100 @@
-# Implementation Plan: Phase 3, backend
+# Implementation Plan: Phase 4, frontend foundation
 
-Source: `docs/PLAN.md` section 6, Phase 3. Working agreement: `CLAUDE.md`. Earlier phase plans are fully checked off and kept in git history. Decisions: ADR 0003 (in-memory watchlist), ADR 0004 (simulation design).
+Source: `docs/PLAN.md` section 6, Phase 4. Working agreement: `CLAUDE.md`. Earlier phase plans are fully checked off and kept in git history. Decisions: ADR 0005 (no Redux, live prices in an external store), ADR 0006 (design tokens and theming).
 
 ## Overview
 
-Build the whole backend before any frontend feature: a seeded market simulator with deterministic history, REST for stocks, a Socket.IO gateway with rooms and batched ticks, an anonymous-identity watchlist, a global validation pipe and error filter, CORS, a health endpoint and optional chaos flags. Everything speaks the contracts in `@nabd/shared`. Domain logic (simulator, history generator, watchlist service, tick batcher) is covered at 100%.
+Everything the features of Phase 5 stand on, with no product screens yet: the realtime layer (one socket, reference-counted subscriptions, an external price store with per-frame batching, reconnect and resubscribe, connection status, staleness), design tokens with light, dark and system themes, fonts, English and Arabic with RTL and Latin digits, formatters, the API and query clients, the provider tree, the router, an error boundary, and a minimal app shell (header, theme and language toggles, connection indicator, "simulated market data" badge) so the foundation can be seen and verified in a browser. Pages are placeholders.
 
-## Threat model (security-and-hardening)
+## Stack (installed versions)
 
-Trust boundaries: HTTP params, query and headers; socket payloads; env. Everything crossing them is validated with the shared Zod schemas before use.
+React 19.3, React Router 8 (`react-router`, `RouterProvider` from `react-router/dom`), TanStack Query 5, i18next 27 with react-i18next 18, socket.io-client 4.8, Tailwind 4.3, Fontsource IBM Plex Sans and IBM Plex Sans Arabic, class-variance-authority, clsx, tailwind-merge. Tests: Vitest, Testing Library, user-event, MSW.
 
-- **Spoofing:** the client ID is anonymous by design (documented). A watchlist is only reachable with its own ID; the guard rejects a missing or malformed ID. Swapping in a JWT guard keeps the same `@CurrentUser()` contract.
-- **Tampering / injection:** no database, no shell, no file paths from input. Path params and query are parsed by schemas.
-- **Information disclosure:** one error shape; unknown errors answer a generic message and never a stack trace; details only for validation failures.
-- **Denial of service:** socket subscribe limited to 50 symbols per message; unknown symbols rejected; batching bounds emit rate; JSON body size is Nest's default limit and there are no body endpoints. No rate limiting (single instance, demo), noted as a gap in the README.
-- **CORS:** explicit single origin from env, never `*`.
-- **Security headers:** `helmet` on the HTTP app.
+## Interface design and quality rules
 
-## Interface design
-
-Controllers are thin. Routes come from `ROUTES`, bodies and responses from shared schemas, errors from `createApiError`/`ERROR_STATUS`. Server modules talk only through exported providers (`index.ts`), enforced by lint.
+- **Realtime is isolated.** Only `features/market-data` imports `socket.io-client` (lint-enforced). It exposes hooks and a provider through its `index.ts`.
+- **Everything from the network is untrusted.** REST responses and socket payloads are parsed with the shared schemas before use; invalid data is dropped or raises an `ApiClientError`.
+- **Injection over globals.** The API client, the socket, the clock and the frame scheduler are injected, so tests need no real network, timers or animation frames.
+- **Design system.** Semantic tokens only; logical properties only; no literals in JSX; every user-facing string through i18n in English and Arabic; digits Latin in both languages; numbers LTR inside RTL layouts; tabular numerals for numbers that change.
+- **Accessibility.** Landmarks and a skip link, visible focus ring from a token, theme choice as a labeled group with `aria-pressed`, connection status in a polite live region, `prefers-reduced-motion` respected, up and down never conveyed by color alone.
+- **Every state designed.** The shell has loading (route fallback), error (boundary with retry), offline and reconnecting (connection indicator) and 404.
 
 ## Task list
 
-### Slice 1: Foundation (vertical through the stack)
+### Slice 1: Realtime layer (highest risk, pure logic first)
 
-- [x] Task 1: `@nabd/shared` health contract (`ROUTES.health`, `healthResponseSchema`), test-first.
-  - Scope: XS
-- [x] Task 2: common foundation and health endpoint
-  - Acceptance: `ApiException`, catch-all filter producing the shared error shape (unknown errors generic, no stack), `ZodValidationPipe`, global prefix `/api`, helmet, `GET /api/health`; env gains `MARKET_SEED`, `CHAOS_LATENCY_MS`, `CHAOS_ERROR_RATE`; matrix `docs/testing/server-common.md` first.
-  - Verify: supertest e2e on 404 route, validation failure, unknown error, health.
+- [ ] Task 1: `PriceStore` and staleness
+  - Acceptance: coalesces ticks per symbol, publishes once per scheduled frame; older or equal timestamps ignored; per-symbol subscribers notified only for their symbol; snapshots stable until a change; previous price kept for direction; staleness is a pure function of time, connection and last receipt; matrix `docs/testing/web-realtime.md` first; 100% coverage.
+  - Scope: M
+- [ ] Task 2: `RealtimeClient`, connection status, socket adapter
+  - Acceptance: one socket; `acquire` is reference-counted and idempotent to release; subscribe only when connected, resubscribe all active symbols on every `connect`, in chunks of 50; payloads validated with `ticksPayloadSchema`; status `connecting`, `connected`, `reconnecting`, `offline`; `server:error` reported; the only file importing `socket.io-client` wraps it; 100% coverage.
+  - Scope: L, two commits (client and status, then the adapter)
+- [ ] Task 3: React bindings
+  - Acceptance: `RealtimeProvider`, `useLivePrice`, `useConnectionStatus`, `useSubscription`, `useIsStale`; StrictMode safe (connect, disconnect, connect); a component re-renders only for its symbol.
   - Scope: M
 
-### Slice 2: Market domain (pure, 100% coverage)
+### Checkpoint: Realtime
 
-- [x] Task 3: seeded RNG and stock universe
-  - Acceptance: deterministic streams per seed, normal and exponential draws, stable string hash; universe of real tickers, every entry passes `stockSchema` and has a positive snapshot price, beta and volatility; matrix `server-market-rng.md`.
+- [ ] Gates green, committed.
+
+### Slice 2: Look and feel
+
+- [ ] Task 4: tokens, theme and Tailwind mapping
+  - Acceptance: `tokens.css` (primitives, light and dark semantic layers), `@theme inline` mapping with the default palette removed, `dark` custom variant on `data-theme`, theme store (`light`, `dark`, `system`, persisted, follows system), pre-paint script, contrast test over every UI pairing in both themes.
   - Scope: M
-- [x] Task 4: live simulator
-  - Acceptance: every quote passes shared `quoteSchema` after any number of steps; deterministic per seed; positive cent-rounded prices; shared market factor correlates stocks; volatility clusters; irregular tick times; day rollover sets previous close; matrix `server-market-simulator.md`.
-  - Scope: L, split in two commits (state and stepping, then day rollover and ticks).
-- [x] Task 5: history generator
-  - Acceptance: every result passes `historyDataSchema`; last close equals the current price; deterministic for the same inputs; ascending, bucket-aligned times; day gaps at UTC boundaries; correct point count per period; matrix `server-market-history.md`.
-  - Scope: M
-
-### Checkpoint: Market domain
-
-- [x] Domain tests green at 100%, committed.
-
-### Slice 3: Stocks REST
-
-- [x] Task 6: market service (clock, tick stream) and stocks controller
-  - Acceptance: `GET /api/stocks`, `/api/stocks/:symbol`, `/api/stocks/:symbol/history?period=`; responses validate against shared response schemas; unknown symbol 404, bad symbol or period 422; matrix `server-stocks.md`.
-  - Scope: M
-
-### Slice 4: Watchlist
-
-- [x] Task 7: identity guard, `@CurrentUser()`, watchlist service, repository and controller
-  - Acceptance: missing or malformed `x-client-id` gives 401 `CLIENT_ID_REQUIRED`; `PUT` adds idempotently (keeps first `addedAt`), `DELETE` removes idempotently, `GET` lists in added order; unknown symbol 404; clients are isolated from each other; matrix `server-watchlist.md`; service at 100%.
-  - Scope: M
-
-### Checkpoint: REST complete
-
-- [x] All REST e2e green, committed.
-
-### Slice 5: Realtime
-
-- [x] Task 8: tick batcher and gateway
-  - Acceptance: subscribe/unsubscribe join and leave per-symbol rooms; invalid payloads and unknown symbols answer `server:error` and never crash; the current tick is sent on subscribe; live ticks are batched per flush interval and sent per room; disconnect cleans up; matrix `server-realtime.md`; batcher at 100%; end-to-end with `socket.io-client`.
-  - Scope: L, split in two commits (batcher, then gateway).
-
-### Slice 6: Operations
-
-- [x] Task 9: chaos interceptor (latency and error rate from env, never on health)
+- [ ] Task 5: fonts and base styles
+  - Acceptance: IBM Plex Sans and IBM Plex Sans Arabic via Fontsource, font stack token, tabular numerals utility use, focus ring from token, reduced motion respected.
   - Scope: S
-- [x] Task 10: `main.ts` wiring (prefix, helmet, CORS also for Socket.IO through an adapter, shutdown hooks), manual run with curl and a socket client, README and docs, whole-repo gates
+
+### Slice 3: Language
+
+- [ ] Task 6: i18n and RTL
+  - Acceptance: typed English and Arabic resources, language detection (stored, then browser, then English), persistence, `lang` and `dir` on `<html>` kept in sync, plural forms for Arabic, no missing keys between languages (tested).
+  - Scope: M
+- [ ] Task 7: formatters
+  - Acceptance: price, signed change, percent, compact volume, direction, in both languages with Latin digits; 100% coverage.
   - Scope: S
+
+### Slice 4: Data access
+
+- [ ] Task 8: API client, client ID and endpoints
+  - Acceptance: parses every response with the shared schemas; adds `x-client-id`; maps failures to `ApiClientError` (`network`, `http`, `parse`) with the server's code; 204 handled; abort supported; tested with MSW; 100% coverage.
+  - Scope: M
+- [ ] Task 9: query client and API provider
+  - Acceptance: retries only network and 5xx errors with backoff, never 4xx; sensible stale times; fresh client per test.
+  - Scope: S
+
+### Checkpoint: Foundations
+
+- [ ] Gates green, committed.
+
+### Slice 5: The app
+
+- [ ] Task 10: shared UI atoms
+  - Acceptance: `Button` (cva variants), `Badge`, `ConnectionStatus` (presentational), icons, `cn`; keyboard and name checks.
+  - Scope: M
+- [ ] Task 11: providers, router, error boundary, shell, placeholder pages
+  - Acceptance: provider tree; routes `/`, `/stocks/:symbol`, `/watchlist`, catch-all 404; skip link, landmarks, nav with `aria-current`; theme and language toggles; connection indicator and simulated-data badge; error boundary with retry and a router error element; the existing `App` test updated.
+  - Scope: L, split into two commits
+
+### Checkpoint: Complete
+
+- [ ] Task 12: browser verification and gates
+  - Acceptance: the built app against the running server in a real browser: live connection indicator, dark theme, Arabic with RTL, 404, reload keeps preferences, no console errors, mobile width; whole-repo gates; every deferred rule re-checked (`no-literal-string` in JSX, Tailwind rules against the real theme, boundaries, `socket.io-client` restriction); README and docs.
+  - Scope: M
 
 ## Risks and mitigations
 
-| Risk                                               | Impact | Mitigation                                                                |
-| -------------------------------------------------- | ------ | ------------------------------------------------------------------------- |
-| Simulator output violates the shared refinements   | High   | Property-style tests parse every quote and candle with the shared schemas |
-| Gateway is not covered by global filters and pipes | High   | Validate and answer inside the gateway explicitly; test invalid payloads  |
-| Socket.IO CORS not applied through Nest            | Med    | Custom IoAdapter; test the CORS header on the polling handshake           |
-| Gateway e2e without documented pattern             | Med    | `app.listen(0)` plus `socket.io-client`; proven in the first gateway test |
-| Timers make tests flaky                            | Med    | Injected clock and fake timers; no real sleeps in unit tests              |
-| Plan size: this is the largest phase               | Med    | One commit per task, green at each, checkpoints after slices 2, 4         |
+| Risk                                                               | Impact | Mitigation                                                                            |
+| ------------------------------------------------------------------ | ------ | ------------------------------------------------------------------------------------- |
+| Re-render storms from live ticks                                   | High   | Coalesce per symbol, flush once per frame, per-symbol subscriptions, stable snapshots |
+| Missed resubscribe after a reconnect (server rooms are per socket) | High   | Re-emit all active subscriptions on every `connect`; tested with a fake socket        |
+| Tokens that fail WCAG contrast in one theme                        | High   | Contrast test over the real `tokens.css`, both themes                                 |
+| React Router 8 and MSW 3 differ from what I know                   | Med    | Verify the installed APIs by typecheck and tests before building on them              |
+| Stripped Tailwind palette breaks a needed utility                  | Med    | Map every needed token; the unknown-class lint rule reports gaps immediately          |
+| Arabic strings are mine, not a native speaker's                    | Med    | Say so in the report; keys and structure are ready for review                         |
+| Fonts and RTL cannot be verified by unit tests                     | Med    | Real browser check in Task 12                                                         |
 
 ## Open questions
 
-- None blocking. Stock prices are an approximate snapshot, labeled as simulated.
+- None blocking. Arabic copy should be reviewed by a native speaker before release.
