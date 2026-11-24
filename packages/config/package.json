@@ -12,7 +12,8 @@
     "./prettier": "./prettier/index.js",
     "./eslint/base": "./eslint/base.js",
     "./eslint/react": "./eslint/react.js",
-    "./eslint/architecture": "./eslint/architecture.js"
+    "./eslint/architecture": "./eslint/architecture.js",
+    "./eslint/design-system": "./eslint/design-system.js"
   },
   "dependencies": {
     "@eslint/js": "^9.39.5",

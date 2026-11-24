@@ -6,11 +6,12 @@ import globals from 'globals';
 
 import { webArchitecture } from './architecture.js';
 import { base } from './base.js';
+import { designSystem } from './design-system.js';
 
 /**
  * Config for React + Vite workspaces (`apps/web`).
  */
-export const reactConfig = defineConfig(base, webArchitecture, {
+export const reactConfig = defineConfig(base, webArchitecture, designSystem, {
   files: ['**/*.{ts,tsx}'],
   languageOptions: { globals: globals.browser },
   settings: { react: { version: 'detect' } },
