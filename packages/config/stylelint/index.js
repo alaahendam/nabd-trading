@@ -27,6 +27,11 @@ const config = {
       },
     ],
     'import-notation': 'string',
+    // Tailwind v4 resets a theme namespace with a wildcard, for example --color-*: initial.
+    'custom-property-pattern': [
+      '^[a-z][a-z0-9]*(-[a-z0-9*]+)*$',
+      { message: 'Expected custom property names to be kebab-case (a trailing * is allowed)' },
+    ],
     // oklch(0.9 0.2 130) is the standard Tailwind v4 form.
     'lightness-notation': null,
     'hue-degree-notation': null,
