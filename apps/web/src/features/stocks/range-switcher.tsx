@@ -73,7 +73,7 @@ export function RangeSwitcher({ value, onChange }: RangeSwitcherProps) {
               size="sm"
               variant={selected ? 'primary' : 'ghost'}
               aria-pressed={selected}
-              aria-label={t(`chart.period.${period}`)}
+              aria-label={`${period}, ${t(`chart.period.${period}`)}`}
               onClick={() => {
                 setForm(undefined);
                 onChange({ kind: 'period', period });

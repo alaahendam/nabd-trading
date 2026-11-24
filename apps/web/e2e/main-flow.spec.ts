@@ -24,16 +24,16 @@ test('a user follows a stock from the live list to the watchlist, in two languag
   await expect(page).toHaveURL(/\/stocks\/AAPL$/);
   await expect(page.getByRole('heading', { level: 1, name: 'AAPL' })).toBeVisible();
   await expect(page.getByText('Previous close')).toBeVisible();
-  const chart = page.getByRole('img', { name: 'AAPL price chart: Past day' });
+  const chart = page.getByRole('figure', { name: 'AAPL price chart: Past day' });
   await expect(chart.locator('canvas').first()).toBeVisible();
 
   // Another period reloads the chart and is named in its label.
-  await page.getByRole('button', { name: 'Past week' }).click();
-  await expect(page.getByRole('button', { name: 'Past week' })).toHaveAttribute(
+  await page.getByRole('button', { name: '1W, Past week' }).click();
+  await expect(page.getByRole('button', { name: '1W, Past week' })).toHaveAttribute(
     'aria-pressed',
     'true',
   );
-  await expect(page.getByRole('img', { name: 'AAPL price chart: Past week' })).toBeVisible();
+  await expect(page.getByRole('figure', { name: 'AAPL price chart: Past week' })).toBeVisible();
 
   // The star adds it to the watchlist at once.
   const star = page.getByRole('button', { name: 'Watch AAPL' });
@@ -78,7 +78,7 @@ test('a custom range replaces the period and names the chart with its dates', as
   await page.getByRole('button', { name: 'Apply' }).click();
 
   await expect(
-    page.getByRole('img', { name: `MSFT price chart: ${day(from)} – ${day(to)}` }),
+    page.getByRole('figure', { name: `MSFT price chart: ${day(from)} – ${day(to)}` }),
   ).toBeVisible();
   await expect(page.getByRole('button', { name: 'Custom' })).toHaveAttribute(
     'aria-pressed',

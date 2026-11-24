@@ -32,7 +32,7 @@ const settle = async () => {
   await act(async () => {
     await Promise.resolve();
   });
-  await screen.findByRole('img');
+  await screen.findByRole('figure');
   await act(async () => {
     await Promise.resolve();
   });
@@ -79,7 +79,7 @@ describe('StockChart custom range', () => {
     expect(custom).toHaveAttribute('aria-expanded', 'true');
     // Nothing is applied yet, so the period in force is still the one that looks selected.
     expect(custom).toHaveAttribute('aria-pressed', 'false');
-    expect(screen.getByRole('button', { name: 'Past day' })).toHaveAttribute(
+    expect(screen.getByRole('button', { name: '1D, Past day' })).toHaveAttribute(
       'aria-pressed',
       'true',
     );
@@ -97,7 +97,7 @@ describe('StockChart custom range', () => {
       from: Date.UTC(2026, 5, 10),
       to: Date.UTC(2026, 5, 13) - 1,
     });
-    expect(screen.getByRole('img')).toHaveAttribute(
+    expect(screen.getByRole('figure')).toHaveAttribute(
       'aria-label',
       'AAPL price chart: 2026-06-10 – 2026-06-12',
     );
@@ -129,13 +129,13 @@ describe('StockChart custom range', () => {
     await openCustom();
     await apply('2026-06-10', '2026-06-12');
 
-    await userEvent.click(screen.getByRole('button', { name: 'Past week' }));
+    await userEvent.click(screen.getByRole('button', { name: '1W, Past week' }));
     await act(async () => {
       await Promise.resolve();
     });
 
     expect(api.getHistory.mock.calls.at(-1)?.[1]).toBe('1W');
-    expect(screen.getByRole('button', { name: 'Past week' })).toHaveAttribute(
+    expect(screen.getByRole('button', { name: '1W, Past week' })).toHaveAttribute(
       'aria-pressed',
       'true',
     );
@@ -149,7 +149,7 @@ describe('StockChart custom range', () => {
     await openCustom();
     expect(screen.getByLabelText('From')).toBeInTheDocument();
 
-    await userEvent.click(screen.getByRole('button', { name: 'Past month' }));
+    await userEvent.click(screen.getByRole('button', { name: '1M, Past month' }));
 
     expect(screen.queryByLabelText('From')).not.toBeInTheDocument();
   });

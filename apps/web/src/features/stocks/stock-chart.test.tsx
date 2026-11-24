@@ -34,7 +34,7 @@ const settle = async () => {
   await act(async () => {
     await Promise.resolve();
   });
-  await screen.findByRole('img');
+  await screen.findByRole('figure');
   await act(async () => {
     await Promise.resolve();
   });
@@ -49,7 +49,7 @@ describe('StockChart', () => {
     const { chart, unmount } = renderChart();
     await settle();
     expect(chart.loader).toHaveBeenCalledTimes(1);
-    expect(chart.loader.mock.calls[0]?.[0]).toBe(screen.getByRole('img'));
+    expect(chart.loader.mock.calls[0]?.[0]).toBe(screen.getByRole('figure'));
     expect(chart.port.dispose).not.toHaveBeenCalled();
 
     unmount();
@@ -70,22 +70,22 @@ describe('StockChart', () => {
   it('CHT-03 switches the period', async () => {
     const { api, chart } = renderChart();
     await settle();
-    expect(screen.getByRole('button', { name: 'Past day' })).toHaveAttribute(
+    expect(screen.getByRole('button', { name: '1D, Past day' })).toHaveAttribute(
       'aria-pressed',
       'true',
     );
 
-    await userEvent.click(screen.getByRole('button', { name: 'Past week' }));
+    await userEvent.click(screen.getByRole('button', { name: '1W, Past week' }));
     await act(async () => {
       await Promise.resolve();
     });
 
     expect(api.getHistory).toHaveBeenCalledWith('AAPL', '1W', expect.any(AbortSignal));
-    expect(screen.getByRole('button', { name: 'Past week' })).toHaveAttribute(
+    expect(screen.getByRole('button', { name: '1W, Past week' })).toHaveAttribute(
       'aria-pressed',
       'true',
     );
-    expect(screen.getByRole('button', { name: 'Past day' })).toHaveAttribute(
+    expect(screen.getByRole('button', { name: '1D, Past day' })).toHaveAttribute(
       'aria-pressed',
       'false',
     );
@@ -151,7 +151,7 @@ describe('StockChart', () => {
       }),
     );
     render(<StockChart symbol="AAPL" />, { wrapper: harness.Wrapper });
-    await screen.findByRole('img');
+    await screen.findByRole('figure');
     await act(async () => {
       await Promise.resolve();
     });
@@ -222,7 +222,7 @@ describe('StockChart', () => {
   it('CHT-11 is an image with a label, drawn left to right', async () => {
     renderChart();
     await settle();
-    const image = screen.getByRole('img');
+    const image = screen.getByRole('figure');
     expect(image).toHaveAttribute('aria-label', 'AAPL price chart: Past day');
     expect(image).toHaveAttribute('dir', 'ltr');
   });
@@ -230,7 +230,7 @@ describe('StockChart', () => {
   it('CHT-12 names the period buttons in Arabic and keeps the codes Latin', async () => {
     renderChart('ar');
     await settle();
-    const day = screen.getByRole('button', { name: 'اليوم الماضي' });
+    const day = screen.getByRole('button', { name: '1D, اليوم الماضي' });
     expect(day).toHaveTextContent('1D');
     expect(screen.getByRole('group', { name: 'فترة الرسم البياني' })).toBeInTheDocument();
   });

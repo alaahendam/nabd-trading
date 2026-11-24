@@ -143,7 +143,7 @@ export function StockChart({ symbol }: { symbol: string }) {
       <div className="relative overflow-hidden rounded-lg border border-line bg-surface-raised p-2 shadow-raised">
         <div
           ref={setElement}
-          role="img"
+          role="figure"
           dir="ltr"
           aria-label={t('chart.label', { symbol, period: rangeName })}
           className="block-80 inline-full"
