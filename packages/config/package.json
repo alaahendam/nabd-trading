@@ -9,10 +9,31 @@
     "./tsconfig/base.json": "./tsconfig/base.json",
     "./tsconfig/react.json": "./tsconfig/react.json",
     "./tsconfig/node.json": "./tsconfig/node.json",
-    "./prettier": "./prettier/index.js"
+    "./prettier": "./prettier/index.js",
+    "./eslint/base": "./eslint/base.js"
   },
   "dependencies": {
+    "@eslint/js": "^9.39.5",
+    "eslint": "^9.39.5",
+    "eslint-plugin-better-tailwindcss": "^4.11.0",
+    "eslint-plugin-boundaries": "^7.4.4",
+    "eslint-plugin-i18next": "^6.1.5",
+    "eslint-plugin-jsx-a11y": "^6.10.2",
+    "eslint-plugin-react": "^7.37.5",
+    "eslint-plugin-react-hooks": "^7.1.1",
+    "eslint-plugin-simple-import-sort": "^14.0.0",
+    "eslint-plugin-unused-imports": "^4.4.1",
+    "globals": "^17.14.0",
     "prettier": "^3.10.1",
-    "prettier-plugin-tailwindcss": "^0.8.1"
+    "prettier-plugin-tailwindcss": "^0.8.1",
+    "typescript-eslint": "^8.73.0"
+  },
+  "scripts": {
+    "lint": "eslint --max-warnings 0 .",
+    "typecheck": "tsc --noEmit"
+  },
+  "devDependencies": {
+    "@types/node": "^24.19.2",
+    "typescript": "~6.0.3"
   }
 }
