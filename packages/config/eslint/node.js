@@ -26,6 +26,7 @@ export const nodeConfig = defineConfig(
       ],
     },
     rules: {
+      '@typescript-eslint/no-extraneous-class': ['error', { allowWithDecorator: true }],
       'boundaries/dependencies': [
         'error',
         {
