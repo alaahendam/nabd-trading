@@ -13,11 +13,21 @@ describe('envSchema', () => {
       NODE_ENV: 'development',
       PORT: 3000,
       CORS_ORIGIN: 'http://localhost:5173',
+      MARKET_SEED: 'nabd',
+      SIM_VOLATILITY_SCALE: 3,
+      SIM_STEP_MS: 100,
     });
   });
 
   it('ENV-02 passes valid values through', () => {
-    const input = { NODE_ENV: 'production', PORT: 8080, CORS_ORIGIN: 'https://nabd.example' };
+    const input = {
+      NODE_ENV: 'production',
+      PORT: 8080,
+      CORS_ORIGIN: 'https://nabd.example',
+      MARKET_SEED: 'abc',
+      SIM_VOLATILITY_SCALE: 2.5,
+      SIM_STEP_MS: 250,
+    };
     expect(envSchema.parse(input)).toEqual(input);
   });
 
@@ -34,6 +44,29 @@ describe('envSchema', () => {
     ['ENV-09', { CORS_ORIGIN: 'localhost' }, 'CORS_ORIGIN'],
   ])('%s rejects %j', (_id, input, path) => {
     expect(issuePaths(input)).toEqual([path]);
+  });
+});
+
+describe('simulation env', () => {
+  it('ENV-15 defaults the seed and accepts a string', () => {
+    expect(envSchema.parse({}).MARKET_SEED).toBe('nabd');
+    expect(envSchema.parse({ MARKET_SEED: 'abc' }).MARKET_SEED).toBe('abc');
+  });
+
+  it('ENV-16 requires a positive volatility scale', () => {
+    expect(envSchema.parse({}).SIM_VOLATILITY_SCALE).toBe(3);
+    expect(envSchema.parse({ SIM_VOLATILITY_SCALE: '2.5' }).SIM_VOLATILITY_SCALE).toBe(2.5);
+    for (const bad of ['0', '-1', 'abc']) {
+      expect(issuePaths({ SIM_VOLATILITY_SCALE: bad })).toEqual(['SIM_VOLATILITY_SCALE']);
+    }
+  });
+
+  it('ENV-17 requires a step of 10 to 5000 ms', () => {
+    expect(envSchema.parse({}).SIM_STEP_MS).toBe(100);
+    expect(envSchema.parse({ SIM_STEP_MS: '250' }).SIM_STEP_MS).toBe(250);
+    for (const bad of ['9', '5001', '1.5']) {
+      expect(issuePaths({ SIM_STEP_MS: bad })).toEqual(['SIM_STEP_MS']);
+    }
   });
 });
 

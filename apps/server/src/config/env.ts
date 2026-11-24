@@ -5,6 +5,9 @@ export const envSchema = z.object({
   NODE_ENV: z.enum(['development', 'production', 'test']).default('development'),
   PORT: z.coerce.number().int().min(1).max(65535).default(3000),
   CORS_ORIGIN: z.url().default('http://localhost:5173'),
+  MARKET_SEED: z.string().min(1).default('nabd'),
+  SIM_VOLATILITY_SCALE: z.coerce.number().positive().default(3),
+  SIM_STEP_MS: z.coerce.number().int().min(10).max(5000).default(100),
 });
 
 export type Env = z.infer<typeof envSchema>;
