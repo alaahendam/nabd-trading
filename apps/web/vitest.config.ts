@@ -17,6 +17,24 @@ export default defineConfig({
         branches: 90,
         functions: 90,
         lines: 90,
+        'src/features/market-data/realtime-hooks.tsx': {
+          statements: 100,
+          branches: 100,
+          functions: 100,
+          lines: 100,
+        },
+        'src/features/market-data/clock-ticker.ts': {
+          statements: 100,
+          branches: 100,
+          functions: 100,
+          lines: 100,
+        },
+        'src/features/market-data/create-realtime-client.ts': {
+          statements: 100,
+          branches: 100,
+          functions: 100,
+          lines: 100,
+        },
         'src/features/market-data/realtime-client.ts': {
           statements: 100,
           branches: 100,
