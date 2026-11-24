@@ -8,13 +8,15 @@ import { useLivePrice } from '../market-data';
 import { applyLivePrice, toCandles, toVolumeBars } from './candles';
 import { readChartColors } from './chart-colors';
 import { useChartLoader } from './chart-context';
+import { chartLocale } from './chart-locale';
 import type { Candle, ChartPort } from './chart-port';
 import { PeriodSwitcher } from './period-switcher';
 import { useHistory } from './stock-queries';
 
 /** A candlestick chart with volume, a period switcher, and the live price on the last candle. */
 export function StockChart({ symbol }: { symbol: string }) {
-  const { t } = useTranslation();
+  const { t, i18n } = useTranslation();
+  const locale = chartLocale(i18n.resolvedLanguage);
   const loader = useChartLoader();
   const { resolved: theme } = useTheme();
   const [period, setPeriod] = useState<Period>(DEFAULT_PERIOD);
@@ -27,6 +29,12 @@ export function StockChart({ symbol }: { symbol: string }) {
   const [attempt, setAttempt] = useState(0);
   const [loadFailed, setLoadFailed] = useState(false);
   const lastCandle = useRef<Candle | undefined>(undefined);
+  // The latest locale, for the effect that creates the chart: a language change must update the
+  // chart (below), not rebuild it, so the locale cannot be a dependency of that effect.
+  const localeRef = useRef(locale);
+  useEffect(() => {
+    localeRef.current = locale;
+  }, [locale]);
 
   useEffect(() => {
     if (element === null) {
@@ -34,7 +42,7 @@ export function StockChart({ symbol }: { symbol: string }) {
     }
     let cancelled = false;
     let created: ChartPort | undefined;
-    loader(element, readChartColors(getComputedStyle(element))).then(
+    loader(element, readChartColors(getComputedStyle(element)), localeRef.current).then(
       (next) => {
         if (cancelled) {
           next.dispose();
@@ -84,6 +92,10 @@ export function StockChart({ symbol }: { symbol: string }) {
     }
     port.applyColors(readChartColors(getComputedStyle(element)));
   }, [port, element, theme]);
+
+  useEffect(() => {
+    port?.applyLocale(locale);
+  }, [port, locale]);
 
   const retry = (action: () => void) => <Button onClick={action}>{t('errors.retry')}</Button>;
 

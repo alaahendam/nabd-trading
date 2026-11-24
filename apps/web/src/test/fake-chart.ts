@@ -8,6 +8,7 @@ export function createFakeChart() {
     setData: vi.fn<ChartPort['setData']>(),
     updateCandle: vi.fn<ChartPort['updateCandle']>(),
     applyColors: vi.fn<ChartPort['applyColors']>(),
+    applyLocale: vi.fn<ChartPort['applyLocale']>(),
     dispose: vi.fn<ChartPort['dispose']>(),
   } satisfies ChartPort;
   const loader = vi.fn<ChartLoader>(() => Promise.resolve(port));

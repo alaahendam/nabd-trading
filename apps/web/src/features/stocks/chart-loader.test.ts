@@ -6,6 +6,7 @@ const port: ChartPort = {
   setData: vi.fn(),
   updateCandle: vi.fn(),
   applyColors: vi.fn(),
+  applyLocale: vi.fn(),
   dispose: vi.fn(),
 };
 const createLightweightChart = vi.fn(() => port);
@@ -19,7 +20,7 @@ const colors: ChartColors = { background: 'a', text: 'b', grid: 'c', up: 'd', do
 describe('loadLightweightChart', () => {
   it('ADP-06 imports the adapter on demand and makes a port with it', async () => {
     const container = document.createElement('div');
-    await expect(loadLightweightChart(container, colors)).resolves.toBe(port);
-    expect(createLightweightChart).toHaveBeenCalledWith(container, colors);
+    await expect(loadLightweightChart(container, colors, 'ar-u-nu-latn')).resolves.toBe(port);
+    expect(createLightweightChart).toHaveBeenCalledWith(container, colors, 'ar-u-nu-latn');
   });
 });

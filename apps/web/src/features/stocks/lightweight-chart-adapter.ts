@@ -31,13 +31,18 @@ const candleOptions = (colors: ChartColors) => ({
  * The only file that imports the chart library. It maps the app's small `ChartPort` onto
  * lightweight-charts (Apache-2.0; the TradingView attribution logo is on, see the footer notice).
  */
-export function createLightweightChart(container: HTMLElement, initial: ChartColors): ChartPort {
+export function createLightweightChart(
+  container: HTMLElement,
+  initial: ChartColors,
+  locale: string,
+): ChartPort {
   let colors = initial;
   let bars: readonly VolumeBar[] = [];
 
   const chart = createChart(container, {
     ...chartOptions(colors),
     autoSize: true,
+    localization: { locale },
     rightPriceScale: { borderVisible: false },
     timeScale: { borderVisible: false, timeVisible: true },
   });
@@ -73,6 +78,9 @@ export function createLightweightChart(container: HTMLElement, initial: ChartCol
       chart.applyOptions(chartOptions(next));
       candles.applyOptions(candleOptions(next));
       paintVolume();
+    },
+    applyLocale(next: string) {
+      chart.applyOptions({ localization: { locale: next } });
     },
     dispose() {
       chart.remove();

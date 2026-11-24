@@ -86,6 +86,7 @@ export function createFeatureHarness({ language = 'en', route = '/' }: HarnessOp
     client,
     queryClient,
     chart,
+    i18n,
     themeStore,
     Wrapper,
     connect: () => {

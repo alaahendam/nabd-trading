@@ -288,6 +288,32 @@ describe('StockChart', () => {
   });
 });
 
+describe('StockChart language', () => {
+  it('CHT-17 starts in the language of the app', async () => {
+    const english = renderChart();
+    await settle();
+    expect(english.chart.loader.mock.calls[0]?.[2]).toBe('en-US');
+    english.unmount();
+
+    const arabic = renderChart('ar');
+    await settle();
+    expect(arabic.chart.loader.mock.calls[0]?.[2]).toBe('ar-u-nu-latn');
+  });
+
+  it('CHT-18 follows a language change without creating a second chart', async () => {
+    const { chart, i18n } = renderChart();
+    await settle();
+    chart.port.applyLocale.mockClear();
+
+    await act(async () => {
+      await i18n.changeLanguage('ar');
+    });
+
+    expect(chart.port.applyLocale).toHaveBeenLastCalledWith('ar-u-nu-latn');
+    expect(chart.loader).toHaveBeenCalledTimes(1);
+  });
+});
+
 describe('useChartLoader', () => {
   it('CHT-16 needs its provider', () => {
     const spy = vi.spyOn(console, 'error').mockImplementation(() => undefined);

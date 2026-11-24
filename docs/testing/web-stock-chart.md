@@ -54,3 +54,12 @@ Times: the API gives milliseconds; the library wants seconds (`UTCTimestamp`), s
 | CHT-14 | A tick in the period's next bucket    | a tick past the last candle's bucket         | `updateCandle` gets a new candle at the bucket start                                               | component |
 | CHT-15 | A late library failure is ignored     | the loader rejects after unmount             | no state change and nothing disposed                                                               | component |
 | CHT-16 | The loader needs its provider         | `useChartLoader` outside `ChartProvider`     | an error naming `ChartProvider`                                                                    | component |
+
+## Chart language
+
+| ID     | Behavior                              | Input                                 | Expected                                                                                      | Level     |
+| ------ | ------------------------------------- | ------------------------------------- | --------------------------------------------------------------------------------------------- | --------- |
+| CLC-01 | The chart locale follows the language | `en`, `ar` and anything else          | `en-US`; `ar-u-nu-latn` (Arabic names, Latin digits); `en-US`                                 | unit      |
+| ADP-07 | The adapter applies a locale          | `applyLocale('ar-u-nu-latn')`         | the chart's localization locale changes, and the one given at creation is used from the start | unit      |
+| CHT-17 | The chart starts in the app language  | mount in English; mount in Arabic     | the loader is given `en-US`; `ar-u-nu-latn`                                                   | component |
+| CHT-18 | A language change reaches the chart   | switch the app from English to Arabic | `applyLocale` is called with `ar-u-nu-latn`, without creating a second chart                  | component |
