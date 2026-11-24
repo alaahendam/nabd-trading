@@ -56,7 +56,34 @@ describe('PriceStore', () => {
       volume: 42,
       timestamp: 1234,
       receivedAt: 7000,
+      high: 100.25,
+      low: 100.25,
     });
+  });
+
+  it('PST-13 remembers the highest and the lowest published price', () => {
+    const { store, runFrame } = setup();
+    const publish = (price: number, timestamp: number) => {
+      store.apply([tick('AAPL', price, timestamp)]);
+      runFrame();
+      return store.get('AAPL');
+    };
+
+    expect(publish(100, 1)).toMatchObject({ high: 100, low: 100 });
+    expect(publish(103, 2)).toMatchObject({ high: 103, low: 100 });
+    expect(publish(98, 3)).toMatchObject({ high: 103, low: 98 });
+    expect(publish(101, 4)).toMatchObject({ high: 103, low: 98 });
+  });
+
+  it('PST-13 keeps the range of each symbol apart', () => {
+    const { store, runFrame } = setup();
+    store.apply([tick('AAPL', 100, 1), tick('MSFT', 400, 1)]);
+    runFrame();
+    store.apply([tick('AAPL', 90, 2), tick('MSFT', 410, 2)]);
+    runFrame();
+
+    expect(store.get('AAPL')).toMatchObject({ high: 100, low: 90 });
+    expect(store.get('MSFT')).toMatchObject({ high: 410, low: 400 });
   });
 
   it('PST-03 coalesces ticks within a frame', () => {

@@ -8,6 +8,9 @@ export interface LivePrice {
   readonly previousPrice: number | undefined;
   /** Cumulative volume for the day. */
   readonly volume: number;
+  /** The highest and lowest price this store has published for the symbol. */
+  readonly high: number;
+  readonly low: number;
   /** The server's time of the tick. */
   readonly timestamp: number;
   /** When this browser received the tick, used to tell when prices have gone stale. */
@@ -121,10 +124,13 @@ export class PriceStore {
     this.cancelFrame = undefined;
     const changed: string[] = [];
     for (const [symbol, { tick, receivedAt }] of this.pending) {
+      const previous = this.published.get(symbol);
       this.published.set(symbol, {
         symbol,
         price: tick.price,
-        previousPrice: this.published.get(symbol)?.price,
+        previousPrice: previous?.price,
+        high: Math.max(previous?.high ?? tick.price, tick.price),
+        low: Math.min(previous?.low ?? tick.price, tick.price),
         volume: tick.volume,
         timestamp: tick.timestamp,
         receivedAt,

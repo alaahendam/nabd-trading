@@ -10,6 +10,8 @@ const priceReceivedAt = (receivedAt: number): LivePrice => ({
   symbol: 'AAPL',
   price: 100,
   previousPrice: undefined,
+  high: 100,
+  low: 100,
   volume: 1,
   timestamp: 1,
   receivedAt,
