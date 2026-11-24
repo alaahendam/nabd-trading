@@ -24,7 +24,7 @@ Create `apps/server` (NestJS) and `apps/web` (Vite + React) as empty but fully w
 
 ### Slice 1: Server shell (risk first: ESM Nest + decorators + tests)
 
-- [ ] Task 1: `apps/server` boots, validates env, and its test runner works
+- [x] Task 1: `apps/server` boots, validates env, and its test runner works
   - Acceptance: `@nabd/server` package (ESM); `AppModule` with global `ConfigModule` validated by a Zod schema; `main.ts` reads `PORT` and `CORS_ORIGIN`; invalid env fails startup; test matrix `docs/testing/server-env.md` written first.
   - Verify: `pnpm --filter @nabd/server lint typecheck test build`; start the built app and see HTTP 404 on `/` (listening, no routes yet).
   - Files: `package.json`, `tsconfig.json`, `nest-cli.json`, `vitest.config.ts`, `eslint.config.js`, `src/main.ts`, `src/app.module.ts`, `src/config/env.ts` (+ tests), `test/app.e2e.test.ts`.
@@ -32,31 +32,31 @@ Create `apps/server` (NestJS) and `apps/web` (Vite + React) as empty but fully w
 
 ### Checkpoint: Server
 
-- [ ] Gates green for `@nabd/server`, committed.
+- [x] Gates green for `@nabd/server`, committed.
 
 ### Slice 2: Web shell
 
-- [ ] Task 2: `apps/web` renders an empty app shell with validated env
+- [x] Task 2: `apps/web` renders an empty app shell with validated env
   - Acceptance: `@nabd/web` package; Vite + React + strict TS; `src/{app,features,shared,lib}` layout; `lib/env.ts` parses `VITE_API_URL`; `App` test passes; matrix `docs/testing/web-env.md` first.
   - Verify: `pnpm --filter @nabd/web lint typecheck test build`.
   - Files: `package.json`, `index.html`, `vite.config.ts`, `tsconfig.json`, `eslint.config.js`, `vitest.config.ts`, `src/main.tsx`, `src/app/App.tsx`, `src/lib/env.ts` (+ tests), `src/test/setup.ts`.
   - Scope: M
-- [ ] Task 3: Tailwind v4 wired and the Tailwind lint rules active
+- [x] Task 3: Tailwind v4 wired and the Tailwind lint rules active
   - Acceptance: `@tailwindcss/vite`, `src/styles/index.css` with `@import "tailwindcss"`; ESLint `better-tailwindcss` entry point set; Prettier `tailwindStylesheet` set; a deliberate `ml-4` / `p-[13px]` / unknown class in a throwaway file is rejected.
   - Files: `vite.config.ts`, `src/styles/index.css`, `eslint.config.js`, `prettier.config.js`.
   - Scope: S
-- [ ] Task 4: Playwright config and one smoke spec
+- [x] Task 4: Playwright config and one smoke spec
   - Acceptance: `playwright.config.ts` with `webServer` and `baseURL`; `e2e/smoke.spec.ts`; Vitest excludes `e2e/`; typechecks and lints. Not executed (browser download needs approval).
   - Files: `playwright.config.ts`, `e2e/smoke.spec.ts`, `vitest.config.ts`.
   - Scope: S
 
 ### Checkpoint: Web
 
-- [ ] Gates green for `@nabd/web`, committed.
+- [x] Gates green for `@nabd/web`, committed.
 
 ### Slice 3: Phase gate
 
-- [ ] Task 5: Whole-repo gates and rule proofs against real files
+- [x] Task 5: Whole-repo gates and rule proofs against real files
   - Acceptance: `pnpm install --frozen-lockfile`, `format:check`, `lint`, `typecheck`, `test`, `build` all green; every Phase 0 rule that was deferred (`no-unknown-classes`, entry points, `lint-staged` per workspace, hex/arbitrary/physical/i18n/boundaries) rejected a throwaway violation inside the real apps; README and `docs/PLAN.md` updated.
   - Scope: S
 

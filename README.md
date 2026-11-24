@@ -4,7 +4,7 @@ Live markets, simulated. A small trading app: live stock list over WebSockets, s
 
 > Nabd is an independent take-home project. It is not affiliated with any company, and all market data is simulated.
 
-**Status:** Phase 0 complete: repository, workspace tooling and quality gates. There is no application code yet; the app shells arrive in Phase 1. This README is a skeleton and is completed in the final documentation phase.
+**Status:** Phases 0 and 1 complete: workspace tooling, quality gates, and empty but fully wired app shells (server and web) with validated environment variables. There is no product code yet. This README is a skeleton and is completed in the final documentation phase.
 
 ## Requirements
 
@@ -23,15 +23,16 @@ pnpm install
 | `pnpm build`        | Build every workspace                                               |
 | `pnpm lint`         | ESLint in each workspace, root tooling files, and Stylelint for CSS |
 | `pnpm typecheck`    | TypeScript in each workspace                                        |
-| `pnpm test`         | Tests in each workspace                                             |
+| `pnpm test`         | Vitest with coverage thresholds in each workspace                   |
+| `pnpm test:e2e`     | Playwright (needs `pnpm exec playwright install chromium` once)     |
 | `pnpm format`       | Prettier write                                                      |
 | `pnpm format:check` | Prettier check                                                      |
 
 ## Repository layout
 
 ```
-apps/web          React + Vite shell            (Phase 1)
-apps/server       NestJS shell                  (Phase 1)
+apps/web          React + Vite + Tailwind v4 shell (port 5173)
+apps/server       NestJS shell (port 3000)
 packages/shared   Zod contracts, socket events  (Phase 2)
 packages/config   Shared tsconfig, ESLint, Prettier and Stylelint configs
 docs/             PLAN.md, ADRs, test matrices, AI workflow
@@ -57,3 +58,7 @@ The ESLint configs in `packages/config` encode the architecture (`app → featur
 - How I worked with AI (see `docs/ai/`)
 - What I would do next
 - Screenshots
+
+## Environment
+
+Both apps validate their environment with Zod at startup and refuse to run on invalid values. Every variable has a default, so `pnpm dev` works with no setup. See `apps/server/.env.example` and `apps/web/.env.example`.
