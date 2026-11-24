@@ -1,100 +1,75 @@
-# Implementation Plan: Phase 4, frontend foundation
+# Implementation Plan: Phase 5, features
 
-Source: `docs/PLAN.md` section 6, Phase 4. Working agreement: `CLAUDE.md`. Earlier phase plans are fully checked off and kept in git history. Decisions: ADR 0005 (no Redux, live prices in an external store), ADR 0006 (design tokens and theming).
+Source: `docs/PLAN.md` section 6, Phase 5 (stock list, stock detail with chart, watchlist). Working agreement: `CLAUDE.md`. The Phase 4 plan is fully checked off and kept in git history. Everything here stands on the Phase 4 foundation: realtime hooks, API client, query client, shell, design tokens, i18n.
 
 ## Overview
 
-Everything the features of Phase 5 stand on, with no product screens yet: the realtime layer (one socket, reference-counted subscriptions, an external price store with per-frame batching, reconnect and resubscribe, connection status, staleness), design tokens with light, dark and system themes, fonts, English and Arabic with RTL and Latin digits, formatters, the API and query clients, the provider tree, the router, an error boundary, and a minimal app shell (header, theme and language toggles, connection indicator, "simulated market data" badge) so the foundation can be seen and verified in a browser. Pages are placeholders.
+Three vertical slices, each usable on its own: a live stock list, a stock detail page with a candlestick chart and period switcher, and a server-side watchlist with optimistic updates. Every state is designed and tested (loading skeleton, empty, error with retry, reconnecting, stale price, Arabic/RTL). E2E across the whole flow is Phase 6; Phase 5 proves each feature with component tests (MSW, fake socket) and a real-browser check.
 
-## Stack (installed versions)
+## Architecture decisions
 
-React 19.3, React Router 8 (`react-router`, `RouterProvider` from `react-router/dom`), TanStack Query 5, i18next 27 with react-i18next 18, socket.io-client 4.8, Tailwind 4.3, Fontsource IBM Plex Sans and IBM Plex Sans Arabic, class-variance-authority, clsx, tailwind-merge. Tests: Vitest, Testing Library, user-event, MSW.
+- **Two features, one direction.** `features/stocks` (list, detail, chart, queries) knows nothing about the watchlist. `features/watchlist` imports `stocks` through its public `index.ts` (it renders stock rows) and exports the star toggle. The route layer in `app/` composes the star into the list and the detail page through a slot (`renderAction`). This avoids a `stocks` ↔ `watchlist` import cycle and keeps the boundary lint meaningful.
+- **Live price on top of REST.** REST gives the quote (previous close, open, high, low, volume); the live store gives the latest price. Change and percent are derived from the live price and the REST previous close with the Phase 4 formatters, so a row never shows a price that disagrees with its change.
+- **Subscriptions follow the screen.** A list subscribes to the symbols it shows with `useSubscription`; the detail page subscribes to one. Reference counting makes navigating between them free.
+- **Chart behind a port.** `lightweight-charts` 5.3 (Apache-2.0) needs a canvas, which jsdom lacks, so the component talks to a small `ChartPort` and the real adapter is the only file importing the library (lint-enforced, like `socket.io-client`). Tests drive a fake port; the real chart is verified in the browser. The chart is loaded lazily, which also removes the large-chunk warning from the initial bundle.
+- **Chart facts verified in the installed types:** `time` is `UTCTimestamp` in **seconds** (our history uses milliseconds, so it is divided by 1000), `autoSize: true` handles resizing, `series.update()` is the way to apply live ticks, `chart.remove()` disposes.
+- **Attribution.** The license requires the NOTICE text and a link to tradingview.com on a page users can see. The footer carries both, in i18n, and the chart's `attributionLogo` is on.
+- **Watchlist writes are optimistic.** Add and remove update the cache at once, roll back on error, and revalidate on settle. Mutations are not retried (Phase 4 policy), because a silent retry could hide a failure.
+- **Period switcher is a toggle-button group** (`aria-pressed`), the same pattern as the theme switcher, not ARIA tabs, since it does not control separate panels.
 
-## Interface design and quality rules
+## Dependency graph
 
-- **Realtime is isolated.** Only `features/market-data` imports `socket.io-client` (lint-enforced). It exposes hooks and a provider through its `index.ts`.
-- **Everything from the network is untrusted.** REST responses and socket payloads are parsed with the shared schemas before use; invalid data is dropped or raises an `ApiClientError`.
-- **Injection over globals.** The API client, the socket, the clock and the frame scheduler are injected, so tests need no real network, timers or animation frames.
-- **Design system.** Semantic tokens only; logical properties only; no literals in JSX; every user-facing string through i18n in English and Arabic; digits Latin in both languages; numbers LTR inside RTL layouts; tabular numerals for numbers that change.
-- **Accessibility.** Landmarks and a skip link, visible focus ring from a token, theme choice as a labeled group with `aria-pressed`, connection status in a polite live region, `prefers-reduced-motion` respected, up and down never conveyed by color alone.
-- **Every state designed.** The shell has loading (route fallback), error (boundary with retry), offline and reconnecting (connection indicator) and 404.
+```
+shared atoms (Skeleton, ChangeBadge, StateMessage)
+  └─ stocks data hooks (useStocks, useStock, useHistory)
+       ├─ stock list (rows, live price, states)
+       └─ stock detail (header, stats, chart port, period switcher)
+            └─ routes + attribution
+  └─ watchlist data hooks (query + optimistic mutations)
+       └─ star toggle + watchlist view
+            └─ composition in app, verification
+```
 
 ## Task list
 
-### Slice 1: Realtime layer (highest risk, pure logic first)
+### Slice 1: stock list
 
-- [x] Task 1: `PriceStore` and staleness
-  - Acceptance: coalesces ticks per symbol, publishes once per scheduled frame; older or equal timestamps ignored; per-symbol subscribers notified only for their symbol; snapshots stable until a change; previous price kept for direction; staleness is a pure function of time, connection and last receipt; matrix `docs/testing/web-realtime.md` first; 100% coverage.
-  - Scope: M
-- [x] Task 2: `RealtimeClient`, connection status, socket adapter
-  - Acceptance: one socket; `acquire` is reference-counted and idempotent to release; subscribe only when connected, resubscribe all active symbols on every `connect`, in chunks of 50; payloads validated with `ticksPayloadSchema`; status `connecting`, `connected`, `reconnecting`, `offline`; `server:error` reported; the only file importing `socket.io-client` wraps it; 100% coverage.
-  - Scope: L, two commits (client and status, then the adapter)
-- [x] Task 3: React bindings
-  - Acceptance: `RealtimeProvider`, `useLivePrice`, `useConnectionStatus`, `useSubscription`, `useIsStale`; StrictMode safe (connect, disconnect, connect); a component re-renders only for its symbol.
-  - Scope: M
+- [ ] Task 1: shared atoms: `Skeleton`, `ChangeBadge` (arrow, sign and color, never color alone), `StateMessage` (empty and error with retry)
+- [ ] Task 2: `features/stocks` data hooks over the API client and query keys
+- [ ] Task 3: stock list: rows with live price and flash, change vs previous close, freshness, loading, empty, error, reconnecting
+- [ ] Checkpoint: list works against the real server
 
-### Checkpoint: Realtime
+### Slice 2: stock detail and chart
 
-- [x] Gates green, committed.
+- [ ] Task 4: detail header and stats (price, change, open, high, low, volume, previous close)
+- [ ] Task 5: chart: `ChartPort`, real adapter, period switcher, history query, live last-candle update, theme colors, loading and error
+- [ ] Task 6: routes (lazy detail), page titles, attribution footer
+- [ ] Checkpoint: detail works against the real server
 
-### Slice 2: Look and feel
+### Slice 3: watchlist
 
-- [x] Task 4: tokens, theme and Tailwind mapping
-  - Acceptance: `tokens.css` (primitives, light and dark semantic layers), `@theme inline` mapping with the default palette removed, `dark` custom variant on `data-theme`, theme store (`light`, `dark`, `system`, persisted, follows system), pre-paint script, contrast test over every UI pairing in both themes.
-  - Scope: M
-- [x] Task 5: fonts and base styles
-  - Acceptance: IBM Plex Sans and IBM Plex Sans Arabic via Fontsource, font stack token, tabular numerals utility use, focus ring from token, reduced motion respected.
-  - Scope: S
+- [ ] Task 7: watchlist data hooks with optimistic add and remove, rollback
+- [ ] Task 8: `WatchlistToggle` (real button, `aria-pressed`), watchlist view, composition into list and detail
+- [ ] Task 9: real-browser verification (RTL, dark, live ticks, offline, mobile), whole-repo gates, ADR, README and plan updates
 
-### Slice 3: Language
+## Acceptance criteria (phase level)
 
-- [x] Task 6: i18n and RTL
-  - Acceptance: typed English and Arabic resources, language detection (stored, then browser, then English), persistence, `lang` and `dir` on `<html>` kept in sync, plural forms for Arabic, no missing keys between languages (tested).
-  - Scope: M
-- [x] Task 7: formatters
-  - Acceptance: price, signed change, percent, compact volume, direction, in both languages with Latin digits; 100% coverage.
-  - Scope: S
-
-### Slice 4: Data access
-
-- [x] Task 8: API client, client ID and endpoints
-  - Acceptance: parses every response with the shared schemas; adds `x-client-id`; maps failures to `ApiClientError` (`network`, `http`, `parse`) with the server's code; 204 handled; abort supported; tested with MSW; 100% coverage.
-  - Scope: M
-- [x] Task 9: query client and API provider
-  - Acceptance: retries only network and 5xx errors with backoff, never 4xx; sensible stale times; fresh client per test.
-  - Scope: S
-
-### Checkpoint: Foundations
-
-- [x] Gates green, committed.
-
-### Slice 5: The app
-
-- [x] Task 10: shared UI atoms
-  - Acceptance: `Button` (cva variants), `Badge`, `ConnectionStatus` (presentational), icons, `cn`; keyboard and name checks.
-  - Scope: M
-- [x] Task 11: providers, router, error boundary, shell, placeholder pages
-  - Acceptance: provider tree; routes `/`, `/stocks/:symbol`, `/watchlist`, catch-all 404; skip link, landmarks, nav with `aria-current`; theme and language toggles; connection indicator and simulated-data badge; error boundary with retry and a router error element; the existing `App` test updated.
-  - Scope: L, split into two commits
-
-### Checkpoint: Complete
-
-- [x] Task 12: browser verification and gates
-  - Acceptance: the built app against the running server in a real browser: live connection indicator, dark theme, Arabic with RTL, 404, reload keeps preferences, no console errors, mobile width; whole-repo gates; every deferred rule re-checked (`no-literal-string` in JSX, Tailwind rules against the real theme, boundaries, `socket.io-client` restriction); README and docs.
-  - Scope: M
+- Each feature has a test matrix in `docs/testing/` written before its code, and every ID is covered by a test.
+- Logic files at 100% per-file coverage; global floor holds. No lowered thresholds, no lint or type escapes.
+- All user text in both languages, no literal strings in JSX; digits always Latin.
+- Up and down shown by color and sign or arrow. AA contrast in both themes (new color pairings are added to the token contrast test).
+- Real browser: live ticks flow, Arabic RTL and dark theme look right, no console errors, reload keeps the watchlist.
 
 ## Risks and mitigations
 
-| Risk                                                               | Impact | Mitigation                                                                            |
-| ------------------------------------------------------------------ | ------ | ------------------------------------------------------------------------------------- |
-| Re-render storms from live ticks                                   | High   | Coalesce per symbol, flush once per frame, per-symbol subscriptions, stable snapshots |
-| Missed resubscribe after a reconnect (server rooms are per socket) | High   | Re-emit all active subscriptions on every `connect`; tested with a fake socket        |
-| Tokens that fail WCAG contrast in one theme                        | High   | Contrast test over the real `tokens.css`, both themes                                 |
-| React Router 8 and MSW 3 differ from what I know                   | Med    | Verify the installed APIs by typecheck and tests before building on them              |
-| Stripped Tailwind palette breaks a needed utility                  | Med    | Map every needed token; the unknown-class lint rule reports gaps immediately          |
-| Arabic strings are mine, not a native speaker's                    | Med    | Say so in the report; keys and structure are ready for review                         |
-| Fonts and RTL cannot be verified by unit tests                     | Med    | Real browser check in Task 12                                                         |
+| Risk                                                     | Impact | Mitigation                                                                              |
+| -------------------------------------------------------- | ------ | --------------------------------------------------------------------------------------- |
+| Re-rendering every row on every tick                     | High   | Per-symbol selectors from Phase 4; a test asserts an unrelated row does not re-render   |
+| Chart colors drifting from tokens                        | Medium | Colors read from the CSS custom properties at render time and refreshed on theme change |
+| Optimistic update leaves the cache wrong after a failure | High   | Snapshot and rollback in `onError`, invalidate in `onSettled`, tested with MSW failures |
+| Canvas library hard to test                              | Medium | `ChartPort` seam, fake in tests, real adapter checked in the browser                    |
+| Initial bundle growth from the chart                     | Medium | Lazy-load the detail route; the production build warning is the check                   |
 
 ## Open questions
 
-- None blocking. Arabic copy should be reviewed by a native speaker before release.
+- None blocking. Search or sort on the list is out of scope for Phase 5 and can be added later if wanted.
