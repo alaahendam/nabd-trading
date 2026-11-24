@@ -26,10 +26,10 @@ Built with `tsc` to `dist` (ESM, NodeNext, declarations). Nest runs compiled JS 
 
 ### Slice 1: Foundation and market contracts
 
-- [ ] Task 1: `library` tsconfig base in `@nabd/config`
+- [x] Task 1: `library` tsconfig base in `@nabd/config`
   - Acceptance: strict, NodeNext, declarations, no DOM or Node types. Verify: `@nabd/config` typecheck.
   - Scope: XS
-- [ ] Task 2: `@nabd/shared` package with `Stock`, `Quote`, `PriceTick`, `HistoryPoint`, `Period` and period config
+- [x] Task 2: `@nabd/shared` package with `Stock`, `Quote`, `PriceTick`, `HistoryPoint`, `Period` and period config
   - Acceptance: matrix `docs/testing/shared-market.md` first; valid and invalid payloads for every schema; OHLC consistency refinement; 100% coverage; builds to `dist`.
   - Verify: `pnpm --filter @nabd/shared lint typecheck test build`.
   - Files: `package.json`, `tsconfig*.json`, `vitest.config.ts`, `eslint.config.js`, `src/{index,market,period}.ts` and tests.
@@ -37,23 +37,23 @@ Built with `tsc` to `dist` (ESM, NodeNext, declarations). Nest runs compiled JS 
 
 ### Checkpoint: Market contracts
 
-- [ ] Gates green for `@nabd/shared`, committed.
+- [x] Gates green for `@nabd/shared`, committed.
 
 ### Slice 2: Watchlist, identity and errors
 
-- [ ] Task 3: `WatchlistItem`, add input, client ID header and schema, API error shape, error code to status map, routes
+- [x] Task 3: `WatchlistItem`, add input, client ID header and schema, API error shape, error code to status map, routes
   - Acceptance: matrix `docs/testing/shared-api.md` first; error codes closed; routes build escaped symbol paths; 100% coverage.
   - Scope: M
 
 ### Slice 3: Realtime contracts
 
-- [ ] Task 4: Socket event names, payload schemas, typed event maps, room name helper
+- [x] Task 4: Socket event names, payload schemas, typed event maps, room name helper
   - Acceptance: matrix `docs/testing/shared-socket.md` first; subscribe/unsubscribe payload limits; batched tick payload; event maps usable with `socket.io` generics; 100% coverage.
   - Scope: M
 
 ### Checkpoint: Complete
 
-- [ ] Task 5: Whole-repo gates; a throwaway import of `@nabd/shared` proves it resolves in Nest (NodeNext), Vite and Vitest; the deep-import rule rejects `@nabd/shared/...`; README and docs updated.
+- [x] Task 5: Whole-repo gates; a throwaway import of `@nabd/shared` proves it resolves in Nest (NodeNext), Vite and Vitest; the deep-import rule rejects `@nabd/shared/...`; README and docs updated.
   - Scope: S
 
 ## Risks and mitigations

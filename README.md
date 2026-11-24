@@ -4,7 +4,7 @@ Live markets, simulated. A small trading app: live stock list over WebSockets, s
 
 > Nabd is an independent take-home project. It is not affiliated with any company, and all market data is simulated.
 
-**Status:** Phases 0 and 1 complete: workspace tooling, quality gates, and empty but fully wired app shells (server and web) with validated environment variables. There is no product code yet. This README is a skeleton and is completed in the final documentation phase.
+**Status:** Phases 0 to 2 complete: workspace tooling, quality gates, empty but fully wired app shells (server and web) with validated environment variables, and the shared contracts package (`@nabd/shared`). There is no product code yet. This README is a skeleton and is completed in the final documentation phase.
 
 ## Requirements
 
@@ -33,7 +33,7 @@ pnpm install
 ```
 apps/web          React + Vite + Tailwind v4 shell (port 5173)
 apps/server       NestJS shell (port 3000)
-packages/shared   Zod contracts, socket events  (Phase 2)
+packages/shared   Zod contracts, routes, errors, socket events (compiled ESM)
 packages/config   Shared tsconfig, ESLint, Prettier and Stylelint configs
 docs/             PLAN.md, ADRs, test matrices, AI workflow
 ```
