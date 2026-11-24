@@ -1,74 +1,70 @@
-# Implementation Plan: Phase 1, app shells with configs only
+# Implementation Plan: Phase 2, `packages/shared`
 
-Source: `docs/PLAN.md` section 6, Phase 1. Working agreement: `CLAUDE.md`.
+Source: `docs/PLAN.md` section 6, Phase 2. Working agreement: `CLAUDE.md`. The Phase 1 plan was fully checked off and is kept in git history.
 
 ## Overview
 
-Create `apps/server` (NestJS) and `apps/web` (Vite + React) as empty but fully wired shells: build, lint, typecheck and test run green, test and Playwright configs exist, and environment variables are validated at startup. No product code. Phase 0 rules are verified against real files here (they were only proven with throwaway files before).
+`@nabd/shared` is the single source of truth for every contract between web and server: Zod schemas with the types derived from them, REST routes, the API error shape, the anonymous identity header, socket event names with typed payloads, and the period configuration. No runtime behavior beyond validation. It must be fully tested (100% coverage) before Phase 3 builds the server against it.
 
-## Stack detected (versions from the npm registry on 2026-11-24)
+## Interface design (api-and-interface-design)
 
-- Node 24.13.0 (engines of every package below accept it), pnpm 12.23.0, TypeScript 6.0.3 (held, ADR 0001).
-- Web: Vite 8, @vitejs/plugin-react 6, React 19, Tailwind 4.3 with `@tailwindcss/vite`, Vitest 5, Testing Library, jsdom, Playwright 1.65, Zod 4.
-- Server: NestJS 12 (ESM only, `type: module`), @nestjs/config 12, Vitest 5 with SWC, supertest, Zod 4.
+- **Contract first.** Schemas are written and tested before any consumer exists. Types are only ever `z.infer` of a schema.
+- **One time convention.** Every timestamp is epoch milliseconds (integer). The chart layer converts as needed.
+- **One error shape.** `{ error: { code, message, details? } }` with a closed set of codes and a code to HTTP status map, so server filter and client agree.
+- **Envelopes are additive.** Lists return `{ data: [...] }` so pagination can be added later as an optional field without breaking clients. The stock universe is fixed and small, so no pagination now (decision recorded here, not an oversight).
+- **Input and output are separate.** `AddWatchlistInput` is not `WatchlistItem`.
+- **Validate at boundaries only.** Server validates request bodies, queries and socket payloads; web validates responses and socket payloads from the network. Internal code trusts the types.
+- **Closed vocabularies.** Periods, error codes, exchanges and socket events are `as const` values, never loose strings.
+- **Refined schemas are final.** Zod 4 `.extend()` throws on refined objects, so OHLC consistency refinements sit on the schemas that are not extended.
+- **One entry point.** Only `.` is exported; the architecture rule already forbids deep imports.
 
-## Architecture decisions
+## Packaging decision
 
-- **Server tests use Vitest + SWC, not Jest.** Nest 12 is ESM-only and its docs default to Vitest. One runner across the repo. Plan and ADR 0002 updated (user decision).
-- **Env is validated with Zod in both apps.** The server passes the schema to `ConfigModule.forRoot({ validationSchema })` (documented Standard Schema support). The web parses `import.meta.env` through the same pattern in `lib/env.ts`. The app refuses to start on invalid env.
-- **No scaffolder.** `create-vite` and `nest new` bring their own git, ESLint, Prettier and test configs that fight `@nabd/config`. Files are written by hand from the official docs and the shared configs are used as is.
-- **Playwright is configured but not run in Phase 1.** Browsers are a large download that needs approval. `test:e2e` is separate from `pnpm test`.
-- **Per-glob 100% coverage thresholds** for domain logic are added in the phase that creates that code. Phase 1 enforces the 90% global floor only.
+Built with `tsc` to `dist` (ESM, NodeNext, declarations). Nest runs compiled JS and Vite resolves ESM, so a compiled package is the one form both consume. Turbo already runs `^build` before lint, typecheck and test. A new `library` tsconfig base goes in `@nabd/config`. `dev` is `tsc --watch`.
 
 ## Task list
 
-### Slice 1: Server shell (risk first: ESM Nest + decorators + tests)
+### Slice 1: Foundation and market contracts
 
-- [x] Task 1: `apps/server` boots, validates env, and its test runner works
-  - Acceptance: `@nabd/server` package (ESM); `AppModule` with global `ConfigModule` validated by a Zod schema; `main.ts` reads `PORT` and `CORS_ORIGIN`; invalid env fails startup; test matrix `docs/testing/server-env.md` written first.
-  - Verify: `pnpm --filter @nabd/server lint typecheck test build`; start the built app and see HTTP 404 on `/` (listening, no routes yet).
-  - Files: `package.json`, `tsconfig.json`, `nest-cli.json`, `vitest.config.ts`, `eslint.config.js`, `src/main.ts`, `src/app.module.ts`, `src/config/env.ts` (+ tests), `test/app.e2e.test.ts`.
+- [ ] Task 1: `library` tsconfig base in `@nabd/config`
+  - Acceptance: strict, NodeNext, declarations, no DOM or Node types. Verify: `@nabd/config` typecheck.
+  - Scope: XS
+- [ ] Task 2: `@nabd/shared` package with `Stock`, `Quote`, `PriceTick`, `HistoryPoint`, `Period` and period config
+  - Acceptance: matrix `docs/testing/shared-market.md` first; valid and invalid payloads for every schema; OHLC consistency refinement; 100% coverage; builds to `dist`.
+  - Verify: `pnpm --filter @nabd/shared lint typecheck test build`.
+  - Files: `package.json`, `tsconfig*.json`, `vitest.config.ts`, `eslint.config.js`, `src/{index,market,period}.ts` and tests.
   - Scope: M
 
-### Checkpoint: Server
+### Checkpoint: Market contracts
 
-- [x] Gates green for `@nabd/server`, committed.
+- [ ] Gates green for `@nabd/shared`, committed.
 
-### Slice 2: Web shell
+### Slice 2: Watchlist, identity and errors
 
-- [x] Task 2: `apps/web` renders an empty app shell with validated env
-  - Acceptance: `@nabd/web` package; Vite + React + strict TS; `src/{app,features,shared,lib}` layout; `lib/env.ts` parses `VITE_API_URL`; `App` test passes; matrix `docs/testing/web-env.md` first.
-  - Verify: `pnpm --filter @nabd/web lint typecheck test build`.
-  - Files: `package.json`, `index.html`, `vite.config.ts`, `tsconfig.json`, `eslint.config.js`, `vitest.config.ts`, `src/main.tsx`, `src/app/App.tsx`, `src/lib/env.ts` (+ tests), `src/test/setup.ts`.
+- [ ] Task 3: `WatchlistItem`, add input, client ID header and schema, API error shape, error code to status map, routes
+  - Acceptance: matrix `docs/testing/shared-api.md` first; error codes closed; routes build escaped symbol paths; 100% coverage.
   - Scope: M
-- [x] Task 3: Tailwind v4 wired and the Tailwind lint rules active
-  - Acceptance: `@tailwindcss/vite`, `src/styles/index.css` with `@import "tailwindcss"`; ESLint `better-tailwindcss` entry point set; Prettier `tailwindStylesheet` set; a deliberate `ml-4` / `p-[13px]` / unknown class in a throwaway file is rejected.
-  - Files: `vite.config.ts`, `src/styles/index.css`, `eslint.config.js`, `prettier.config.js`.
-  - Scope: S
-- [x] Task 4: Playwright config and one smoke spec
-  - Acceptance: `playwright.config.ts` with `webServer` and `baseURL`; `e2e/smoke.spec.ts`; Vitest excludes `e2e/`; typechecks and lints. Not executed (browser download needs approval).
-  - Files: `playwright.config.ts`, `e2e/smoke.spec.ts`, `vitest.config.ts`.
-  - Scope: S
 
-### Checkpoint: Web
+### Slice 3: Realtime contracts
 
-- [x] Gates green for `@nabd/web`, committed.
+- [ ] Task 4: Socket event names, payload schemas, typed event maps, room name helper
+  - Acceptance: matrix `docs/testing/shared-socket.md` first; subscribe/unsubscribe payload limits; batched tick payload; event maps usable with `socket.io` generics; 100% coverage.
+  - Scope: M
 
-### Slice 3: Phase gate
+### Checkpoint: Complete
 
-- [x] Task 5: Whole-repo gates and rule proofs against real files
-  - Acceptance: `pnpm install --frozen-lockfile`, `format:check`, `lint`, `typecheck`, `test`, `build` all green; every Phase 0 rule that was deferred (`no-unknown-classes`, entry points, `lint-staged` per workspace, hex/arbitrary/physical/i18n/boundaries) rejected a throwaway violation inside the real apps; README and `docs/PLAN.md` updated.
+- [ ] Task 5: Whole-repo gates; a throwaway import of `@nabd/shared` proves it resolves in Nest (NodeNext), Vite and Vitest; the deep-import rule rejects `@nabd/shared/...`; README and docs updated.
   - Scope: S
 
 ## Risks and mitigations
 
-| Risk                                                      | Impact | Mitigation                                                                 |
-| --------------------------------------------------------- | ------ | -------------------------------------------------------------------------- |
-| Nest 12 ESM + decorator metadata under Vitest             | High   | Slice 1 first; SWC plugin emits metadata; e2e boot test proves DI works    |
-| NodeNext needs `.js` import suffixes, boundaries resolver | Med    | Typescript resolver already configured; proven by a cross-module violation |
-| Plugin peers drift (Vite 8, Vitest 5, React 19)           | Med    | `pnpm peers check` after each install; hold versions in ADR 0001 if needed |
-| Playwright cannot be run without a browser download       | Low    | Config typechecks and lints; run is deferred and reported                  |
+| Risk                                                        | Impact | Mitigation                                                                |
+| ----------------------------------------------------------- | ------ | ------------------------------------------------------------------------- |
+| Compiled ESM package not resolvable by Nest, Vite or Vitest | High   | Throwaway import in each consumer in Task 5, before Phase 3 depends on it |
+| Schema churn after Phase 3 starts                           | Med    | Additive-only rule, 100% tests, envelopes, closed enums documented above  |
+| `dist` stale during development                             | Low    | `dev` runs `tsc --watch`; turbo builds dependencies before test and lint  |
+| Zod refinement limits (no `.extend` on refined objects)     | Low    | Refine only terminal schemas; documented above                            |
 
 ## Open questions
 
-- None blocking. Playwright browser install (about 150 MB) needs your approval before the first e2e run.
+- None blocking. Stock symbols and the universe belong to the server (Phase 3), not to shared.

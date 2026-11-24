@@ -1,11 +1,10 @@
-# Phase 1 task list
+# Phase 2 task list
 
 Details and acceptance criteria: `tasks/plan.md`.
 
-- [x] Task 1: `apps/server` boots, validates env, test runner works
-- [x] Checkpoint: Server gates green, committed
-- [x] Task 2: `apps/web` shell with validated env
-- [x] Task 3: Tailwind v4 wired, Tailwind lint rules active
-- [x] Task 4: Playwright config and smoke spec (not executed)
-- [x] Checkpoint: Web gates green, committed
-- [x] Task 5: Whole-repo gates and rule proofs against real files, docs updated
+- [ ] Task 1: `library` tsconfig base in `@nabd/config`
+- [ ] Task 2: `@nabd/shared` package with market contracts and period config
+- [ ] Checkpoint: market contracts gates green, committed
+- [ ] Task 3: watchlist, identity, API error shape, routes
+- [ ] Task 4: socket events, payloads, typed event maps
+- [ ] Task 5: whole-repo gates and consumer import proof, docs updated
