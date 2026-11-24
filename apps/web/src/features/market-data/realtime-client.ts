@@ -24,19 +24,27 @@ export interface RealtimeClientOptions {
 /**
  * The one connection to the server for the whole app.
  *
- * - Components `acquire` the symbols they show and get back a `release`. A symbol is subscribed
- *   while at least one holder needs it.
- * - A reconnect is a new socket on the server, whose rooms start empty, so every `connect`
- *   subscribes all active symbols again.
- * - Everything that arrives is validated with the shared schemas before it is used.
+ * Subscriptions are declarative. Components `acquire` the symbols they show and get back a
+ * `release`; a symbol is wanted while at least one holder has it. The client remembers what the
+ * server currently has (`serverSubscribed`) and, once per tick of the event loop, sends only the
+ * difference, batched. So a list of rows that mount together sends one message, and a symbol
+ * that is released and acquired again in the same commit is never sent at all.
+ *
+ * A reconnect is a new socket on the server, whose rooms start empty, so the server's side is
+ * forgotten whenever the connection drops and everything wanted is subscribed again on connect.
+ *
+ * Everything that arrives is validated with the shared schemas before it is used.
  */
 export class RealtimeClient {
   private status: ConnectionStatus = 'connecting';
   private readonly statusListeners = new Set<() => void>();
   private readonly errorListeners = new Set<(error: SocketError) => void>();
-  /** Per symbol, the handles currently holding it. */
+  /** Per symbol, the handles currently holding it: what the app wants. */
   private readonly holders = new Map<string, Set<object>>();
+  /** What the server currently has for this socket. */
+  private readonly serverSubscribed = new Set<string>();
   private readonly onIssue: (issue: RealtimeIssue) => void;
+  private reconcileScheduled = false;
   private started = false;
   private browserOnline = true;
 
@@ -94,6 +102,7 @@ export class RealtimeClient {
 
   disconnect(): void {
     this.started = false;
+    this.serverSubscribed.clear();
     this.socket.disconnect();
     this.setStatus('offline');
   }
@@ -120,17 +129,12 @@ export class RealtimeClient {
     });
 
     const handle = {};
-    const added: string[] = [];
     for (const symbol of valid) {
-      let holders = this.holders.get(symbol);
-      if (!holders) {
-        holders = new Set();
-        this.holders.set(symbol, holders);
-        added.push(symbol);
-      }
+      const holders = this.holders.get(symbol) ?? new Set<object>();
       holders.add(handle);
+      this.holders.set(symbol, holders);
     }
-    this.send(added, 'subscribe');
+    this.scheduleReconcile();
 
     let released = false;
     return () => {
@@ -138,22 +142,44 @@ export class RealtimeClient {
         return;
       }
       released = true;
-      const removed: string[] = [];
       for (const [symbol, holders] of this.holders) {
         if (holders.delete(handle) && holders.size === 0) {
           this.holders.delete(symbol);
-          removed.push(symbol);
         }
       }
-      this.send(removed, 'unsubscribe');
+      this.scheduleReconcile();
     };
   }
 
-  /** Sends only while connected; a later `connect` resubscribes whatever is still active. */
-  private send(symbols: readonly string[], method: 'subscribe' | 'unsubscribe'): void {
+  private scheduleReconcile(): void {
+    if (this.reconcileScheduled) {
+      return;
+    }
+    this.reconcileScheduled = true;
+    queueMicrotask(() => {
+      this.reconcileScheduled = false;
+      this.reconcile();
+    });
+  }
+
+  /** Brings the server in line with what the app wants. Only while connected. */
+  private reconcile(): void {
     if (this.status !== 'connected') {
       return;
     }
+    const toAdd = [...this.holders.keys()].filter((symbol) => !this.serverSubscribed.has(symbol));
+    const toRemove = [...this.serverSubscribed].filter((symbol) => !this.holders.has(symbol));
+    for (const symbol of toAdd) {
+      this.serverSubscribed.add(symbol);
+    }
+    for (const symbol of toRemove) {
+      this.serverSubscribed.delete(symbol);
+    }
+    this.send(toAdd, 'subscribe');
+    this.send(toRemove, 'unsubscribe');
+  }
+
+  private send(symbols: readonly string[], method: 'subscribe' | 'unsubscribe'): void {
     for (let start = 0; start < symbols.length; start += MAX_SYMBOLS_PER_REQUEST) {
       this.socket[method](symbols.slice(start, start + MAX_SYMBOLS_PER_REQUEST));
     }
@@ -161,10 +187,12 @@ export class RealtimeClient {
 
   private handleConnect(): void {
     this.setStatus('connected');
-    this.send([...this.holders.keys()], 'subscribe');
+    this.serverSubscribed.clear();
+    this.reconcile();
   }
 
   private handleDisconnect(reason: string): void {
+    this.serverSubscribed.clear();
     if (reason === 'io client disconnect') {
       this.setStatus('offline');
       return;

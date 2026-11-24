@@ -139,65 +139,80 @@ describe('RealtimeClient connection', () => {
   });
 });
 
+/** Lets the client's once-per-tick reconcile run. */
+const settle = () => Promise.resolve();
+
 describe('RealtimeClient subscriptions', () => {
-  it('RTC-08 waits for the connection before subscribing', () => {
+  it('RTC-08 waits for the connection before subscribing', async () => {
     const { client, socket } = setup();
     client.connect();
     client.acquire(['AAPL']);
+    await settle();
     expect(socket.calls.subscribe).toEqual([]);
 
     socket.simulateConnect();
     expect(socket.calls.subscribe).toEqual([['AAPL']]);
   });
 
-  it('RTC-09 subscribes at once when connected, only for symbols not already subscribed', () => {
+  it('RTC-09 subscribes when connected, only for symbols the server does not have yet', async () => {
     const { client, socket } = connected();
     client.acquire(['AAPL', 'MSFT']);
+    await settle();
     client.acquire(['MSFT', 'NVDA']);
+    await settle();
     expect(socket.calls.subscribe).toEqual([['AAPL', 'MSFT'], ['NVDA']]);
   });
 
-  it('RTC-10 reference-counts symbols', () => {
+  it('RTC-10 reference-counts symbols', async () => {
     const { client, socket } = connected();
     const releaseFirst = client.acquire(['AAPL']);
     const releaseSecond = client.acquire(['AAPL']);
+    await settle();
     expect(socket.calls.subscribe).toEqual([['AAPL']]);
 
     releaseFirst();
+    await settle();
     expect(socket.calls.unsubscribe).toEqual([]);
     releaseSecond();
+    await settle();
     expect(socket.calls.unsubscribe).toEqual([['AAPL']]);
   });
 
-  it('RTC-11 ignores a second release of the same handle', () => {
+  it('RTC-11 ignores a second release of the same handle', async () => {
     const { client, socket } = connected();
     const release = client.acquire(['AAPL']);
     const other = client.acquire(['AAPL']);
+    await settle();
 
     release();
     release();
+    await settle();
     expect(socket.calls.unsubscribe).toEqual([]);
 
     other();
+    await settle();
     expect(socket.calls.unsubscribe).toEqual([['AAPL']]);
   });
 
-  it('RTC-12 does not unsubscribe while disconnected, and resubscribes nothing afterwards', () => {
+  it('RTC-12 does not unsubscribe while disconnected, and subscribes nothing afterwards', async () => {
     const { client, socket } = connected();
     const release = client.acquire(['AAPL']);
+    await settle();
     socket.simulateDisconnect('transport close');
 
     release();
+    await settle();
     expect(socket.calls.unsubscribe).toEqual([]);
 
     socket.simulateConnect();
     expect(socket.calls.subscribe).toEqual([['AAPL']]);
   });
 
-  it('RTC-13 resubscribes the active symbols on every connect', () => {
+  it('RTC-13 subscribes the wanted symbols again on every connect', async () => {
     const { client, socket } = connected();
     const releaseMsft = client.acquire(['MSFT']);
     client.acquire(['AAPL']);
+    await settle();
     socket.calls.subscribe.length = 0;
 
     socket.simulateDisconnect('transport close');
@@ -205,13 +220,14 @@ describe('RealtimeClient subscriptions', () => {
     expect(socket.calls.subscribe).toEqual([['MSFT', 'AAPL']]);
 
     releaseMsft();
+    await settle();
     socket.calls.subscribe.length = 0;
     socket.simulateDisconnect('transport close');
     socket.simulateConnect();
     expect(socket.calls.subscribe).toEqual([['AAPL']]);
   });
 
-  it('RTC-14 splits large requests', () => {
+  it('RTC-14 splits large requests', async () => {
     const { client, socket } = connected();
     const symbols = Array.from(
       { length: 120 },
@@ -219,6 +235,7 @@ describe('RealtimeClient subscriptions', () => {
         `${String.fromCharCode(65 + (index % 26))}${String.fromCharCode(65 + Math.floor(index / 26))}`,
     );
     client.acquire(symbols);
+    await settle();
     expect(socket.calls.subscribe.map((chunk) => chunk.length)).toEqual([
       MAX_SYMBOLS_PER_REQUEST,
       MAX_SYMBOLS_PER_REQUEST,
@@ -227,19 +244,60 @@ describe('RealtimeClient subscriptions', () => {
     expect(socket.calls.subscribe.flat()).toEqual(symbols);
   });
 
-  it('RTC-15 cleans up the symbols it is given', () => {
+  it('RTC-15 cleans up the symbols it is given', async () => {
     const { client, socket, issues } = connected();
     client.acquire(['AAPL', 'AAPL']);
+    await settle();
     expect(socket.calls.subscribe).toEqual([['AAPL']]);
 
     client.acquire(['aapl']);
+    await settle();
     expect(issues).toEqual([{ kind: 'invalid-symbol', symbol: 'aapl' }]);
     expect(socket.calls.subscribe).toHaveLength(1);
 
     const release = client.acquire([]);
     release();
+    await settle();
     expect(socket.calls.subscribe).toHaveLength(1);
     expect(socket.calls.unsubscribe).toEqual([]);
+  });
+
+  it('RTC-21 sends nothing for a symbol released and acquired again in the same tick', async () => {
+    const { client, socket } = connected();
+    const release = client.acquire(['AAPL']);
+    await settle();
+    socket.calls.subscribe.length = 0;
+
+    release();
+    client.acquire(['AAPL']);
+    await settle();
+
+    expect(socket.calls.subscribe).toEqual([]);
+    expect(socket.calls.unsubscribe).toEqual([]);
+  });
+
+  it('RTC-22 batches acquisitions and releases of one tick into single messages', async () => {
+    const { client, socket } = connected();
+    const releases = ['AAPL', 'MSFT', 'NVDA'].map((symbol) => client.acquire([symbol]));
+    await settle();
+    expect(socket.calls.subscribe).toEqual([['AAPL', 'MSFT', 'NVDA']]);
+
+    for (const release of releases) {
+      release();
+    }
+    await settle();
+    expect(socket.calls.unsubscribe).toEqual([['AAPL', 'MSFT', 'NVDA']]);
+  });
+
+  it('RTC-23 does not remember the server across a disconnect', async () => {
+    const { client, socket } = connected();
+    client.acquire(['AAPL']);
+    await settle();
+
+    client.disconnect();
+    client.connect();
+    socket.simulateConnect();
+    expect(socket.calls.subscribe).toEqual([['AAPL'], ['AAPL']]);
   });
 });
 
