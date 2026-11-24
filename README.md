@@ -4,7 +4,7 @@ Live markets, simulated. A small trading app: live stock list over WebSockets, s
 
 > Nabd is an independent take-home project. It is not affiliated with any company, and all market data is simulated.
 
-**Status:** Phases 0 to 4 complete: workspace tooling, quality gates, the shared contracts package (`@nabd/shared`), the whole backend (market simulator, REST, realtime gateway, watchlist) and the web foundation (design tokens and themes, English and Arabic with RTL, API and realtime layers, app shell). The pages are placeholders; the features arrive in Phases 5 and 6. This README is a skeleton and is completed in the final documentation phase.
+**Status:** Phases 0 to 5 complete: workspace tooling, quality gates, the shared contracts package (`@nabd/shared`), the whole backend (market simulator, REST, realtime gateway, watchlist), the web foundation (design tokens and themes, English and Arabic with RTL, API and realtime layers, app shell) and the three features: a live stock list, a stock detail page with a candlestick chart and period switcher, and a server-side watchlist with optimistic updates. Phase 6 adds integration polish and the end-to-end test; Phase 7 completes this README (it is still a skeleton).
 
 ## Requirements
 

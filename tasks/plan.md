@@ -48,9 +48,9 @@ shared atoms (Skeleton, ChangeBadge, StateMessage)
 
 ### Slice 3: watchlist
 
-- [ ] Task 7: watchlist data hooks with optimistic add and remove, rollback
-- [ ] Task 8: `WatchlistToggle` (real button, `aria-pressed`), watchlist view, composition into list and detail
-- [ ] Task 9: real-browser verification (RTL, dark, live ticks, offline, mobile), whole-repo gates, ADR, README and plan updates
+- [x] Task 7: watchlist data hooks with optimistic add and remove, rollback
+- [x] Task 8: `WatchlistToggle` (real button, `aria-pressed`), watchlist view, composition into list and detail
+- [x] Task 9: real-browser verification (RTL, dark, live ticks, offline, mobile), whole-repo gates, ADR, README and plan updates
 
 ## Acceptance criteria (phase level)
 

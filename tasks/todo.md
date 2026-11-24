@@ -10,6 +10,6 @@ Details and acceptance criteria: `tasks/plan.md`.
 - [x] Task 5: chart, period switcher, history
 - [x] Task 6: routes, titles, attribution
 - [x] Checkpoint: detail works against the real server
-- [ ] Task 7: watchlist data hooks, optimistic updates
-- [ ] Task 8: star toggle, watchlist view, composition
-- [ ] Task 9: browser verification, gates, docs
+- [x] Task 7: watchlist data hooks, optimistic updates
+- [x] Task 8: star toggle, watchlist view, composition
+- [x] Task 9: browser verification, gates, docs
