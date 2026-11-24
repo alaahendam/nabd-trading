@@ -40,3 +40,16 @@ wraps the tree in an i18next instance. Queries are by role and accessible name, 
 | APP-13 | Lazy page loading             | navigate to a lazy page                  | a status with the loading text shows, then the page                    | component |
 | APP-14 | Document title                | navigate between pages                   | `document.title` follows the page and the language                     | component |
 | APP-15 | App composition               | render `App` with fakes                  | the stocks page renders inside the shell                               | component |
+
+## Phase 5 atoms
+
+| ID    | Behavior                                | Input                                                                        | Expected                                                                                             | Level     |
+| ----- | --------------------------------------- | ---------------------------------------------------------------------------- | ---------------------------------------------------------------------------------------------------- | --------- |
+| UI-11 | Skeleton is decorative                  | `<Skeleton className="x" />`                                                 | hidden from assistive technology, keeps the caller class                                             | component |
+| UI-12 | ChangeBadge up                          | change 1.5, percent 0.85                                                     | text `+$1.50 (+0.85%)`, an up arrow, and "Up" for screen readers                                     | component |
+| UI-13 | ChangeBadge down                        | change -2, percent -1.2                                                      | text `-$2.00 (-1.20%)`, a down arrow, and "Down" for screen readers                                  | component |
+| UI-14 | ChangeBadge flat                        | change 0, percent 0; and 0.004 (rounds to zero)                              | text `$0.00 (0.00%)`, a dash, and "Unchanged"                                                        | component |
+| UI-15 | ChangeBadge never relies on color alone | each direction                                                               | the arrow is `aria-hidden`; the sign or word carries the meaning; each direction has own classes     | component |
+| UI-16 | ChangeBadge tolerates bad numbers       | `NaN`                                                                        | dashes, "Unchanged", no throw                                                                        | component |
+| UI-17 | ChangeBadge speaks Arabic               | `ar`, up and down                                                            | the Arabic words for up and down, figures still Latin                                                | component |
+| UI-18 | StateMessage empty and error            | `tone="empty"`; `tone="error"`; with and without an action and a description | empty is a `status`, error is an `alert`; title always shown; description and action only when given | component |

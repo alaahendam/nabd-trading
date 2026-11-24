@@ -39,6 +39,7 @@ const en = {
   },
   pages: { stocks: 'Stocks', watchlist: 'Watchlist', stock: 'Stock details' },
   loading: { page: 'Loading…' },
+  change: { up: 'Up', down: 'Down', flat: 'Unchanged' },
   count: { stocks_one: '{{count}} stock', stocks_other: '{{count}} stocks' },
 } as const;
 
@@ -79,6 +80,7 @@ const ar: Tree = {
   },
   pages: { stocks: 'الأسهم', watchlist: 'قائمة المراقبة', stock: 'تفاصيل السهم' },
   loading: { page: 'جارٍ التحميل…' },
+  change: { up: 'ارتفاع', down: 'انخفاض', flat: 'دون تغيير' },
   count: {
     stocks_zero: 'لا أسهم',
     stocks_one: 'سهم واحد',
