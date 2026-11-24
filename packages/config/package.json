@@ -10,7 +10,8 @@
     "./tsconfig/react.json": "./tsconfig/react.json",
     "./tsconfig/node.json": "./tsconfig/node.json",
     "./prettier": "./prettier/index.js",
-    "./eslint/base": "./eslint/base.js"
+    "./eslint/base": "./eslint/base.js",
+    "./eslint/react": "./eslint/react.js"
   },
   "dependencies": {
     "@eslint/js": "^9.39.5",
