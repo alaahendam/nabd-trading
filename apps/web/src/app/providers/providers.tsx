@@ -1,10 +1,10 @@
 import { QueryClientProvider } from '@tanstack/react-query';
 import type { ReactNode } from 'react';
 
-import { RealtimeProvider } from '../features/market-data';
-import { ApiProvider } from '../lib/api';
-import { I18nProvider } from '../lib/i18n/i18n-provider';
-import { ThemeProvider } from '../lib/theme/theme-hooks';
+import { RealtimeProvider } from '../../features/market-data';
+import { ApiProvider } from '../../lib/api';
+import { I18nProvider } from '../../lib/i18n/i18n-provider';
+import { ThemeProvider } from '../../lib/theme/theme-hooks';
 import type { AppServices } from './services';
 
 export function Providers({ services, children }: { services: AppServices; children: ReactNode }) {

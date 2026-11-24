@@ -7,12 +7,13 @@ import globals from 'globals';
 import { webArchitecture } from './architecture.js';
 import { base } from './base.js';
 import { designSystem } from './design-system.js';
+import { fileNaming } from './file-naming.js';
 import { i18n } from './i18n.js';
 
 /**
  * Config for React + Vite workspaces (`apps/web`).
  */
-export const reactConfig = defineConfig(base, webArchitecture, designSystem, i18n, {
+export const reactConfig = defineConfig(base, webArchitecture, designSystem, i18n, fileNaming, {
   files: ['**/*.{ts,tsx}'],
   languageOptions: { globals: globals.browser },
   settings: { react: { version: 'detect' } },

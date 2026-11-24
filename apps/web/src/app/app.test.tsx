@@ -3,8 +3,8 @@ import { createMemoryRouter } from 'react-router';
 import { describe, expect, it } from 'vitest';
 
 import { createTestServices } from '../test/app-services';
-import { App } from './App';
-import { createAppRoutes } from './routes';
+import { App } from './app';
+import { createAppRoutes } from './routes/routes';
 
 describe('App', () => {
   it('APP-15 renders the stock list inside the shell, with a main landmark', async () => {

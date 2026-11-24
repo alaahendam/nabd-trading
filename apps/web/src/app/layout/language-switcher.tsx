@@ -1,8 +1,8 @@
 import { useTranslation } from 'react-i18next';
 
-import { useLanguage } from '../lib/i18n/i18n-provider';
-import { LANGUAGE_NAMES, LANGUAGES } from '../lib/i18n/language';
-import { Button } from '../shared/ui';
+import { useLanguage } from '../../lib/i18n/i18n-provider';
+import { LANGUAGE_NAMES, LANGUAGES } from '../../lib/i18n/language';
+import { Button } from '../../shared/ui';
 
 /** Each language is named in itself, so a reader can always find theirs. */
 export function LanguageSwitcher() {

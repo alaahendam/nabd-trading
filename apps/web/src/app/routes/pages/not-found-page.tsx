@@ -1,7 +1,7 @@
 import { useTranslation } from 'react-i18next';
 import { Link } from 'react-router';
 
-import { buttonVariants } from '../../shared/ui/button';
+import { buttonVariants } from '../../../shared/ui';
 import { useDocumentTitle } from '../use-document-title';
 
 export function NotFoundPage() {

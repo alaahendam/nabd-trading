@@ -1,4 +1,4 @@
-import type { AppServices } from '../app/services';
+import type { AppServices } from '../app/providers/services';
 import { PriceStore } from '../features/market-data/price-store';
 import { RealtimeClient } from '../features/market-data/realtime-client';
 import { createApi } from '../lib/api/endpoints';

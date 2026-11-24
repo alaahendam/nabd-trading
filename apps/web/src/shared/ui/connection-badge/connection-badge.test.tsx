@@ -1,7 +1,7 @@
 import { screen } from '@testing-library/react';
 import { describe, expect, it } from 'vitest';
 
-import { renderWithI18n } from '../../test/render';
+import { renderWithI18n } from '../../../test/render';
 import { ConnectionBadge } from './connection-badge';
 
 const LABELS = {

@@ -2,7 +2,7 @@ import { screen } from '@testing-library/react';
 import userEvent from '@testing-library/user-event';
 import { afterEach, beforeEach, describe, expect, it, vi } from 'vitest';
 
-import { renderWithI18n } from '../test/render';
+import { renderWithI18n } from '../../test/render';
 import { ErrorBoundary, ErrorPage } from './error-boundary';
 
 const fault = { active: true };

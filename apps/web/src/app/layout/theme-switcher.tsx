@@ -1,8 +1,8 @@
 import { useTranslation } from 'react-i18next';
 
-import { THEME_PREFERENCES } from '../lib/theme/theme';
-import { useTheme } from '../lib/theme/theme-hooks';
-import { Button } from '../shared/ui';
+import { THEME_PREFERENCES } from '../../lib/theme/theme';
+import { useTheme } from '../../lib/theme/theme-hooks';
+import { Button } from '../../shared/ui';
 
 export function ThemeSwitcher() {
   const { t } = useTranslation();

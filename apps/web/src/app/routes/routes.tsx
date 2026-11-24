@@ -1,11 +1,11 @@
 import type { ErrorInfo } from 'react';
 import { Navigate, type RouteObject } from 'react-router';
 
+import { Shell } from '../layout/shell';
 import { NotFoundPage } from './pages/not-found-page';
 import { StockPage } from './pages/stock-page';
 import { StocksPage } from './pages/stocks-page';
 import { WatchlistPage } from './pages/watchlist-page';
-import { Shell } from './shell';
 
 export function createAppRoutes({
   onError,

@@ -4,9 +4,9 @@ import { StrictMode } from 'react';
 import { createRoot } from 'react-dom/client';
 import { createBrowserRouter } from 'react-router';
 
-import { App } from './app/App';
-import { createAppRoutes } from './app/routes';
-import { createServices } from './app/services';
+import { App } from './app/app';
+import { createServices } from './app/providers/services';
+import { createAppRoutes } from './app/routes/routes';
 import { env } from './lib/env';
 
 const container = document.getElementById('root');

@@ -30,6 +30,7 @@ Nabd is an independent project, not affiliated with or a copy of any real produc
 - Live prices live in an external store read with `useSyncExternalStore` and per-symbol selectors. They do not go through TanStack Query. One socket for the whole app, ref-counted subscriptions, updates batched per animation frame.
 - Server modules talk to each other only through exported providers. Contracts come from `@nabd/shared`.
 - No Redux. Server state is TanStack Query, live prices are the external store.
+- Web files and folders are kebab-case, with no exceptions (`stock-row.tsx`, `price-store.ts`); a middle extension such as `.test` is fine. Tests sit next to the file they cover. A shared UI component gets its own folder with its test and an `index.ts`. Hooks live with their domain, not in a global `hooks/` folder. `app/` is grouped by role: `layout/`, `providers/`, `routes/`.
 
 ## Design system rules
 

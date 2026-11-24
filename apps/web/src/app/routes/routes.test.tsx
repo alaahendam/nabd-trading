@@ -5,10 +5,10 @@ import { createMemoryRouter } from 'react-router';
 import { RouterProvider } from 'react-router/dom';
 import { afterEach, beforeEach, describe, expect, it, vi } from 'vitest';
 
-import { createTestServices } from '../test/app-services';
-import { Providers } from './providers';
+import { createTestServices } from '../../test/app-services';
+import { Shell } from '../layout/shell';
+import { Providers } from '../providers/providers';
 import { createAppRoutes } from './routes';
-import { Shell } from './shell';
 
 const mount = (
   path = '/stocks',
