@@ -63,3 +63,11 @@ export function changeDirection(value: number): ChangeDirection {
   }
   return rounded < 0 ? 'down' : 'flat';
 }
+
+/**
+ * A percentage without its sign, for a sentence that says "up" or "down" in words (a text
+ * alternative read aloud). `value` is already a percentage: 2.46 means 2.46%.
+ */
+export function formatPercentMagnitude(value: number): string {
+  return Number.isFinite(value) ? `${decimal.format(Math.abs(toCents(value)))}%` : DASH;
+}

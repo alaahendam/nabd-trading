@@ -316,6 +316,94 @@ describe('StockChart language', () => {
   });
 });
 
+describe('the chart text alternative', () => {
+  const candle = (open: number, high: number, low: number, close: number) => ({
+    time: LAST_POINT_MS,
+    open,
+    high,
+    low,
+    close,
+    volume: 1,
+  });
+
+  const renderWith = (points: HistoryData['points'], language?: 'en' | 'ar') => {
+    const harness = createFeatureHarness(language === undefined ? {} : { language });
+    harness.api.getHistory.mockImplementation((symbol, range) =>
+      Promise.resolve({ ...historyFor(symbol, range), points }),
+    );
+    render(<StockChart symbol="AAPL" />, { wrapper: harness.Wrapper });
+    return harness;
+  };
+
+  it('CHT-22 describes the chart: period, start, end, change, high and low', async () => {
+    renderChart();
+    await settle();
+    expect(screen.getByRole('figure')).toHaveAccessibleDescription(
+      'Past day: from $228.00 to $231.00, up 1.32%. High $232.00, low $227.00.',
+    );
+  });
+
+  it('CHT-23 follows the period', async () => {
+    renderChart();
+    await settle();
+
+    await userEvent.click(screen.getByRole('button', { name: '1W, Past week' }));
+    await act(async () => {
+      await Promise.resolve();
+    });
+
+    expect(screen.getByRole('figure')).toHaveAccessibleDescription(/^Past week: from \$228\.00/);
+  });
+
+  it('CHT-24 says down, and unchanged, in words', async () => {
+    renderWith([candle(200, 205, 150, 150)]);
+    await screen.findByRole('figure');
+    expect(await screen.findByText(/down 25\.00%/)).toBeInTheDocument();
+    expect(screen.getByRole('figure')).toHaveAccessibleDescription(
+      'Past day: from $200.00 to $150.00, down 25.00%. High $205.00, low $150.00.',
+    );
+  });
+
+  it('CHT-25 says unchanged when the move rounds to nothing', async () => {
+    renderWith([candle(200, 200.5, 199.5, 200.001)]);
+    expect(await screen.findByText(/unchanged/)).toBeInTheDocument();
+  });
+
+  it('CHT-26 is in Arabic in the Arabic app, with Latin digits', async () => {
+    renderWith(aaplHistory.points, 'ar');
+    expect(await screen.findByText(/ارتفاع 1\.32%/)).toBeInTheDocument();
+    expect(screen.getByRole('figure')).toHaveAccessibleDescription(
+      'اليوم الماضي: من $228.00 إلى $231.00، ارتفاع 1.32%. الأعلى $232.00، الأدنى $227.00.',
+    );
+  });
+
+  it('CHT-27 names a custom range by its dates', async () => {
+    renderChart();
+    await settle();
+    await userEvent.click(screen.getByRole('button', { name: 'Custom' }));
+    await userEvent.click(screen.getByRole('button', { name: 'Apply' }));
+    await act(async () => {
+      await Promise.resolve();
+    });
+
+    expect(screen.getByRole('figure')).toHaveAccessibleDescription(
+      /^\d{4}-\d{2}-\d{2} – \d{4}-\d{2}-\d{2}: from \$228\.00/,
+    );
+  });
+
+  it('CHT-28 has no description while there is nothing to describe', async () => {
+    const harness = createFeatureHarness();
+    harness.api.getHistory.mockReturnValue(new Promise(() => undefined));
+    render(<StockChart symbol="AAPL" />, { wrapper: harness.Wrapper });
+    expect(screen.getByRole('figure')).not.toHaveAttribute('aria-describedby');
+
+    const empty = renderWith([]);
+    expect(empty.chart.loader).toBeDefined();
+    expect(await screen.findByText('No chart data for this period')).toBeInTheDocument();
+    expect(screen.getAllByRole('figure')[1]).not.toHaveAttribute('aria-describedby');
+  });
+});
+
 describe('useChartLoader', () => {
   it('CHT-16 needs its provider', () => {
     const spy = vi.spyOn(console, 'error').mockImplementation(() => undefined);

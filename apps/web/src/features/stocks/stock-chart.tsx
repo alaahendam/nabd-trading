@@ -1,7 +1,8 @@
 import { DEFAULT_PERIOD } from '@nabd/shared';
-import { useEffect, useRef, useState } from 'react';
+import { useEffect, useId, useRef, useState } from 'react';
 import { useTranslation } from 'react-i18next';
 
+import { changeDirection, formatPercentMagnitude, formatPrice } from '../../lib/format/format';
 import { useTheme } from '../../lib/theme/theme-hooks';
 import { Button, Skeleton, StateMessage } from '../../shared/ui';
 import { useLivePrice } from '../market-data';
@@ -10,6 +11,7 @@ import { readChartColors } from './chart-colors';
 import { useChartLoader } from './chart-context';
 import { chartLocale } from './chart-locale';
 import type { Candle, ChartPort } from './chart-port';
+import { summarizeHistory } from './chart-summary';
 import { type ChartRange, describeCustomRange, toHistoryRange } from './custom-range';
 import { RangeSwitcher } from './range-switcher';
 import { useHistory } from './stock-queries';
@@ -103,6 +105,24 @@ export function StockChart({ symbol }: { symbol: string }) {
   const rangeName =
     range.kind === 'period' ? t(`chart.period.${range.period}`) : describeCustomRange(range.range);
 
+  // The numbers behind the picture, for anyone who cannot see it. Read from the loaded history,
+  // so it follows the period and the language and does not change with every live tick.
+  const summaryId = useId();
+  const summary = history.data === undefined ? undefined : summarizeHistory(history.data.points);
+  const summaryText =
+    summary === undefined
+      ? undefined
+      : t('chart.summary.text', {
+          period: rangeName,
+          start: formatPrice(summary.start),
+          end: formatPrice(summary.end),
+          high: formatPrice(summary.high),
+          low: formatPrice(summary.low),
+          change: t(`chart.summary.${changeDirection(summary.changePercent)}`, {
+            value: formatPercentMagnitude(summary.changePercent),
+          }),
+        });
+
   const retry = (action: () => void) => <Button onClick={action}>{t('errors.retry')}</Button>;
 
   let overlay = null;
@@ -146,8 +166,14 @@ export function StockChart({ symbol }: { symbol: string }) {
           role="figure"
           dir="ltr"
           aria-label={t('chart.label', { symbol, period: rangeName })}
+          aria-describedby={summaryText === undefined ? undefined : summaryId}
           className="block-80 inline-full"
         />
+        {summaryText === undefined ? null : (
+          <p id={summaryId} className="sr-only">
+            {summaryText}
+          </p>
+        )}
         {overlay === null ? null : (
           <div className="absolute inset-0 bg-surface-raised">{overlay}</div>
         )}

@@ -1,6 +1,13 @@
 import { describe, expect, it } from 'vitest';
 
-import { changeDirection, formatChange, formatPercent, formatPrice, formatVolume } from './format';
+import {
+  changeDirection,
+  formatChange,
+  formatPercent,
+  formatPercentMagnitude,
+  formatPrice,
+  formatVolume,
+} from './format';
 
 describe('formatPrice', () => {
   it.each([
@@ -98,5 +105,17 @@ describe('digits', () => {
         expect(text).toMatch(allowed);
       }
     }
+  });
+});
+
+describe('formatPercentMagnitude', () => {
+  it.each([
+    [2.456, '2.46%'],
+    [-2.456, '2.46%'],
+    [0, '0.00%'],
+    [-0.004, '0.00%'],
+    [Number.NaN, '—'],
+  ])('FMT-08 formats %f as %s, with no sign', (value, expected) => {
+    expect(formatPercentMagnitude(value)).toBe(expected);
   });
 });

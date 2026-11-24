@@ -96,6 +96,12 @@ const en = {
       },
     },
     label: '{{symbol}} price chart: {{period}}',
+    summary: {
+      text: '{{period}}: from {{start}} to {{end}}, {{change}}. High {{high}}, low {{low}}.',
+      up: 'up {{value}}',
+      down: 'down {{value}}',
+      flat: 'unchanged',
+    },
     period: {
       label: 'Chart period',
       '1D': 'Past day',
@@ -202,6 +208,12 @@ const ar: Tree = {
       },
     },
     label: '{{symbol}}: رسم بياني للسعر، {{period}}',
+    summary: {
+      text: '{{period}}: من {{start}} إلى {{end}}، {{change}}. الأعلى {{high}}، الأدنى {{low}}.',
+      up: 'ارتفاع {{value}}',
+      down: 'انخفاض {{value}}',
+      flat: 'دون تغيير',
+    },
     period: {
       label: 'فترة الرسم البياني',
       '1D': 'اليوم الماضي',

@@ -63,3 +63,22 @@ Times: the API gives milliseconds; the library wants seconds (`UTCTimestamp`), s
 | ADP-07 | The adapter applies a locale          | `applyLocale('ar-u-nu-latn')`         | the chart's localization locale changes, and the one given at creation is used from the start | unit      |
 | CHT-17 | The chart starts in the app language  | mount in English; mount in Arabic     | the loader is given `en-US`; `ar-u-nu-latn`                                                   | component |
 | CHT-18 | A language change reaches the chart   | switch the app from English to Arabic | `applyLocale` is called with `ar-u-nu-latn`, without creating a second chart                  | component |
+
+## Text alternative
+
+The chart is a labelled figure; its description gives the numbers behind the picture. It is read from the loaded history (not from live ticks), so it is still while prices move, and it follows the period and the language.
+
+| ID     | Behavior                                  | Input                                             | Expected                                                                              | Level     |
+| ------ | ----------------------------------------- | ------------------------------------------------- | ------------------------------------------------------------------------------------- | --------- |
+| SUM-01 | Nothing to say about no candles           | `[]`                                              | no summary                                                                            | unit      |
+| SUM-02 | Start and end                             | two candles                                       | the first open and the last close                                                     | unit      |
+| SUM-03 | High and low                              | three candles with the extremes in the middle one | the highest high and the lowest low of all candles                                    | unit      |
+| SUM-04 | Change                                    | open 200, close 205; open 200, close 150          | `+2.5`, `-25` (percent)                                                               | unit      |
+| SUM-05 | No division by zero                       | open 0                                            | `0`                                                                                   | unit      |
+| CHT-22 | The chart is described                    | the default period                                | description: period, from, to, up 1.32%, high, low                                    | component |
+| CHT-23 | The description follows the period        | switch to 1W                                      | it starts with "Past week"                                                            | component |
+| CHT-24 | Down is said in words                     | a candle that falls 25%                           | "down 25.00%", with no minus sign                                                     | component |
+| CHT-25 | Unchanged is said in words                | a move that rounds to nothing                     | "unchanged"                                                                           | component |
+| CHT-26 | Arabic, with Latin digits                 | the Arabic app                                    | `اليوم الماضي: من $228.00 إلى $231.00، ارتفاع 1.32%. الأعلى $232.00، الأدنى $227.00.` | component |
+| CHT-27 | A custom range is named by its dates      | apply the default custom range                    | the description starts with the two dates                                             | component |
+| CHT-28 | No description while there is nothing yet | loading; an empty history                         | no `aria-describedby`                                                                 | component |

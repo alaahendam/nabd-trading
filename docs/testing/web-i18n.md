@@ -50,6 +50,7 @@ Modules: `apps/web/src/lib/i18n` (`language.ts`, `resources.ts`, `i18n.ts`, `lan
 | FMT-05 | Direction               | `1`, `-1`, `0`, `0.004`, `-0.004`, `0.005`              | `up`, `down`, `flat`, `flat`, `flat`, `up` (the same rounding the text uses)                             | unit  |
 | FMT-06 | Non-finite input        | `NaN`, `Infinity`, `-Infinity` in each formatter        | an em dash                                                                                               | unit  |
 | FMT-07 | Digits are always Latin | each formatter over a range of values                   | output has only characters from ASCII digits, `.`, `,`, `$`, `+`, `-`, `%`, letters `KMB`, or an em dash | unit  |
+| FMT-08 | Percent without a sign  | `2.456`, `-2.456`, `0`, `-0.004`, `NaN`                 | `2.46%`, `2.46%`, `0.00%`, `0.00%`, an em dash (for a sentence that says up or down in words)            | unit  |
 
 ## Coverage target
 
