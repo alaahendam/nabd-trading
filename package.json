@@ -20,7 +20,8 @@
     "format:check": "prettier --check .",
     "lint:css": "stylelint --allow-empty-input \"**/*.css\"",
     "prepare": "husky",
-    "lint:root": "eslint --max-warnings 0 ."
+    "lint:root": "eslint --max-warnings 0 .",
+    "test:e2e": "turbo run test:e2e"
   },
   "devDependencies": {
     "@commitlint/cli": "^21.2.4",
