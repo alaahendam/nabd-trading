@@ -9,6 +9,8 @@ export const envSchema = z.object({
   SIM_VOLATILITY_SCALE: z.coerce.number().positive().default(3),
   SIM_STEP_MS: z.coerce.number().int().min(10).max(5000).default(100),
   TICK_FLUSH_MS: z.coerce.number().int().min(10).max(5000).default(250),
+  CHAOS_LATENCY_MS: z.coerce.number().int().min(0).max(10_000).default(0),
+  CHAOS_ERROR_RATE: z.coerce.number().min(0).max(1).default(0),
 });
 
 export type Env = z.infer<typeof envSchema>;

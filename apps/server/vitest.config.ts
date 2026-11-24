@@ -17,6 +17,12 @@ export default defineConfig({
         functions: 90,
         lines: 90,
         'src/modules/market/rng.ts': { statements: 100, branches: 100, functions: 100, lines: 100 },
+        'src/modules/chaos/chaos.interceptor.ts': {
+          statements: 100,
+          branches: 100,
+          functions: 100,
+          lines: 100,
+        },
         'src/modules/realtime/tick-batcher.ts': {
           statements: 100,
           branches: 100,

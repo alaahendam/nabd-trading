@@ -17,6 +17,8 @@ describe('envSchema', () => {
       SIM_VOLATILITY_SCALE: 3,
       SIM_STEP_MS: 100,
       TICK_FLUSH_MS: 250,
+      CHAOS_LATENCY_MS: 0,
+      CHAOS_ERROR_RATE: 0,
     });
   });
 
@@ -29,6 +31,8 @@ describe('envSchema', () => {
       SIM_VOLATILITY_SCALE: 2.5,
       SIM_STEP_MS: 250,
       TICK_FLUSH_MS: 500,
+      CHAOS_LATENCY_MS: 250,
+      CHAOS_ERROR_RATE: 0.5,
     };
     expect(envSchema.parse(input)).toEqual(input);
   });
@@ -78,6 +82,22 @@ describe('realtime env', () => {
     expect(envSchema.parse({ TICK_FLUSH_MS: '500' }).TICK_FLUSH_MS).toBe(500);
     for (const bad of ['9', '5001', '1.5']) {
       expect(issuePaths({ TICK_FLUSH_MS: bad })).toEqual(['TICK_FLUSH_MS']);
+    }
+  });
+});
+
+describe('chaos env', () => {
+  it('CHS-09 defaults both flags to off and validates their ranges', () => {
+    expect(envSchema.parse({})).toMatchObject({ CHAOS_LATENCY_MS: 0, CHAOS_ERROR_RATE: 0 });
+    expect(envSchema.parse({ CHAOS_LATENCY_MS: '250', CHAOS_ERROR_RATE: '0.5' })).toMatchObject({
+      CHAOS_LATENCY_MS: 250,
+      CHAOS_ERROR_RATE: 0.5,
+    });
+    for (const bad of ['-1', '10001', '1.5', 'abc']) {
+      expect(issuePaths({ CHAOS_LATENCY_MS: bad })).toEqual(['CHAOS_LATENCY_MS']);
+    }
+    for (const bad of ['-0.1', '1.1', 'abc']) {
+      expect(issuePaths({ CHAOS_ERROR_RATE: bad })).toEqual(['CHAOS_ERROR_RATE']);
     }
   });
 });
