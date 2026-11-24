@@ -14,7 +14,8 @@
     "./eslint/react": "./eslint/react.js",
     "./eslint/architecture": "./eslint/architecture.js",
     "./eslint/design-system": "./eslint/design-system.js",
-    "./eslint/i18n": "./eslint/i18n.js"
+    "./eslint/i18n": "./eslint/i18n.js",
+    "./eslint/node": "./eslint/node.js"
   },
   "dependencies": {
     "@eslint/js": "^9.39.5",
