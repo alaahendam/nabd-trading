@@ -4,12 +4,13 @@ import react from 'eslint-plugin-react';
 import reactHooks from 'eslint-plugin-react-hooks';
 import globals from 'globals';
 
+import { webArchitecture } from './architecture.js';
 import { base } from './base.js';
 
 /**
  * Config for React + Vite workspaces (`apps/web`).
  */
-export const reactConfig = defineConfig(base, {
+export const reactConfig = defineConfig(base, webArchitecture, {
   files: ['**/*.{ts,tsx}'],
   languageOptions: { globals: globals.browser },
   settings: { react: { version: 'detect' } },
