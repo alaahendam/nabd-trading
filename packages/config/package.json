@@ -8,6 +8,11 @@
   "exports": {
     "./tsconfig/base.json": "./tsconfig/base.json",
     "./tsconfig/react.json": "./tsconfig/react.json",
-    "./tsconfig/node.json": "./tsconfig/node.json"
+    "./tsconfig/node.json": "./tsconfig/node.json",
+    "./prettier": "./prettier/index.js"
+  },
+  "dependencies": {
+    "prettier": "^3.10.1",
+    "prettier-plugin-tailwindcss": "^0.8.1"
   }
 }

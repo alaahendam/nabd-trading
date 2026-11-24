@@ -7,6 +7,7 @@ Live markets, simulated. A small trading app: live stock list over WebSockets, s
 **Status:** Phase 0, repository setup. This README is a skeleton and is completed in the final documentation phase.
 
 ## Planned sections
+
 - Run it (requirements, install, dev, test)
 - Architecture (diagram)
 - Decisions and trade-offs (see `docs/decisions/`)

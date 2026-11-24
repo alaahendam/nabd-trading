@@ -18,6 +18,7 @@ Your task is **Phase 0 only: repository and workspace setup, with no application
 8. Make the root `README.md` skeleton accurate and add the root scripts (`dev`, `build`, `lint`, `typecheck`, `test`, `format`, `format:check`).
 
 Gate before you stop:
+
 - `pnpm install`, `pnpm lint`, `pnpm typecheck`, `pnpm format:check` all pass on the empty workspace.
 - Prove the enforcement works: create temporary throwaway files that violate, one at a time, a formatting rule, a hex color literal, an arbitrary Tailwind value, a physical-direction class (`ml-4`), a literal string in JSX, a cross-feature import, and a bad commit message. Show that each one is rejected, then delete the throwaway files. If a rule cannot be demonstrated yet because its target code does not exist, say so explicitly and list it so it is re-checked in Phase 1.
 - Commit as you go, one logical unit per commit (for example: workspace and Turborepo, TypeScript bases, Prettier, ESLint base, each ESLint rule group, Stylelint, husky and lint-staged, commitlint, CI workflow, `.vscode`, `.claude` and AI docs, README). Stage files explicitly, never batch the phase into one commit, and make sure each commit leaves the repo passing. Then stop and give me a short report: what was set up, what was verified, what is deferred to Phase 1. Do not start Phase 1.
