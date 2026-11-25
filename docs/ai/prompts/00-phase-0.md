@@ -1,6 +1,8 @@
 # Phase 0 prompt
 
-Paste this as the first message to Claude Code, started inside this repo.
+> **Original, not adapted.** This file came in with the baseline commit (`d216cbc`), before any code, together with `CLAUDE.md` and `docs/PLAN.md`. The transcript of the Claude Code session shows the message "go to the repo and implement phase 0"; whether this longer text was pasted as written is TODO(confirm).
+
+It was meant to be pasted as the first message to Claude Code, started inside this repo.
 
 ---
 
