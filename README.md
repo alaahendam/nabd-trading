@@ -33,16 +33,17 @@ To run the browser tests once: `pnpm --filter @nabd/web exec playwright install 
 
 Run from the repository root; Turborepo runs each across the workspaces.
 
-| Script                                | What it does                                                               |
-| ------------------------------------- | -------------------------------------------------------------------------- |
-| `pnpm dev`                            | Web (Vite) and API (Nest, watch mode) together                             |
-| `pnpm build`                          | Build every workspace (the shared package first)                           |
-| `pnpm lint`                           | ESLint in each workspace and at the root, plus Stylelint for CSS           |
-| `pnpm typecheck`                      | TypeScript in each workspace                                               |
-| `pnpm test`                           | Vitest with coverage thresholds in each workspace                          |
-| `pnpm test:e2e`                       | Playwright against the real built server and web app (ports 3300 and 4273) |
-| `pnpm format` / `pnpm format:check`   | Prettier write / check                                                     |
-| `pnpm --filter @nabd/web screenshots` | Regenerate the README screenshots into `docs/screenshots`                  |
+| Script                                    | What it does                                                                     |
+| ----------------------------------------- | -------------------------------------------------------------------------------- |
+| `pnpm dev`                                | Web (Vite) and API (Nest, watch mode) together                                   |
+| `pnpm build`                              | Build every workspace (the shared package first)                                 |
+| `pnpm lint`                               | ESLint in each workspace and at the root, plus Stylelint for CSS                 |
+| `pnpm typecheck`                          | TypeScript in each workspace                                                     |
+| `pnpm test`                               | Vitest with coverage thresholds in each workspace                                |
+| `pnpm test:e2e`                           | Playwright against the real built server and web app (ports 3300 and 4273)       |
+| `pnpm format` / `pnpm format:check`       | Prettier write / check                                                           |
+| `pnpm --filter @nabd/web screenshots`     | Regenerate the README screenshots into `docs/screenshots`                        |
+| `pnpm --filter @nabd/tokens run generate` | Rewrite the web `tokens.css` from the typed tokens (a test fails if it is stale) |
 
 ## Architecture
 
@@ -51,7 +52,7 @@ flowchart LR
   subgraph Browser["apps/web (React 19, Vite, Tailwind v4)"]
     UI["features: stocks, watchlist"]
     Q["TanStack Query<br/>(REST data, optimistic watchlist)"]
-    RT["features/market-data<br/>RealtimeClient + PriceStore<br/>(one socket, per-frame batching)"]
+    RT["@nabd/market-data<br/>RealtimeClient + PriceStore<br/>(one socket, per-frame batching)"]
     CH["Chart port<br/>(Lightweight Charts, lazy chunk)"]
     UI --> Q
     UI --> RT
@@ -87,11 +88,11 @@ The web app and the server share code only through `packages/shared`: every requ
 ```
 apps/web                 React app (Vite, Tailwind v4, TanStack Query, React Router, i18next)
   src/app                  layout (shell, header, footer), providers, routes and pages
-  src/features             stocks (list, detail, chart), watchlist, market-data (the only socket code)
-  src/lib                  api client, formatters, i18n, query client, theme
+  src/features             stocks (list, detail, chart), watchlist
+  src/lib                  the browser parts: connectivity, client ID, language store, theme
   src/shared/ui            small shared components, one folder each with its test
   src/styles               design tokens (the only file with color literals) and base styles
-  src/test                 test harness: fake socket, fake API, fake chart, MSW handlers
+  src/test                 test harness: providers around the shared fakes, the fake chart
   e2e                      Playwright specs (main flow, states, accessibility, keyboard, Arabic)
   screenshots              the script that generates docs/screenshots
 apps/server              NestJS API and Socket.IO gateway
@@ -103,6 +104,13 @@ apps/server              NestJS API and Socket.IO gateway
   src/modules/chaos        optional injected latency and 503s for testing error states
   src/modules/health       liveness
 packages/shared          Zod contracts, routes, error codes, socket events (compiled ESM)
+packages/api-client      the HTTP client and endpoints, with every response validated (shared with mobile)
+packages/domain          candle math, the chart summary, custom range validation (pure)
+packages/market-data     the price store, the realtime client over Socket.IO, staleness, React bindings
+packages/data            query keys, stock, history and watchlist hooks, optimistic updates
+packages/i18n            English and Arabic resources, language rules, formatters
+packages/tokens          design tokens as typed values, and the generator of the web tokens.css
+packages/testing         recorders, fakes, fixtures and mock API handlers for Vitest and Jest
 packages/config          shared tsconfig, ESLint, Prettier and Stylelint configs
 docs/                    PLAN.md, decisions (ADRs), testing (test matrices), ai, screenshots, deployment
 tasks/                   the plan and task list of the latest phase
@@ -136,7 +144,7 @@ Each is a short ADR with the alternatives that were rejected. The index is [`doc
 - **Matrices first.** Every module has a test matrix in [`docs/testing`](docs/testing) written before its code; test names carry the row IDs (`LST-07`, `CHT-18`).
 - **Coverage thresholds** are enforced in each Vitest config and never lowered: 90% overall, **100% on domain logic** (the simulator and history generator, the watchlist service, the price store and realtime client, the formatters, the API client). Bootstrap files are excluded explicitly with a reason.
 - **Tests must be able to fail.** New checks were run against a deliberately broken version first (a removed focus ring, a mis-aligned value, a plain `span` instead of `bdi`); see [`docs/ai/lessons.md`](docs/ai/lessons.md).
-- Counts at the last full run, made on a fresh clone: **1,051 unit and component tests** (170 contracts, 307 server, 574 web) and **38 browser tests**.
+- Counts at the last full run, made on a fresh clone: **1,096 unit and component tests** (170 contracts, 307 server, 255 web, and 364 in the shared packages) and **38 browser tests**.
 
 ## Quality gates
 
@@ -147,7 +155,7 @@ Rules live in tooling, so a change that breaks them is rejected instead of argue
 | Prettier                  | Style discussions; also sorts Tailwind classes                                                                                                                         |
 | TypeScript                | Loose types: `strict`, `noUncheckedIndexedAccess`, `exactOptionalPropertyTypes`, `noImplicitReturns`                                                                   |
 | ESLint boundaries         | Web imports run `app → features → shared/lib` only; a feature never reaches into another's internals; server modules talk only through exported providers              |
-| ESLint restricted imports | `socket.io-client` only in `features/market-data`, `fetch` only in `lib/api`, `lightweight-charts` only in the chart adapter                                           |
+| ESLint restricted imports | `socket.io-client` only in `@nabd/market-data`, `fetch` only in `@nabd/api-client`, `lightweight-charts` only in the chart adapter                                     |
 | ESLint design system      | No unknown Tailwind classes, no arbitrary values, no color literals, **logical properties only** (`ms-`, `pe-`, `start-`; never `ml-`, `left-`), so RTL cannot regress |
 | ESLint i18n               | Literal user-facing strings in JSX                                                                                                                                     |
 | ESLint a11y and React     | `jsx-a11y`, hooks rules, `button-has-type`, leaked renders                                                                                                             |

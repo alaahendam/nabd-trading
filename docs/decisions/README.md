@@ -14,6 +14,7 @@ Decisions that would surprise a newcomer, each with the constraint that forced i
 | [0008](0008-paged-stock-list-and-custom-history-range.md)   | A paged stock list and a custom history range                              | accepted |
 | [0009](0009-route-splitting-measured-and-not-kept.md)       | Route splitting was measured and not kept; vendor chunks instead           | accepted |
 | [0010](0010-pin-react-to-the-expo-sdk-version.md)           | Pin React to the version the Expo SDK requires                             | accepted |
+| [0011](0011-shared-packages-for-web-and-mobile.md)          | Shared packages for the web and the mobile app                             | accepted |
 
 Statuses are `proposed`, `accepted`, or `superseded by NNNN`. An ADR that stays right but gains later facts has an **Amendments** section (see 0007) instead of being rewritten, so the history of the decision stays readable.
 
