@@ -6,5 +6,6 @@
     "noEmit": true,
     "types": ["node"]
   },
-  "include": ["*.js", "eslint/**/*.js", "prettier/**/*.js", "types.d.ts"]
+  "include": ["*.js", "eslint/**/*.js", "prettier/**/*.js", "types.d.ts"],
+  "exclude": ["eslint/**/*.test.js"]
 }
