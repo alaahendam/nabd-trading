@@ -21,7 +21,7 @@ Part of `docs/MOBILE-PLAN.md` (section 5). Goal: the three features of the web a
 - [x] **T5 Stock detail.** Header, stats, states (loading, not found, error), the star, live price.
 - [x] **T6 Chart spike and ADR.** Three candidates on the same data, measured, decided (ADR 0013).
 - [x] **T7 Chart.** The chosen chart behind a port, the period switcher, its states, the text summary.
-- [ ] **T8 Gates.** Whole-repo gates, CI green on the PR, plan ticked, README limits.
+- [x] **T8 Gates.** Whole-repo gates, CI green on the PR, plan ticked, README limits.
 
 ## Gate
 
