@@ -1,18 +1,21 @@
-import { useTranslation } from 'react-i18next';
+import { useRouter } from 'expo-router';
 
 import { MarketBanner } from '../../src/features/market-data';
-import { Screen, Text } from '../../src/shared/ui';
+import { StockList } from '../../src/features/stocks';
+import { Screen } from '../../src/shared/ui';
 
-/** The stock list. A placeholder until M3. */
+/** The stock list. */
 export default function StocksTab() {
-  const { t } = useTranslation();
+  const router = useRouter();
 
   return (
     <Screen>
       <MarketBanner />
-      <Text variant="title" accessibilityRole="header">
-        {t('nav.stocks')}
-      </Text>
+      <StockList
+        onOpenStock={(symbol) => {
+          router.push({ pathname: '/stock/[symbol]', params: { symbol } });
+        }}
+      />
     </Screen>
   );
 }

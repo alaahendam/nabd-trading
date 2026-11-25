@@ -1,14 +1,36 @@
+import { aapl } from '@nabd/testing';
 import { router } from 'expo-router';
 import { act, renderRouter, screen } from 'expo-router/testing-library';
 
 // The root layout reads this once, when it loads, which is when `renderRouter` first needs it.
 process.env.EXPO_PUBLIC_API_URL = 'https://api.example.com';
 
+/** The server, by address: the stock list and one stock, an empty watchlist, nothing else. */
+function stubServer() {
+  jest.spyOn(globalThis, 'fetch').mockImplementation((input) => {
+    const url = typeof input === 'string' ? input : input instanceof URL ? input.href : input.url;
+    const path = new URL(url).pathname;
+    if (path.endsWith('/stocks/AAPL')) return Promise.resolve(Response.json({ data: aapl }));
+    if (path.endsWith('/stocks')) {
+      return Promise.resolve(Response.json({ data: [aapl], nextCursor: null, total: 1 }));
+    }
+    if (path.endsWith('/watchlist')) return Promise.resolve(Response.json({ data: [] }));
+    return Promise.resolve(
+      Response.json({ error: { code: 'not_found', message: 'Not found' } }, { status: 404 }),
+    );
+  });
+}
+
+beforeEach(stubServer);
+afterEach(() => {
+  jest.restoreAllMocks();
+});
+
 describe('routes', () => {
   it('ROU-01 opens on the stock list', async () => {
     await renderRouter('./app');
 
-    expect(await screen.findByRole('header', { name: 'Stocks' })).toBeOnTheScreen();
+    expect(await screen.findByText('Apple Inc.')).toBeOnTheScreen();
     expect(screen).toHavePathname('/');
   });
 
@@ -27,7 +49,7 @@ describe('routes', () => {
 
   it('ROU-04 opens the stock detail above the tabs, and going back returns to them', async () => {
     await renderRouter('./app');
-    await screen.findByRole('header', { name: 'Stocks' });
+    await screen.findByText('Apple Inc.');
 
     await act(() => {
       router.push({ pathname: '/stock/[symbol]', params: { symbol: 'AAPL' } });

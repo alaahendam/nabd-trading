@@ -20,3 +20,6 @@ jest.mock('expo-crypto', () => {
     },
   };
 });
+
+// FlashList measures its layout on the device; this gives it a fixed phone-sized one.
+jest.requireActual<object>('@shopify/flash-list/jestSetup');

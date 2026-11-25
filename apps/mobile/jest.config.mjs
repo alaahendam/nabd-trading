@@ -11,7 +11,7 @@ export default {
   // React Native or Expo ones. The workspace packages are symlinks to folders outside node_modules,
   // so they are transformed like the app's own code.
   transformIgnorePatterns: [
-    'node_modules/(?!(.pnpm|(jest-)?react-native|@react-native(-community)?|expo(nent)?|@expo(nent)?/.*|@expo-google-fonts/.*|react-navigation|@react-navigation/.*|standard-navigation))',
+    'node_modules/(?!(.pnpm|(jest-)?react-native|@react-native(-community)?|expo(nent)?|@expo(nent)?/.*|@expo-google-fonts/.*|react-navigation|@react-navigation/.*|standard-navigation|@shopify/flash-list))',
   ],
   collectCoverageFrom: [
     'app/**/*.{ts,tsx}',
