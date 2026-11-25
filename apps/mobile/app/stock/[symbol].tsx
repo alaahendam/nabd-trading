@@ -11,7 +11,7 @@ export default function StockScreen() {
   const router = useRouter();
 
   return (
-    <Screen>
+    <Screen edges={['left', 'right', 'bottom']}>
       <MarketBanner />
       <StockDetail
         symbol={symbol}

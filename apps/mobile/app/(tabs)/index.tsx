@@ -9,7 +9,7 @@ export default function StocksTab() {
   const router = useRouter();
 
   return (
-    <Screen>
+    <Screen edges={['left', 'right']}>
       <MarketBanner />
       <StockList
         onOpenStock={(symbol) => {

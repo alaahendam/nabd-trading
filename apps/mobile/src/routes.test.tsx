@@ -75,3 +75,26 @@ describe('routes', () => {
     },
   );
 });
+
+describe('safe areas', () => {
+  it.each([
+    ['/', ['left', 'right']],
+    ['/watchlist', ['left', 'right']],
+    ['/stock/AAPL', ['bottom', 'left', 'right']],
+    ['/nowhere', ['bottom', 'left', 'right', 'top']],
+  ])(
+    'SAF-01 on %s leaves out the edges the header and the tab bar already cover',
+    async (url, edges) => {
+      await renderRouter('./app', { initialUrl: url });
+      await screen.findByTestId('screen');
+
+      const modes = screen.getByTestId('screen').props['edges'] as Record<string, string>;
+      const on = Object.entries(modes)
+        .filter(([, mode]) => mode !== 'off')
+        .map(([edge]) => edge)
+        .sort();
+
+      expect(on).toEqual(edges);
+    },
+  );
+});

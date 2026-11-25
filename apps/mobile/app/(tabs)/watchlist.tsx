@@ -9,7 +9,7 @@ export default function WatchlistTab() {
   const router = useRouter();
 
   return (
-    <Screen>
+    <Screen edges={['left', 'right']}>
       <MarketBanner />
       <WatchlistView
         onOpenStock={(symbol) => {
