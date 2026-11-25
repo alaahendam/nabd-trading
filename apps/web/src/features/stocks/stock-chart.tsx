@@ -1,3 +1,6 @@
+import { applyLivePrice, toCandles, toVolumeBars } from '@nabd/domain';
+import { summarizeHistory } from '@nabd/domain';
+import { type ChartRange, describeCustomRange, toHistoryRange } from '@nabd/domain';
 import { DEFAULT_PERIOD } from '@nabd/shared';
 import { useEffect, useId, useRef, useState } from 'react';
 import { useTranslation } from 'react-i18next';
@@ -6,13 +9,10 @@ import { changeDirection, formatPercentMagnitude, formatPrice } from '../../lib/
 import { useTheme } from '../../lib/theme/theme-hooks';
 import { Button, Skeleton, StateMessage } from '../../shared/ui';
 import { useLivePrice } from '../market-data';
-import { applyLivePrice, toCandles, toVolumeBars } from './candles';
 import { readChartColors } from './chart-colors';
 import { useChartLoader } from './chart-context';
 import { chartLocale } from './chart-locale';
 import type { Candle, ChartPort } from './chart-port';
-import { summarizeHistory } from './chart-summary';
-import { type ChartRange, describeCustomRange, toHistoryRange } from './custom-range';
 import { RangeSwitcher } from './range-switcher';
 import { useHistory } from './stock-queries';
 

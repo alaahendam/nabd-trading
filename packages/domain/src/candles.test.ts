@@ -1,7 +1,7 @@
 import type { HistoryPoint } from '@nabd/shared';
 import { describe, expect, it } from 'vitest';
 
-import { applyLivePrice, toCandles, toVolumeBars } from './candles';
+import { applyLivePrice, toCandles, toVolumeBars } from './candles.js';
 
 const HOUR = 3_600_000;
 

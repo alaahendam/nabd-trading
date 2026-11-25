@@ -1,8 +1,8 @@
 # Chart custom range: test matrix
 
-Scope: `custom-range.ts` (the date rules), the range switcher in `StockChart`, and the live candle on a custom range. Added in the design polish round; the fixed periods are in `web-stock-chart.md`.
+Scope: `custom-range.ts` (the date rules; in `packages/domain/src` since mobile M0, shared with the mobile app), the range switcher in `StockChart`, and the live candle on a custom range. Added in the design polish round; the fixed periods are in `web-stock-chart.md`.
 
-## custom-range.ts
+## custom-range.ts (`@nabd/domain`)
 
 It turns two date inputs (`YYYY-MM-DD`, UTC days) into the range the API takes.
 

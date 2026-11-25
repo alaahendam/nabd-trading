@@ -1,10 +1,10 @@
 # Stock chart: test matrix
 
-Scope: `features/stocks` chart: `candles.ts` (pure math), `chart-colors.ts`, `lightweight-chart-adapter.ts` (glue to the library, tested with the library mocked), `chart-loader.ts`, `chart-context.tsx`, and `StockChart` (with the period switcher). Component tests use a fake `ChartPort`, so no canvas is needed; the real chart is checked in a browser.
+Scope: `features/stocks` chart: `candles.ts` (pure math, now in `packages/domain/src` with `chart-summary.ts` and `custom-range.ts`, shared with the mobile app), `chart-colors.ts`, `lightweight-chart-adapter.ts` (glue to the library, tested with the library mocked), `chart-loader.ts`, `chart-context.tsx`, and `StockChart` (with the period switcher). Component tests use a fake `ChartPort`, so no canvas is needed; the real chart is checked in a browser.
 
 Times: the API gives milliseconds; the library wants seconds (`UTCTimestamp`), so conversion happens in `candles.ts` and nowhere else.
 
-## candles.ts
+## candles.ts (`@nabd/domain`)
 
 | ID     | Behavior                         | Input                                                    | Expected                                                                               | Level |
 | ------ | -------------------------------- | -------------------------------------------------------- | -------------------------------------------------------------------------------------- | ----- |

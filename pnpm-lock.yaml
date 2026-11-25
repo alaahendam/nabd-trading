@@ -307,6 +307,9 @@ importers:
       '@nabd/api-client':
         specifier: workspace:*
         version: link:../../packages/api-client
+      '@nabd/domain':
+        specifier: workspace:*
+        version: link:../../packages/domain
       '@nabd/shared':
         specifier: workspace:*
         version: link:../../packages/shared
@@ -496,6 +499,25 @@ importers:
       typescript:
         specifier: ~6.0.3
         version: 6.0.3
+
+  packages/domain:
+    dependencies:
+      '@nabd/shared':
+        specifier: workspace:*
+        version: link:../shared
+    devDependencies:
+      '@nabd/config':
+        specifier: workspace:*
+        version: link:../config
+      '@vitest/coverage-v8':
+        specifier: ^5.1.1
+        version: 5.1.1(msw@3.0.7(@types/node@24.19.2)(supports-color@7.2.0)(typescript@6.0.3)(vite@8.3.8(@types/node@24.19.2)(jiti@2.7.0)(yaml@2.9.1)))(vitest@5.1.1)
+      typescript:
+        specifier: ~6.0.3
+        version: 6.0.3
+      vitest:
+        specifier: ^5.1.1
+        version: 5.1.1(@types/node@24.19.2)(@vitest/coverage-v8@5.1.1)(jsdom@31.0.1(@noble/hashes@1.8.0))(msw@3.0.7(@types/node@24.19.2)(supports-color@7.2.0)(typescript@6.0.3)(vite@8.3.8(@types/node@24.19.2)(jiti@2.7.0)(yaml@2.9.1)))(vite@8.3.8(@types/node@24.19.2)(jiti@2.7.0)(yaml@2.9.1))
 
   packages/shared:
     dependencies:

@@ -1,6 +1,19 @@
 import type { HistoryPoint } from '@nabd/shared';
 
-import type { Candle, VolumeBar } from './chart-port';
+/** One candle. `time` is in seconds, which is what the chart library expects. */
+export interface Candle {
+  time: number;
+  open: number;
+  high: number;
+  low: number;
+  close: number;
+}
+
+export interface VolumeBar {
+  time: number;
+  value: number;
+  direction: 'up' | 'down';
+}
 
 /** The API speaks milliseconds, the chart library seconds. This is the only place that converts. */
 const toSeconds = (milliseconds: number) => milliseconds / 1000;

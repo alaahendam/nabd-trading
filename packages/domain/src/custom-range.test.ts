@@ -7,7 +7,7 @@ import {
   toDateInput,
   toHistoryRange,
   validateCustomRange,
-} from './custom-range';
+} from './custom-range.js';
 
 const DAY = 86_400_000;
 const HOUR = 3_600_000;

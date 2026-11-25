@@ -1,15 +1,15 @@
-import { PERIODS } from '@nabd/shared';
-import { useState } from 'react';
-import { useTranslation } from 'react-i18next';
-
-import { Button } from '../../shared/ui';
 import {
   type ChartRange,
   type CustomRangeProblem,
   describeCustomRange,
   toDateInput,
   validateCustomRange,
-} from './custom-range';
+} from '@nabd/domain';
+import { PERIODS } from '@nabd/shared';
+import { useState } from 'react';
+import { useTranslation } from 'react-i18next';
+
+import { Button } from '../../shared/ui';
 
 const DAY = 86_400_000;
 /** The oldest day offered: its start is never older than the year the server serves. */

@@ -1,7 +1,7 @@
 import type { HistoryPoint } from '@nabd/shared';
 import { describe, expect, it } from 'vitest';
 
-import { summarizeHistory } from './chart-summary';
+import { summarizeHistory } from './chart-summary.js';
 
 const point = (open: number, high: number, low: number, close: number): HistoryPoint => ({
   time: 1,
