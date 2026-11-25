@@ -2,7 +2,7 @@
 
 Scope: `apps/web/e2e`. A real Chromium against the real built server and web app, started by Playwright on dedicated ports (API 3300, web 4273). Each test gets a fresh browser context, so a fresh client ID and an empty watchlist. Prices are random: tests wait for a change and never expect a number.
 
-Run: `pnpm --filter @nabd/web test:e2e`. CI runs it as its own job and keeps the report when a test fails.
+Run: `pnpm test:e2e` from the repository root (Turborepo builds the workspace packages first; running the web workspace's script directly on a clean checkout fails, because nothing is built). CI runs it as its own job and keeps the report when a test fails.
 
 ## Main flow (`main-flow.spec.ts`)
 
