@@ -270,6 +270,9 @@ importers:
       expo-constants:
         specifier: ~58.0.16
         version: 58.0.16(expo@58.0.26)(react-native@0.88.1(@babel/core@7.29.13(supports-color@10.2.2))(@react-native/metro-config@0.88.1(@babel/core@7.29.13(supports-color@10.2.2))(supports-color@10.2.2))(@types/react@19.3.0)(react@19.3.0)(supports-color@10.2.2))(supports-color@10.2.2)(typescript@6.0.3)
+      expo-crypto:
+        specifier: ~58.0.8
+        version: 58.0.8(expo@58.0.26)
       expo-font:
         specifier: ~58.0.12
         version: 58.0.12(expo@58.0.26)(react-native@0.88.1(@babel/core@7.29.13(supports-color@10.2.2))(@react-native/metro-config@0.88.1(@babel/core@7.29.13(supports-color@10.2.2))(supports-color@10.2.2))(@types/react@19.3.0)(react@19.3.0)(supports-color@10.2.2))(react@19.3.0)
@@ -4549,6 +4552,11 @@ packages:
     peerDependencies:
       expo: '*'
       react-native: '*'
+
+  expo-crypto@58.0.8:
+    resolution: {integrity: sha512-yMSiMlallOweQ28oQ3BqJf6I/4ZoBggFNRg+PfjG1NbQWBWzGKmkPPUrd3yT0oPW4P+AYppg+Mw6xoAYddLUKA==}
+    peerDependencies:
+      expo: '*'
 
   expo-doctor@1.21.8:
     resolution: {integrity: sha512-O05U/k4AX/khIFQ9DJkDYAe5wYMGrGWiAZmyQ/gn6n99buTozKbPFnz/fzF4MjuYki19FkPQSB/UI+3pkS2q7w==}
@@ -12186,6 +12194,10 @@ snapshots:
     transitivePeerDependencies:
       - supports-color
       - typescript
+
+  expo-crypto@58.0.8(expo@58.0.26):
+    dependencies:
+      expo: 58.0.26(@babel/core@7.29.13(supports-color@10.2.2))(@expo/metro-runtime@58.0.17)(expo-router@58.0.32)(react-dom@19.3.0(react@19.3.0))(react-native-worklets@0.14.0(@babel/core@7.29.13(supports-color@10.2.2))(@react-native/metro-config@0.88.1(@babel/core@7.29.13(supports-color@10.2.2))(supports-color@10.2.2))(react-native@0.88.1(@babel/core@7.29.13(supports-color@10.2.2))(@react-native/metro-config@0.88.1(@babel/core@7.29.13(supports-color@10.2.2))(supports-color@10.2.2))(@types/react@19.3.0)(react@19.3.0)(supports-color@10.2.2))(react@19.3.0)(supports-color@10.2.2))(react-native@0.88.1(@babel/core@7.29.13(supports-color@10.2.2))(@react-native/metro-config@0.88.1(@babel/core@7.29.13(supports-color@10.2.2))(supports-color@10.2.2))(@types/react@19.3.0)(react@19.3.0)(supports-color@10.2.2))(react@19.3.0)(supports-color@10.2.2)(typescript@6.0.3)
 
   expo-doctor@1.21.8: {}
 

@@ -46,6 +46,15 @@ Written before the code. IDs appear in the test names. jest-expo with React Nati
 | LIF-03 | While in the background, a held price is `stale`                                          |
 | LIF-04 | Unmounting stops listening to `AppState`                                                  |
 
+## Data layer
+
+| ID     | Behaviour                                                                             |
+| ------ | ------------------------------------------------------------------------------------- |
+| DAT-01 | The data providers give the tree the API, the query client and the connection status  |
+| DAT-02 | The realtime connection opens when mounted and closes when unmounted                  |
+| DAT-03 | The data services are built from the API address, and the socket is not connected yet |
+| DAT-04 | Requests carry a generated client ID, which is saved and reused                       |
+
 ## Bootstrap and splash
 
 | ID      | Behaviour                                                                      |
