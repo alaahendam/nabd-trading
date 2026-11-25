@@ -1,5 +1,5 @@
 import type { Candle, VolumeBar } from '@nabd/domain';
-import type { ComponentType } from 'react';
+import type { ReactNode } from 'react';
 
 import type { ChartColors } from './chart-commands';
 
@@ -8,13 +8,12 @@ export type { ChartColors };
 /**
  * What the chart needs from the screen, as props. The real surface is a WebView running
  * Lightweight Charts (ADR 0013); tests use a fake, because a WebView needs the device's browser.
- * It is the mobile counterpart of the web app's `ChartPort`, shaped as a component because that is
- * how a native view is held.
+ * It is the mobile counterpart of the web app's `ChartPort`.
  */
 export interface ChartSurfaceProps {
   candles: readonly Candle[];
   volume: readonly VolumeBar[];
-  /** The last candle with the live price on it, or none when the period does not follow it. */
+  /** The last candle with the live price on it, or none before the first tick. */
   live: Candle | undefined;
   colors: ChartColors;
   /** For the time axis and the crosshair, such as `ar-u-nu-latn`. */
@@ -25,4 +24,5 @@ export interface ChartSurfaceProps {
   attempt: number;
 }
 
-export type ChartSurface = ComponentType<ChartSurfaceProps>;
+/** Draws a chart for these props. A function and not a component, so a screen can swap it. */
+export type ChartSurface = (props: ChartSurfaceProps) => ReactNode;

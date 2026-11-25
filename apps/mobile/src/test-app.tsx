@@ -1,3 +1,4 @@
+import { createQueryClient } from '@nabd/data';
 import { PriceStore, RealtimeClient } from '@nabd/market-data';
 import { createFakeApi, FakeSocket } from '@nabd/testing';
 import { QueryClient } from '@tanstack/react-query';
@@ -18,10 +19,13 @@ import { createMemoryStore } from './test-utils';
 export function createTestApp(saved: Record<string, string> = {}) {
   const socket = new FakeSocket();
   const api = createFakeApi();
+  // The app's own settings (such as how long a result stays fresh), with the two things a test must
+  // not have: retries, and a cache lifetime that sets a garbage-collection timer, which would keep
+  // Jest alive.
+  const appOptions = createQueryClient().getDefaultOptions();
   const queryClient = new QueryClient({
-    // An endless cache lifetime sets no garbage-collection timer, which would keep Jest alive.
     defaultOptions: {
-      queries: { retry: false, gcTime: Infinity },
+      queries: { ...appOptions.queries, retry: false, gcTime: Infinity },
       mutations: { retry: false, gcTime: Infinity },
     },
   });

@@ -1,3 +1,5 @@
+import { configure } from '@testing-library/react-native';
+
 // AsyncStorage needs the device's native module; its own in-memory mock stands in for it.
 jest.mock('@react-native-async-storage/async-storage', () =>
   jest.requireActual<object>('@react-native-async-storage/async-storage/jest/async-storage-mock'),
@@ -23,3 +25,7 @@ jest.mock('expo-crypto', () => {
 
 // FlashList measures its layout on the device; this gives it a fixed phone-sized one.
 jest.requireActual<object>('@shopify/flash-list/jestSetup');
+
+// `findBy…` and `waitFor` wait one second by default. A screen that loads a stock and then its
+// chart needs more than that when the other workspaces' tests are using the machine too.
+configure({ asyncUtilTimeout: 5000 });

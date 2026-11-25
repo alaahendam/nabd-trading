@@ -1,7 +1,7 @@
 import { useLocalSearchParams, useRouter } from 'expo-router';
 
 import { MarketBanner } from '../../src/features/market-data';
-import { StockDetail } from '../../src/features/stocks';
+import { StockChart, StockDetail } from '../../src/features/stocks';
 import { WatchlistToggle } from '../../src/features/watchlist';
 import { Screen } from '../../src/shared/ui';
 
@@ -19,7 +19,9 @@ export default function StockScreen() {
           router.navigate('/');
         }}
         renderAction={(shown) => <WatchlistToggle symbol={shown} />}
-      />
+      >
+        {(shown) => <StockChart symbol={shown} />}
+      </StockDetail>
     </Screen>
   );
 }

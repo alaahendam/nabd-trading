@@ -3,7 +3,9 @@ import { createContext, type ReactNode, use } from 'react';
 import type { ChartSurface } from './chart-surface';
 import { WebViewChartSurface } from './webview-chart-surface';
 
-const ChartSurfaceContext = createContext<ChartSurface>(WebViewChartSurface);
+const webViewSurface: ChartSurface = (props) => <WebViewChartSurface {...props} />;
+
+const ChartSurfaceContext = createContext<ChartSurface>(webViewSurface);
 
 /** Swaps the chart surface, as tests do with a fake. The app uses the default: the WebView. */
 export function ChartSurfaceProvider({
