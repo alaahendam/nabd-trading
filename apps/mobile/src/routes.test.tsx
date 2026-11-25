@@ -30,7 +30,7 @@ describe('routes', () => {
     await screen.findByRole('header', { name: 'Stocks' });
 
     await act(() => {
-      router.push('/stock/AAPL');
+      router.push({ pathname: '/stock/[symbol]', params: { symbol: 'AAPL' } });
     });
 
     expect(await screen.findByRole('header', { name: 'AAPL' })).toBeOnTheScreen();
