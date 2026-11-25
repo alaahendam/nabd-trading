@@ -15,6 +15,7 @@ Decisions that would surprise a newcomer, each with the constraint that forced i
 | [0009](0009-route-splitting-measured-and-not-kept.md)       | Route splitting was measured and not kept; vendor chunks instead           | accepted |
 | [0010](0010-pin-react-to-the-expo-sdk-version.md)           | Pin React to the version the Expo SDK requires                             | accepted |
 | [0011](0011-shared-packages-for-web-and-mobile.md)          | Shared packages for the web and the mobile app                             | accepted |
+| [0012](0012-metro-bundles-the-compiled-shared-packages.md)  | Metro bundles the compiled shared packages as they are                     | accepted |
 
 Statuses are `proposed`, `accepted`, or `superseded by NNNN`. An ADR that stays right but gains later facts has an **Amendments** section (see 0007) instead of being rewritten, so the history of the decision stays readable.
 

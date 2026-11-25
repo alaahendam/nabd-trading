@@ -34,7 +34,7 @@ How they are kept portable:
 
 - **Copy the code into the mobile app.** Rejected: two copies drift, and every fix has to be made twice.
 - **One `@nabd/core` package with everything.** Rejected: a screen that only needs the candle math would still pull in the socket client, the package's boundaries could not be enforced, and unrelated parts change at different speeds.
-- **Package source (TypeScript) instead of compiled output.** Not chosen: `@nabd/shared` already ships compiled, and one mechanism is simpler. Whether Metro resolves the compiled `exports` is the first spike of the mobile shell (M1), not yet answered.
+- **Package source (TypeScript) instead of compiled output.** Not chosen: `@nabd/shared` already ships compiled, and one mechanism is simpler. Whether Metro resolves the compiled `exports` was the first spike of the mobile shell: it does (ADR 0012).
 
 ## Consequences
 
