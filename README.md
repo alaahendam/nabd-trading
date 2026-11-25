@@ -224,7 +224,7 @@ The web app is on **Vercel** and the API on **Railway**, both deploying from `ma
 - **`SIGTERM` does not trigger Nest's shutdown hooks on Windows.** A Node limitation on that platform.
 - **The chart attribution** follows the library's notice (its logo is on and a link is in the footer); that is a reading of the notice, not legal advice.
 - **The mobile app has no custom date range.** The chart offers the five periods (1D, 1W, 1M, 3M, 1Y); the web app also has a custom range (ADR 0008).
-- **The mobile app was checked on one Android phone, in Expo Go.** iOS has not been run, there is no store build yet, and no real screen reader was used on mobile. The Android package id is an assumption until a store listing exists.
+- **The mobile app has only been run on one Android phone, in Expo Go.** iOS has not been run, there is no store build yet, and no real screen reader was used on mobile. The Android package id `com.nabd.trading` is an assumption until a store listing exists.
 - **The mobile chart is a WebView** (ADR 0013), which a screen reader cannot read; the numbers behind it are shown as text beneath it. Only the chart page loads, and links in it are not followed.
 - **The Arabic text in the mobile app** reuses the web strings, plus the ones M3 added, and has not had a professional localization review.
 
