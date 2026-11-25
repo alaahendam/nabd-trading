@@ -63,6 +63,7 @@ const en = {
     loadMore: 'Load more stocks',
     loadingMore: 'Loading…',
     loadMoreError: 'Could not load more stocks',
+    row: '{{symbol}}, {{name}}, {{price}}, {{direction}} {{percent}}',
   },
   stock: {
     loading: 'Loading stock…',
@@ -185,6 +186,7 @@ const ar: Tree = {
     loadMore: 'تحميل المزيد من الأسهم',
     loadingMore: 'جارٍ التحميل…',
     loadMoreError: 'تعذّر تحميل المزيد من الأسهم',
+    row: '{{symbol}}، {{name}}، {{price}}، {{direction}} {{percent}}',
   },
   stock: {
     loading: 'جارٍ تحميل السهم…',
