@@ -76,4 +76,3 @@ Deploying produced two failures that no test in the repository could see. Railwa
 
 - The mistakes that cost the most were not syntax errors; they were confident assumptions: that a rule would fit, that a test was testing something, that a change would help, that a wait was long enough.
 - What caught them was always something external to the agent's own reading of its code: a failing test, a linter, a real browser, axe, a measurement, a second platform, or a person looking at the screen.
-- Tooling in the shell was also a source of small errors. Quoting backticks and `$` in large heredocs and `node -e` strings corrupted generated files several times, so files are written with the editor tools instead (a working note from the session, not visible in git; `TODO(confirm)`).

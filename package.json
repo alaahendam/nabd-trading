@@ -1,7 +1,7 @@
 {
   "name": "nabd-trading",
   "private": true,
-  "version": "0.0.0",
+  "version": "1.0.0",
   "description": "Nabd: a mini trading app with live simulated market data",
   "license": "UNLICENSED",
   "type": "module",

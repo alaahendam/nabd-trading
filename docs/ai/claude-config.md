@@ -29,7 +29,7 @@ Each is a prompt file that turns a short instruction into the same procedure eve
 | `/adr <title>`          | Adds the next numbered ADR from the template, in `docs/decisions/`, and updates the status of an ADR it supersedes.                                                                                                                      |
 | `/gates`                | Runs format check, lint, typecheck, test and build in order and stops at the first failure to fix the cause, never the rule.                                                                                                             |
 
-How they were used: the transcript shows the phases started with plain messages ("Start Phase 4"), not with `/phase 4`; the commands encode the same procedure, and the agent followed it either way. `TODO(confirm)`: how often the slash commands were typed themselves versus the plain messages.
+How they were used: the transcript shows the phases started with plain messages ("Start Phase 4"), not with `/phase 4`; the commands encode the same procedure, and the agent followed it either way.
 
 ## Skills
 

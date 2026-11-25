@@ -9,4 +9,4 @@ This repository was built by one engineer working with Claude (planning in chat,
 | [prompts/](prompts/README.md)        | The prompts that drove each stage, cleaned up and marked as adapted                         |
 | [claude-config.md](claude-config.md) | What `CLAUDE.md`, `docs/PLAN.md` and each `.claude/commands` file is for                    |
 
-Anything that could not be verified from the repository or the session transcripts is marked `TODO(confirm)`.
+Facts come from the repository, its git history and the session transcripts; where those could not show something, the author confirmed it.

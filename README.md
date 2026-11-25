@@ -210,8 +210,8 @@ The web app is on **Vercel** and the API on **Railway**, both deploying from `ma
 - **No authentication.** The client ID identifies a browser, nothing more. There is no rate limiting.
 - **One allowed web origin.** `CORS_ORIGIN` takes a single URL, so Vercel preview deployments cannot call the API.
 - **A bad configuration shows a blank page.** The app refuses to start on an invalid `VITE_API_URL` (good) but does not say so on screen (not good); the error is only in the console.
-- **Accessibility is checked by tools, not by people.** axe and the keyboard spec read the accessibility tree in Chromium; no real screen reader was run,. The Arabic text was reviewed by the project author but has not had a professional localization review.
-- **The hosted demo depends on a free or trial plan,** so the live API may be offline when you read this. `TODO(confirm)`: the Railway plan and how long the demo stays up.
+- **Accessibility is checked by tools, not by people.** axe and the keyboard spec read the accessibility tree in Chromium; no real screen reader was run. The Arabic text was reviewed by the project author but has not had a professional localization review.
+- **The hosted API runs on a Railway trial** that lasts until late December 2026. After that the live API may be offline; everything still runs locally with `pnpm dev`.
 - **`SIGTERM` does not trigger Nest's shutdown hooks on Windows.** A Node limitation on that platform.
 - **The chart attribution** follows the library's notice (its logo is on and a link is in the footer); that is a reading of the notice, not legal advice.
 
