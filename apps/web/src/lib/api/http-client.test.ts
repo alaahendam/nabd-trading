@@ -1,9 +1,9 @@
 import { CLIENT_ID_HEADER } from '@nabd/shared';
+import { API_URL, server } from '@nabd/testing/msw';
 import { delay, http, HttpResponse } from 'msw';
 import { describe, expect, it, vi } from 'vitest';
 import { z } from 'zod';
 
-import { API_URL, server } from '../../test/msw';
 import { ApiClientError } from './api-error';
 import { createHttpClient } from './http-client';
 

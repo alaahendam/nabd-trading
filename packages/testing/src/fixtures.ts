@@ -1,6 +1,10 @@
-import type { HistoryData, StockWithQuote, WatchlistItem } from '@nabd/shared';
-
-import type { StocksListQuery, StocksPage } from '../lib/api/endpoints';
+import type {
+  HistoryData,
+  StocksListQuery,
+  StocksPage,
+  StockWithQuote,
+  WatchlistItem,
+} from '@nabd/shared';
 
 /** Valid contract data for tests, so every test starts from something the schemas accept. */
 export const aapl: StockWithQuote = {

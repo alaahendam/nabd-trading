@@ -1,6 +1,5 @@
+import { FakeSocket } from '@nabd/testing';
 import { beforeEach, describe, expect, it, vi } from 'vitest';
-
-import { FakeSocket } from '../../test/fake-socket';
 
 const mocks = vi.hoisted(() => ({ createSocketIoAdapter: vi.fn() }));
 vi.mock('./socket-io-adapter', () => ({ createSocketIoAdapter: mocks.createSocketIoAdapter }));

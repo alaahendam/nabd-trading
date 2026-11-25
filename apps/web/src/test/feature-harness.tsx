@@ -1,3 +1,5 @@
+import { createFakeApi } from '@nabd/testing';
+import { FakeSocket } from '@nabd/testing';
 import { QueryClientProvider } from '@tanstack/react-query';
 import { act, render } from '@testing-library/react';
 import type { ReactElement, ReactNode } from 'react';
@@ -14,9 +16,7 @@ import type { Language } from '../lib/i18n/language';
 import { createQueryClient } from '../lib/query/query-client';
 import { ThemeStore } from '../lib/theme/theme';
 import { ThemeProvider } from '../lib/theme/theme-hooks';
-import { createFakeApi } from './fake-api';
 import { createFakeChart } from './fake-chart';
-import { FakeSocket } from './fake-socket';
 
 interface HarnessOptions {
   language?: Language;

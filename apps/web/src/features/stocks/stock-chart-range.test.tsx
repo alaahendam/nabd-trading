@@ -1,11 +1,11 @@
 import { type HistoryData, PERIOD_CONFIG } from '@nabd/shared';
+import { aaplHistory } from '@nabd/testing';
 import { act, fireEvent, render, screen } from '@testing-library/react';
 import userEvent from '@testing-library/user-event';
 import { afterEach, beforeEach, describe, expect, it, vi } from 'vitest';
 
 import type { HistoryRange } from '../../lib/api';
 import { createFeatureHarness } from '../../test/feature-harness';
-import { aaplHistory } from '../../test/fixtures';
 import { StockChart } from './stock-chart';
 
 const NOW = Date.UTC(2026, 5, 17, 13, 0, 0);
@@ -21,9 +21,7 @@ const historyFor = (symbol: string, range: HistoryRange): HistoryData => ({
 
 function renderChart(language?: 'en' | 'ar') {
   const harness = createFeatureHarness(language === undefined ? {} : { language });
-  harness.api.getHistory.mockImplementation((symbol, range) =>
-    Promise.resolve(historyFor(symbol, range)),
-  );
+  harness.api.getHistory.implement((symbol, range) => Promise.resolve(historyFor(symbol, range)));
   const view = render(<StockChart symbol="AAPL" />, { wrapper: harness.Wrapper });
   return { ...harness, ...view };
 }
@@ -64,7 +62,7 @@ describe('StockChart custom range', () => {
   it('CHT-19 opens a form with two date fields and Apply, and requests nothing yet', async () => {
     const { api } = renderChart();
     await settle();
-    expect(api.getHistory).toHaveBeenCalledTimes(1);
+    expect(api.getHistory.calls).toHaveLength(1);
 
     await openCustom();
 
@@ -83,7 +81,7 @@ describe('StockChart custom range', () => {
       'aria-pressed',
       'true',
     );
-    expect(api.getHistory).toHaveBeenCalledTimes(1);
+    expect(api.getHistory.calls).toHaveLength(1);
   });
 
   it('CHT-20 loads the range that is applied and names the chart with its dates', async () => {
@@ -93,7 +91,7 @@ describe('StockChart custom range', () => {
 
     await apply('2026-06-10', '2026-06-12');
 
-    expect(api.getHistory.mock.calls.at(-1)?.[1]).toEqual({
+    expect(api.getHistory.calls.at(-1)?.[1]).toEqual({
       from: Date.UTC(2026, 5, 10),
       to: Date.UTC(2026, 5, 13) - 1,
     });
@@ -115,12 +113,12 @@ describe('StockChart custom range', () => {
     const { api } = renderChart();
     await settle();
     await openCustom();
-    const before = api.getHistory.mock.calls.length;
+    const before = api.getHistory.calls.length;
 
     await apply(from, to);
 
     expect(screen.getByRole('alert')).toHaveTextContent(message);
-    expect(api.getHistory).toHaveBeenCalledTimes(before);
+    expect(api.getHistory.calls).toHaveLength(before);
   });
 
   it('CHT-22 leaves the custom range when a period is chosen', async () => {
@@ -134,7 +132,7 @@ describe('StockChart custom range', () => {
       await Promise.resolve();
     });
 
-    expect(api.getHistory.mock.calls.at(-1)?.[1]).toBe('1W');
+    expect(api.getHistory.calls.at(-1)?.[1]).toBe('1W');
     expect(screen.getByRole('button', { name: '1W, Past week' })).toHaveAttribute(
       'aria-pressed',
       'true',
@@ -197,13 +195,13 @@ describe('StockChart custom range', () => {
     await settle();
     await openCustom();
     expect(screen.getByLabelText('From')).toBeInTheDocument();
-    const before = api.getHistory.mock.calls.length;
+    const before = api.getHistory.calls.length;
 
     await openCustom();
 
     expect(screen.queryByLabelText('From')).not.toBeInTheDocument();
     expect(screen.getByRole('button', { name: 'Custom' })).toHaveAttribute('aria-pressed', 'false');
-    expect(api.getHistory).toHaveBeenCalledTimes(before);
+    expect(api.getHistory.calls).toHaveLength(before);
   });
 
   it('CHT-27 shows the applied dates when the form is reopened', async () => {

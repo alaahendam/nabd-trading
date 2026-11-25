@@ -1,3 +1,4 @@
+import { aapl, aaplHistory } from '@nabd/testing';
 import { act, render, screen, within } from '@testing-library/react';
 import userEvent from '@testing-library/user-event';
 import { useState } from 'react';
@@ -5,7 +6,6 @@ import { afterEach, describe, expect, it, vi } from 'vitest';
 
 import { ApiClientError } from '../../lib/api';
 import { createFeatureHarness } from '../../test/feature-harness';
-import { aapl, aaplHistory } from '../../test/fixtures';
 import { StockDetail } from './stock-detail';
 
 afterEach(() => {
@@ -32,10 +32,10 @@ function renderDetail(options: Options = {}) {
   const { language, firstFailure, renderAction, symbol = 'AAPL' } = options;
   const harness = createFeatureHarness(language === undefined ? {} : { language });
   if (firstFailure) {
-    harness.api.getStock.mockRejectedValueOnce(firstFailure);
+    harness.api.getStock.rejectsOnce(firstFailure);
   }
-  harness.api.getStock.mockResolvedValue(aapl);
-  harness.api.getHistory.mockResolvedValue(aaplHistory);
+  harness.api.getStock.resolves(aapl);
+  harness.api.getHistory.resolves(aaplHistory);
   const view = render(
     <StockDetail symbol={symbol} {...(renderAction === undefined ? {} : { renderAction })} />,
     { wrapper: harness.Wrapper },
@@ -46,7 +46,7 @@ function renderDetail(options: Options = {}) {
 describe('StockDetail', () => {
   it('DET-01 shows a busy loading status', () => {
     const harness = createFeatureHarness();
-    harness.api.getStock.mockReturnValue(new Promise(() => undefined));
+    harness.api.getStock.returns(new Promise(() => undefined));
     render(<StockDetail symbol="AAPL" />, { wrapper: harness.Wrapper });
     expect(screen.getByRole('status', { name: 'Loading stock…' })).toHaveAttribute(
       'aria-busy',
@@ -58,7 +58,7 @@ describe('StockDetail', () => {
   it('DET-02 shows the header', async () => {
     const { api } = renderDetail();
     expect(await screen.findByRole('heading', { level: 1, name: 'AAPL' })).toBeInTheDocument();
-    expect(api.getStock).toHaveBeenCalledWith('AAPL', expect.any(AbortSignal));
+    expect(api.getStock.calls).toContainEqual(['AAPL', expect.any(AbortSignal)]);
     expect(screen.getByText('Apple Inc.')).toBeInTheDocument();
     expect(screen.getByText('NASDAQ · Technology')).toBeInTheDocument();
     expect(screen.getByText('$230.00')).toBeInTheDocument();
@@ -121,8 +121,8 @@ describe('StockDetail', () => {
       );
     }
     const harness = createFeatureHarness();
-    harness.api.getStock.mockResolvedValue(aapl);
-    harness.api.getHistory.mockResolvedValue(aaplHistory);
+    harness.api.getStock.resolves(aapl);
+    harness.api.getHistory.resolves(aaplHistory);
     render(<Screen />, { wrapper: harness.Wrapper });
     await screen.findByRole('heading', { name: 'AAPL' });
     harness.connect();
@@ -145,7 +145,7 @@ describe('StockDetail', () => {
     expect(await screen.findByRole('alert')).toHaveTextContent('Could not load this stock');
     await userEvent.click(screen.getByRole('button', { name: 'Try again' }));
     expect(await screen.findByRole('heading', { name: 'AAPL' })).toBeInTheDocument();
-    expect(api.getStock).toHaveBeenCalledTimes(2);
+    expect(api.getStock.calls).toHaveLength(2);
   });
 
   it('DET-08 says so when the stock does not exist, with a way back', async () => {
@@ -198,9 +198,7 @@ describe('StockDetail', () => {
     const { api, queryClient } = renderDetail();
     await screen.findByRole('heading', { name: 'AAPL' });
 
-    api.getStock.mockRejectedValueOnce(
-      new ApiClientError({ kind: 'http', status: 400, message: 'x' }),
-    );
+    api.getStock.rejectsOnce(new ApiClientError({ kind: 'http', status: 400, message: 'x' }));
     await act(async () => {
       await queryClient.refetchQueries();
     });

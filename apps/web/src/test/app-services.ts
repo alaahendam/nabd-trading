@@ -1,3 +1,6 @@
+import { FakeSocket } from '@nabd/testing';
+import { API_URL } from '@nabd/testing/msw';
+
 import type { AppServices } from '../app/providers/services';
 import { PriceStore } from '../features/market-data/price-store';
 import { RealtimeClient } from '../features/market-data/realtime-client';
@@ -9,8 +12,6 @@ import { LanguageStore } from '../lib/i18n/language-store';
 import { createQueryClient } from '../lib/query/query-client';
 import { ThemeStore } from '../lib/theme/theme';
 import { createFakeChart } from './fake-chart';
-import { FakeSocket } from './fake-socket';
-import { API_URL } from './msw';
 
 const memoryStorage = () => {
   const data = new Map<string, string>();

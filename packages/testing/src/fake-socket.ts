@@ -1,7 +1,5 @@
-import type { SocketPort } from '../features/market-data/socket-port';
-
 /** A socket for tests: records what the client asks for and lets a test play the server. */
-export class FakeSocket implements SocketPort {
+export class FakeSocket {
   connected = false;
 
   readonly calls = {

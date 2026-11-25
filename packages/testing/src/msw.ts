@@ -2,7 +2,7 @@ import type { WatchlistItem } from '@nabd/shared';
 import { http, HttpResponse } from 'msw';
 import { setupServer } from 'msw/node';
 
-import { aapl, aaplHistory, brkb } from './fixtures';
+import { aapl, aaplHistory, brkb } from './fixtures.js';
 
 /** The mock API for every test. Handlers are added per test; any unhandled request fails it. */
 export const server = setupServer();

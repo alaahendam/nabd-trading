@@ -1,7 +1,7 @@
 import { MAX_SYMBOLS_PER_REQUEST, type PriceTick } from '@nabd/shared';
+import { FakeSocket } from '@nabd/testing';
 import { describe, expect, it, vi } from 'vitest';
 
-import { FakeSocket } from '../../test/fake-socket';
 import type { PriceStore } from './price-store';
 import { RealtimeClient, type RealtimeIssue } from './realtime-client';
 

@@ -1,8 +1,8 @@
+import { FakeSocket } from '@nabd/testing';
 import { act, render, renderHook, screen } from '@testing-library/react';
 import { type ReactNode, StrictMode } from 'react';
 import { afterEach, beforeEach, describe, expect, it, vi } from 'vitest';
 
-import { FakeSocket } from '../../test/fake-socket';
 import { PriceStore } from './price-store';
 import { RealtimeClient } from './realtime-client';
 import {

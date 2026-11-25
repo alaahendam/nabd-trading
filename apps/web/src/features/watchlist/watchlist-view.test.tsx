@@ -1,23 +1,23 @@
+import { aapl, brkb, fakeStocksServer, watchlistItem } from '@nabd/testing';
 import { act, render, screen, waitFor, within } from '@testing-library/react';
 import userEvent from '@testing-library/user-event';
 import { describe, expect, it } from 'vitest';
 
 import { ApiClientError } from '../../lib/api';
 import { createFeatureHarness } from '../../test/feature-harness';
-import { aapl, brkb, fakeStocksServer, watchlistItem } from '../../test/fixtures';
 import { WatchlistView } from './watchlist-view';
 
 function renderView() {
   const harness = createFeatureHarness();
-  harness.api.listStocks.mockImplementation(fakeStocksServer([aapl, brkb]));
-  harness.api.removeFromWatchlist.mockResolvedValue(undefined);
+  harness.api.listStocks.implement(fakeStocksServer([aapl, brkb]));
+  harness.api.removeFromWatchlist.resolves(undefined);
   return harness;
 }
 
 describe('WatchlistView', () => {
   it('WLV-01 shows a busy loading status', () => {
     const harness = renderView();
-    harness.api.listWatchlist.mockReturnValue(new Promise(() => undefined));
+    harness.api.listWatchlist.returns(new Promise(() => undefined));
     render(<WatchlistView />, { wrapper: harness.Wrapper });
     expect(screen.getByRole('status', { name: 'Loading watchlist…' })).toHaveAttribute(
       'aria-busy',
@@ -27,7 +27,7 @@ describe('WatchlistView', () => {
 
   it('WLV-02 invites the user to star a stock when the watchlist is empty', async () => {
     const harness = renderView();
-    harness.api.listWatchlist.mockResolvedValue([]);
+    harness.api.listWatchlist.resolves([]);
     render(<WatchlistView />, { wrapper: harness.Wrapper });
 
     expect(await screen.findByText('Your watchlist is empty')).toBeInTheDocument();
@@ -37,7 +37,7 @@ describe('WatchlistView', () => {
 
   it('WLV-03 shows only the watched stocks, each with a pressed star', async () => {
     const harness = renderView();
-    harness.api.listWatchlist.mockResolvedValue([watchlistItem]);
+    harness.api.listWatchlist.resolves([watchlistItem]);
     render(<WatchlistView />, { wrapper: harness.Wrapper });
 
     expect(await screen.findByText('Apple Inc.')).toBeInTheDocument();
@@ -52,8 +52,8 @@ describe('WatchlistView', () => {
 
   it('WLV-04 takes a row away at once when its star is pressed', async () => {
     const harness = renderView();
-    harness.api.listWatchlist.mockResolvedValue([watchlistItem]);
-    harness.api.removeFromWatchlist.mockReturnValue(new Promise(() => undefined));
+    harness.api.listWatchlist.resolves([watchlistItem]);
+    harness.api.removeFromWatchlist.returns(new Promise(() => undefined));
     render(<WatchlistView />, { wrapper: harness.Wrapper });
     await screen.findByText('Apple Inc.');
     await waitFor(() => {
@@ -69,8 +69,8 @@ describe('WatchlistView', () => {
   it('WLV-05 shows an error with a retry that loads the stocks', async () => {
     const harness = renderView();
     harness.api.listWatchlist
-      .mockRejectedValueOnce(new ApiClientError({ kind: 'http', status: 400, message: 'bad' }))
-      .mockResolvedValue([watchlistItem]);
+      .rejectsOnce(new ApiClientError({ kind: 'http', status: 400, message: 'bad' }))
+      .resolves([watchlistItem]);
     render(<WatchlistView />, { wrapper: harness.Wrapper });
 
     expect(await screen.findByRole('alert')).toHaveTextContent('Could not load your watchlist');
@@ -80,11 +80,11 @@ describe('WatchlistView', () => {
 
   it('WLV-06 keeps the list when a refresh fails after it loaded', async () => {
     const harness = renderView();
-    harness.api.listWatchlist.mockResolvedValue([watchlistItem]);
+    harness.api.listWatchlist.resolves([watchlistItem]);
     render(<WatchlistView />, { wrapper: harness.Wrapper });
     await screen.findByText('Apple Inc.');
 
-    harness.api.listWatchlist.mockRejectedValueOnce(
+    harness.api.listWatchlist.rejectsOnce(
       new ApiClientError({ kind: 'http', status: 400, message: 'bad' }),
     );
     await act(async () => {

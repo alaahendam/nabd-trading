@@ -1,11 +1,11 @@
 import type { WatchlistItem } from '@nabd/shared';
+import { createFakeApi } from '@nabd/testing';
+import { watchlistItem } from '@nabd/testing';
 import { act, renderHook, waitFor } from '@testing-library/react';
 import { describe, expect, it, vi } from 'vitest';
 
 import { ApiClientError } from '../../lib/api';
 import { queryKeys } from '../../lib/query';
-import { createFakeApi } from '../../test/fake-api';
-import { watchlistItem } from '../../test/fixtures';
 import { createQueryWrapper } from '../../test/query-wrapper';
 import { useWatchlist, useWatchlistToggle } from './use-watchlist';
 
@@ -23,7 +23,7 @@ const deferred = <T,>() => {
 
 const setup = (initial: WatchlistItem[] = [watchlistItem]) => {
   const api = createFakeApi();
-  api.listWatchlist.mockResolvedValue(initial);
+  api.listWatchlist.resolves(initial);
   const { wrapper, queryClient } = createQueryWrapper(api);
   const view = renderHook(() => ({ list: useWatchlist(), toggle: useWatchlistToggle() }), {
     wrapper,
@@ -39,20 +39,18 @@ describe('useWatchlist', () => {
     await waitFor(() => {
       expect(result.current.list.data).toEqual([watchlistItem]);
     });
-    expect(api.listWatchlist.mock.calls[0]?.[0]).toBeInstanceOf(AbortSignal);
+    expect(api.listWatchlist.calls[0]?.[0]).toBeInstanceOf(AbortSignal);
   });
 
   it('WLH-02 reports a failure without retrying a permanent error', async () => {
     const api = createFakeApi();
-    api.listWatchlist.mockRejectedValue(
-      new ApiClientError({ kind: 'http', status: 404, message: 'x' }),
-    );
+    api.listWatchlist.rejects(new ApiClientError({ kind: 'http', status: 404, message: 'x' }));
     const { wrapper } = createQueryWrapper(api);
     const { result } = renderHook(() => useWatchlist(), { wrapper });
     await waitFor(() => {
       expect(result.current.isError).toBe(true);
     });
-    expect(api.listWatchlist).toHaveBeenCalledTimes(1);
+    expect(api.listWatchlist.calls).toHaveLength(1);
   });
 });
 
@@ -63,8 +61,8 @@ describe('useWatchlistToggle', () => {
       expect(result.current.list.isSuccess).toBe(true);
     });
     const server = deferred<WatchlistItem>();
-    api.addToWatchlist.mockReturnValue(server.promise);
-    api.listWatchlist.mockResolvedValue([watchlistItem, msft]);
+    api.addToWatchlist.returns(server.promise);
+    api.listWatchlist.resolves([watchlistItem, msft]);
 
     act(() => {
       result.current.toggle.mutate({ symbol: 'MSFT', watch: true });
@@ -72,16 +70,16 @@ describe('useWatchlistToggle', () => {
     await waitFor(() => {
       expect(cached()?.map((item) => item.symbol)).toEqual(['AAPL', 'MSFT']);
     });
-    expect(api.listWatchlist).toHaveBeenCalledTimes(1);
+    expect(api.listWatchlist.calls).toHaveLength(1);
 
     await act(async () => {
       server.resolve(msft);
       await Promise.resolve();
     });
     await waitFor(() => {
-      expect(api.listWatchlist).toHaveBeenCalledTimes(2);
+      expect(api.listWatchlist.calls).toHaveLength(2);
     });
-    expect(api.addToWatchlist).toHaveBeenCalledWith('MSFT');
+    expect(api.addToWatchlist.calls).toContainEqual(['MSFT']);
   });
 
   it('WLH-04 removes optimistically, then fetches the list again', async () => {
@@ -90,8 +88,8 @@ describe('useWatchlistToggle', () => {
       expect(result.current.list.isSuccess).toBe(true);
     });
     const server = deferred<undefined>();
-    api.removeFromWatchlist.mockReturnValue(server.promise);
-    api.listWatchlist.mockResolvedValue([]);
+    api.removeFromWatchlist.returns(server.promise);
+    api.listWatchlist.resolves([]);
 
     act(() => {
       result.current.toggle.mutate({ symbol: 'AAPL', watch: false });
@@ -105,7 +103,7 @@ describe('useWatchlistToggle', () => {
       await Promise.resolve();
     });
     await waitFor(() => {
-      expect(api.listWatchlist).toHaveBeenCalledTimes(2);
+      expect(api.listWatchlist.calls).toHaveLength(2);
     });
   });
 
@@ -115,7 +113,7 @@ describe('useWatchlistToggle', () => {
       expect(result.current.list.isSuccess).toBe(true);
     });
     const failure = new ApiClientError({ kind: 'http', status: 404, message: 'No stock' });
-    api.addToWatchlist.mockRejectedValue(failure);
+    api.addToWatchlist.rejects(failure);
 
     await act(async () => {
       result.current.toggle.mutate({ symbol: 'MSFT', watch: true });
@@ -127,7 +125,7 @@ describe('useWatchlistToggle', () => {
     });
     expect(cached()).toEqual([watchlistItem]);
     await waitFor(() => {
-      expect(api.listWatchlist).toHaveBeenCalledTimes(2);
+      expect(api.listWatchlist.calls).toHaveLength(2);
     });
   });
 
@@ -136,7 +134,7 @@ describe('useWatchlistToggle', () => {
     await waitFor(() => {
       expect(result.current.list.isSuccess).toBe(true);
     });
-    api.removeFromWatchlist.mockRejectedValue(
+    api.removeFromWatchlist.rejects(
       new ApiClientError({ kind: 'http', status: 400, message: 'bad' }),
     );
 
@@ -156,13 +154,13 @@ describe('useWatchlistToggle', () => {
     await waitFor(() => {
       expect(result.current.list.isSuccess).toBe(true);
     });
-    api.addToWatchlist.mockReturnValue(new Promise(() => undefined));
+    api.addToWatchlist.returns(new Promise(() => undefined));
 
     act(() => {
       result.current.toggle.mutate({ symbol: 'AAPL', watch: true });
     });
     await waitFor(() => {
-      expect(api.addToWatchlist).toHaveBeenCalledTimes(1);
+      expect(api.addToWatchlist.calls).toHaveLength(1);
     });
     expect(cached()).toEqual([watchlistItem]);
   });
@@ -170,11 +168,11 @@ describe('useWatchlistToggle', () => {
   it('WLH-08 cancels a list fetch that is running when the toggle starts', async () => {
     const api = createFakeApi();
     let signal: AbortSignal | undefined;
-    api.listWatchlist.mockImplementation((given) => {
+    api.listWatchlist.implement((given) => {
       signal = given;
       return new Promise(() => undefined);
     });
-    api.addToWatchlist.mockReturnValue(new Promise(() => undefined));
+    api.addToWatchlist.returns(new Promise(() => undefined));
     const { wrapper } = createQueryWrapper(api);
     const { result } = renderHook(() => ({ list: useWatchlist(), toggle: useWatchlistToggle() }), {
       wrapper,
@@ -195,11 +193,9 @@ describe('useWatchlistToggle', () => {
   it('WLH-09 leaves the cache empty on rollback when the list never loaded, and fetches again', async () => {
     const api = createFakeApi();
     api.listWatchlist
-      .mockRejectedValueOnce(new ApiClientError({ kind: 'http', status: 400, message: 'x' }))
-      .mockResolvedValue([watchlistItem]);
-    api.addToWatchlist.mockRejectedValue(
-      new ApiClientError({ kind: 'http', status: 400, message: 'x' }),
-    );
+      .rejectsOnce(new ApiClientError({ kind: 'http', status: 400, message: 'x' }))
+      .resolves([watchlistItem]);
+    api.addToWatchlist.rejects(new ApiClientError({ kind: 'http', status: 400, message: 'x' }));
     const { wrapper, queryClient } = createQueryWrapper(api);
     const { result } = renderHook(() => ({ list: useWatchlist(), toggle: useWatchlistToggle() }), {
       wrapper,
@@ -214,7 +210,7 @@ describe('useWatchlistToggle', () => {
     });
 
     await waitFor(() => {
-      expect(api.listWatchlist).toHaveBeenCalledTimes(2);
+      expect(api.listWatchlist.calls).toHaveLength(2);
     });
     await waitFor(() => {
       expect(queryClient.getQueryData(queryKeys.watchlist())).toEqual([watchlistItem]);
@@ -236,9 +232,9 @@ describe('useWatchlistToggle', () => {
     await waitFor(() => {
       expect(result.current.toggle.isError).toBe(true);
     });
-    expect(api.addToWatchlist).not.toHaveBeenCalled();
+    expect(api.addToWatchlist.calls).toHaveLength(0);
     await waitFor(() => {
-      expect(api.listWatchlist).toHaveBeenCalledTimes(2);
+      expect(api.listWatchlist.calls).toHaveLength(2);
     });
   });
 
@@ -247,7 +243,7 @@ describe('useWatchlistToggle', () => {
     await waitFor(() => {
       expect(result.current.list.isSuccess).toBe(true);
     });
-    api.removeFromWatchlist.mockRejectedValue(
+    api.removeFromWatchlist.rejects(
       new ApiClientError({ kind: 'http', status: 503, message: 'down' }),
     );
 
@@ -258,6 +254,6 @@ describe('useWatchlistToggle', () => {
     await waitFor(() => {
       expect(result.current.toggle.isError).toBe(true);
     });
-    expect(api.removeFromWatchlist).toHaveBeenCalledTimes(1);
+    expect(api.removeFromWatchlist.calls).toHaveLength(1);
   });
 });

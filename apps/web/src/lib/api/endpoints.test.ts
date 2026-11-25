@@ -1,8 +1,8 @@
+import { aapl, aaplHistory, brkb, watchlistItem } from '@nabd/testing';
+import { API_URL, server } from '@nabd/testing/msw';
 import { http, HttpResponse } from 'msw';
 import { describe, expect, it } from 'vitest';
 
-import { aapl, aaplHistory, brkb, watchlistItem } from '../../test/fixtures';
-import { API_URL, server } from '../../test/msw';
 import { ApiClientError } from './api-error';
 import { createApi } from './endpoints';
 import { createHttpClient } from './http-client';

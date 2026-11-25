@@ -1,4 +1,5 @@
 import type { StockWithQuote } from '@nabd/shared';
+import { aapl, brkb, fakeStocksServer } from '@nabd/testing';
 import { act, render, screen, within } from '@testing-library/react';
 import userEvent from '@testing-library/user-event';
 import { useState } from 'react';
@@ -6,7 +7,6 @@ import { afterEach, describe, expect, it, vi } from 'vitest';
 
 import { ApiClientError } from '../../lib/api';
 import { createFeatureHarness } from '../../test/feature-harness';
-import { aapl, brkb, fakeStocksServer } from '../../test/fixtures';
 import { StockList } from './stock-list';
 
 const msft: StockWithQuote = {
@@ -48,7 +48,7 @@ afterEach(() => {
 describe('StockList', () => {
   it('LST-01 shows a busy loading status with skeleton rows', () => {
     const harness = createFeatureHarness();
-    harness.api.listStocks.mockReturnValue(new Promise(() => undefined));
+    harness.api.listStocks.returns(new Promise(() => undefined));
     render(<StockList />, { wrapper: harness.Wrapper });
     const status = screen.getByRole('status', { name: 'Loading stocks…' });
     expect(status).toHaveAttribute('aria-busy', 'true');
@@ -58,7 +58,7 @@ describe('StockList', () => {
   it('LST-02 renders a row per stock from its quote', async () => {
     const { api } = renderFeatureWith([aapl, msft]);
     expect(await screen.findByText('Apple Inc.')).toBeInTheDocument();
-    expect(api.listStocks).toHaveBeenCalledTimes(1);
+    expect(api.listStocks.calls).toHaveLength(1);
 
     expect(screen.getAllByRole('listitem')).toHaveLength(2);
     const apple = within(rowOf('AAPL'));
@@ -107,7 +107,7 @@ describe('StockList', () => {
       );
     }
     const harness = createFeatureHarness();
-    harness.api.listStocks.mockImplementation(fakeStocksServer([aapl, msft]));
+    harness.api.listStocks.implement(fakeStocksServer([aapl, msft]));
     render(<Screen />, { wrapper: harness.Wrapper });
     const { connect, socket } = harness;
     await screen.findByText('Apple Inc.');
@@ -161,7 +161,7 @@ describe('StockList', () => {
     expect(await screen.findByRole('alert')).toHaveTextContent('Could not load stocks');
     await userEvent.click(screen.getByRole('button', { name: 'Try again' }));
     expect(await screen.findByText('Apple Inc.')).toBeInTheDocument();
-    expect(api.listStocks).toHaveBeenCalledTimes(2);
+    expect(api.listStocks.calls).toHaveLength(2);
   });
 
   it('LST-25 isolates the company name, so English keeps its own order inside Arabic', async () => {
@@ -174,9 +174,7 @@ describe('StockList', () => {
     const { api, queryClient } = renderFeatureWith([aapl]);
     await screen.findByText('Apple Inc.');
 
-    api.listStocks.mockRejectedValueOnce(
-      new ApiClientError({ kind: 'http', status: 404, message: 'x' }),
-    );
+    api.listStocks.rejectsOnce(new ApiClientError({ kind: 'http', status: 404, message: 'x' }));
     await act(async () => {
       await queryClient.refetchQueries();
     });
@@ -267,9 +265,9 @@ function renderFeatureWith(stocks: StockWithQuote[], options: Options = {}) {
   const { language, firstFailure, ...listProps } = options;
   const harness = createFeatureHarness(language === undefined ? {} : { language });
   if (firstFailure) {
-    harness.api.listStocks.mockRejectedValueOnce(firstFailure);
+    harness.api.listStocks.rejectsOnce(firstFailure);
   }
-  harness.api.listStocks.mockImplementation(fakeStocksServer(stocks));
+  harness.api.listStocks.implement(fakeStocksServer(stocks));
   const view = render(<StockList {...listProps} />, { wrapper: harness.Wrapper });
   return { ...harness, ...view };
 }

@@ -1,9 +1,9 @@
+import { server, stocksHandler, watchlistHandler } from '@nabd/testing/msw';
 import { render, screen } from '@testing-library/react';
 import { createMemoryRouter } from 'react-router';
 import { describe, expect, it } from 'vitest';
 
 import { createTestServices } from '../test/app-services';
-import { server, stocksHandler, watchlistHandler } from '../test/msw';
 import { App } from './app';
 import { createAppRoutes } from './routes/routes';
 
