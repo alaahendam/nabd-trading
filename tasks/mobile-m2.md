@@ -11,7 +11,7 @@ Part of `docs/MOBILE-PLAN.md` (section 5). Goal: everything a screen needs aroun
 - **Language in M2 is read from storage and defaults to English**, with no device detection and no switch: showing Arabic text in a left-to-right layout would be wrong before the RTL work of M4. The stored value is read now so M4 only adds the switch.
 - **Fonts: IBM Plex Sans and IBM Plex Sans Arabic** from `@expo-google-fonts/*` (the Expo-documented way), loaded with `expo-font` during the splash hold. Regular and semibold weights, as on web.
 - **Theme:** preference `light | dark | system`, persisted; `system` follows `Appearance`. Colors come from `resolveToken` of the resolved theme. The static `theme.ts` of M1 becomes a function of the resolved theme.
-- **Hermes `Intl` spike:** it needs the author's phone (Jest runs on Node). A temporary diagnostic route is built and run; its result decides whether the formatters need a fallback. It is not committed as a feature.
+- **Hermes `Intl` spike:** it needs the author's phone (Jest runs on Node), so a temporary diagnostic screen was run there and removed. Result in T6: no fallback needed.
 
 ## Tasks
 
@@ -20,8 +20,8 @@ Part of `docs/MOBILE-PLAN.md` (section 5). Goal: everything a screen needs aroun
 - [x] **T3 Theme and language.** Theme store and provider, themed `Text` and `Screen`, language read.
 - [x] **T4 Data and realtime.** Query client wired to `AppState` and the network, the API, the realtime client and provider, the lifecycle handling.
 - [x] **T5 Shell UI.** Connection status, error boundary, the stock detail route in a stack above the tabs, tab titles and the simulated-data notice.
-- [ ] **T6 Hermes `Intl` spike.** Diagnostic route, run on the phone, result recorded.
-- [ ] **T7 Gates.** Whole-repo gates, CI green on the PR, plan ticked.
+- [x] **T6 Hermes `Intl` spike.** Run on the author's Android phone (Expo Go, Hermes), 2026-11-25: `formatPrice`, `formatChange`, `formatPercent` and `formatVolume` (K, M, B) gave the expected text; `en-US-u-nu-latn` and `ar-u-nu-latn` dates and numbers used Latin digits ("25 نوفمبر, 2:30 م"); `supportedLocalesOf` listed `ar` and `en-US-u-nu-latn`. No fallback is needed. Checked on Expo Go only; the APK uses the same Hermes, and iOS is untested.
+- [x] **T7 Gates.** Whole-repo gates, CI green on the PR, plan ticked.
 
 ## Gate
 
