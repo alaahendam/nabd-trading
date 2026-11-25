@@ -38,4 +38,4 @@ Thumbs.db
 .claude/settings.local.json
 
 # the chart library as a string, built by scripts/build-chart-page.mjs
-src/features/stocks/generated/
+apps/mobile/src/features/stocks/generated/
