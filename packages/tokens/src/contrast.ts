@@ -17,6 +17,9 @@ export function luminance(hex: string): number {
 }
 
 export function contrastRatio(first: string, second: string): number {
-  const [lighter, darker] = [luminance(first), luminance(second)].sort((a, b) => b - a);
-  return ((lighter ?? 0) + 0.05) / ((darker ?? 0) + 0.05);
+  const firstLuminance = luminance(first);
+  const secondLuminance = luminance(second);
+  const lighter = Math.max(firstLuminance, secondLuminance);
+  const darker = Math.min(firstLuminance, secondLuminance);
+  return (lighter + 0.05) / (darker + 0.05);
 }
