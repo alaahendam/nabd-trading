@@ -5,7 +5,7 @@ Modules: `apps/web/src/lib/i18n` (`language.ts`, `resources.ts`, `i18n.ts`, `lan
 ## Purpose and public surface
 
 - Languages: English (`en`, left to right) and Arabic (`ar`, right to left). `parseLanguage`, `detectLanguage({ stored, browser })` (a valid stored choice wins, then the first browser language whose primary subtag is supported, then English), `directionOf`, `applyDocumentLanguage`.
-- `resources`: every user-facing string, typed (keys are checked at compile time through `i18next`'s `CustomTypeOptions`). Digits in strings are not written at all; numbers are interpolated and always Latin. The Arabic text is written by the assistant and needs review by a native speaker.
+- `resources`: every user-facing string, typed (keys are checked at compile time through `i18next`'s `CustomTypeOptions`). Digits in strings are not written at all; numbers are interpolated and always Latin. The Arabic text was written by the assistant and has been reviewed by the project author.
 - `createI18n(language)`: a ready i18next instance (synchronous init, English fallback, no HTML escaping because React escapes).
 - `LanguageStore`: holds the language, persists it (`nabd.language`), switches i18next, and sets `lang` and `dir` on `<html>`. Storage and the root element are injected. `I18nProvider` and `useLanguage()` give React access.
 - The inline script in `index.html` sets `lang` and `dir` (next to `data-theme`) before first paint; tests keep it in step with the logic.
@@ -58,4 +58,4 @@ Modules: `apps/web/src/lib/i18n` (`language.ts`, `resources.ts`, `i18n.ts`, `lan
 
 ## Out of scope
 
-Date and time formatting for chart axes (Phase 5), the language toggle component (shell, Task 11), a native-speaker review of the Arabic copy.
+Date and time formatting for chart axes (Phase 5), the language toggle component (shell, Task 11).

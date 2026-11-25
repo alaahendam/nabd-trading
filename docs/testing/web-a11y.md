@@ -41,4 +41,4 @@ A user who wants the current price reads it by moving to it; nothing interrupts 
 - No real screen reader (NVDA, JAWS, VoiceOver, TalkBack) was run. The checks read the accessibility tree and the DOM, which is what screen readers use, but how a name or a description is spoken, and the order of announcements, can only be judged by listening.
 - Focus order and indicators were observed in Chromium only.
 - Colour contrast and the rest of WCAG A and AA are axe's job (`accessibility.spec.ts`); axe cannot judge whether a description is a good description.
-- The Arabic text was written for this project and has not had a native speaker's review.
+- The Arabic text was written by the assistant and reviewed by the project author. It has not been through a professional translation or localization review.
