@@ -1,0 +1,22 @@
+/** @type {import('jest').Config} */
+export default {
+  preset: 'jest-expo',
+  testMatch: ['<rootDir>/app/**/*.test.{ts,tsx}', '<rootDir>/src/**/*.test.{ts,tsx}'],
+  // The pnpm form from the Expo docs: packages in the store are only transformed when they are
+  // React Native or Expo ones. The workspace packages are symlinks to folders outside node_modules,
+  // so they are transformed like the app's own code.
+  transformIgnorePatterns: [
+    'node_modules/(?!(.pnpm|(jest-)?react-native|@react-native(-community)?|expo(nent)?|@expo(nent)?/.*|@expo-google-fonts/.*|react-navigation|@react-navigation/.*|standard-navigation))',
+  ],
+  collectCoverageFrom: [
+    'app/**/*.{ts,tsx}',
+    'src/**/*.{ts,tsx}',
+    '!**/*.test.{ts,tsx}',
+    '!**/*.d.ts',
+  ],
+  coverageReporters: ['text', 'lcov'],
+  coverageThreshold: {
+    global: { statements: 90, branches: 90, functions: 90, lines: 90 },
+    './src/lib/env.ts': { statements: 100, branches: 100, functions: 100, lines: 100 },
+  },
+};

@@ -8,6 +8,8 @@ build/
 coverage/
 .turbo/
 .vite/
+.expo/
+expo-env.d.ts
 *.tsbuildinfo
 
 # env files (keep examples)
