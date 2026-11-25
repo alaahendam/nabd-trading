@@ -18,6 +18,6 @@ The plan says the watchlist is stored on the server per anonymous client ID. Thi
 
 ## Consequences
 
-- Watchlists are lost when the server restarts, and the server cannot scale past one instance. The README must say so.
+- Watchlists are lost when the server restarts, and the server cannot scale past one instance. The README and `docs/deployment.md` say so (the Railway service runs one replica).
 - Swapping in a database later means writing one class that implements the interface; controller, service and tests do not change.
 - Memory is bounded: the in-memory repository keeps at most 10 000 clients and evicts the least recently used one when a new client arrives, so random client IDs cannot grow memory without limit. A client that has been evicted simply sees an empty watchlist.

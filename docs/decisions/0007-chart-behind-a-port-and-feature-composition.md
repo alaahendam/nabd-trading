@@ -13,7 +13,7 @@ Phase 5 adds three features: a stock list, a stock detail page with a candlestic
 
 ## Decision
 
-- **The chart sits behind a small port.** The app talks to `ChartPort` (`setData`, `updateCandle`, `applyColors`, `dispose`). The only file that imports `lightweight-charts` is `lightweight-chart-adapter.ts`, and a lint rule enforces that, the same way it does for `socket.io-client`. The adapter is loaded on demand through a `ChartLoader`, which puts the library in its own chunk (about 165 kB) so the stock list does not pay for it, and a context supplies the loader so tests inject a fake. The candle math (`candles.ts`) is pure and converts milliseconds to the library's seconds in one place.
+- **The chart sits behind a small port.** The app talks to `ChartPort` (`setData`, `updateCandle`, `applyColors`, `applyLocale`, `dispose`). The only file that imports `lightweight-charts` is `lightweight-chart-adapter.ts`, and a lint rule enforces that, the same way it does for `socket.io-client`. The adapter is loaded on demand through a `ChartLoader`, which puts the library in its own chunk (about 165 kB) so the stock list does not pay for it, and a context supplies the loader so tests inject a fake. The candle math (`candles.ts`) is pure and converts milliseconds to the library's seconds in one place.
 - **Live candles share the server's grid.** Buckets are aligned to the epoch on the server (`time = index * bucketMs`), and the client uses the same arithmetic, so a live tick either moves the last candle's close and range or starts a new candle at the right bucket start.
 - **The canvas cannot read CSS variables.** The semantic token values are read at creation and again when the theme changes, so the chart follows light and dark without a second set of colors.
 - **One direction between features.** `stocks` knows nothing about the watchlist. Its list and detail take an action slot (`renderAction`). `watchlist` imports `stocks` through its public `index.ts` (it renders stock rows with a symbol filter) and exports the star. The pages in `app/` put the star into the slot. There is no import cycle, and the boundary lint stays meaningful.
@@ -33,4 +33,8 @@ Phase 5 adds three features: a stock list, a stock detail page with a candlestic
 - The chart, its colors and its live updates are tested without a canvas; the adapter is tested with the library mocked, and the real drawing is checked in a browser.
 - A second chart library could replace this one by writing one adapter.
 - Ticks coalesced into one frame count as one price, so an extreme reached and left inside a single frame is not recorded in the day range. That is accepted.
-- The main bundle is still about 570 kB: the router, query client, i18n, zod and socket.io are in it. Splitting pages by route is a Phase 6 candidate.
+- The chart chunk is the only on-demand split. Splitting the pages by route was measured in Phase 6 and gave nothing, and the stable dependencies got their own chunks instead (ADR 0009).
+
+## Amendments
+
+- **Phase 6 and the design round.** The port gained `applyLocale`, so the time axis follows the app language (Latin digits, Arabic month and day names); the language changes the chart without rebuilding it. The chart container is a labelled `figure` and not an image, because the library's own attribution link sits inside it and interactive content cannot be nested in an image. Its description (`aria-describedby`) gives the period, start and end price, change, high and low, read from the loaded history and not from live ticks.
