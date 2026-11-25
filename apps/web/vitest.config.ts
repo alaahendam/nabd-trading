@@ -34,15 +34,12 @@ export default defineConfig({
         },
         'src/lib/i18n/i18n.ts': { statements: 100, branches: 100, functions: 100, lines: 100 },
         'src/lib/format/format.ts': { statements: 100, branches: 100, functions: 100, lines: 100 },
-        'src/lib/api/api-error.ts': { statements: 100, branches: 100, functions: 100, lines: 100 },
-        'src/lib/api/client-id.ts': { statements: 100, branches: 100, functions: 100, lines: 100 },
-        'src/lib/api/http-client.ts': {
+        'src/lib/api/browser-client-id.ts': {
           statements: 100,
           branches: 100,
           functions: 100,
           lines: 100,
         },
-        'src/lib/api/endpoints.ts': { statements: 100, branches: 100, functions: 100, lines: 100 },
         'src/lib/api/api-provider.tsx': {
           statements: 100,
           branches: 100,

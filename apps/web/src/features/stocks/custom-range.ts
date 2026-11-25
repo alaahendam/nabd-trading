@@ -1,6 +1,5 @@
+import type { HistoryRange } from '@nabd/shared';
 import { MAX_RANGE_MS, MIN_RANGE_MS, type Period } from '@nabd/shared';
-
-import type { HistoryRange } from '../../lib/api';
 
 const DAY = 86_400_000;
 const DATE_PATTERN = /^\d{4}-\d{2}-\d{2}$/;

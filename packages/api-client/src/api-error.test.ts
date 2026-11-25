@@ -1,6 +1,6 @@
 import { describe, expect, it } from 'vitest';
 
-import { ApiClientError, isRetryable } from './api-error';
+import { ApiClientError, isRetryable } from './api-error.js';
 
 describe('ApiClientError', () => {
   it.each([

@@ -1,10 +1,6 @@
 import { describe, expect, it, vi } from 'vitest';
 
-import {
-  CLIENT_ID_STORAGE_KEY,
-  createBrowserClientIdProvider,
-  createClientIdProvider,
-} from './client-id';
+import { CLIENT_ID_STORAGE_KEY, createClientIdProvider } from './client-id.js';
 
 const UUID = '3f2b8c1e-5a4d-4e6f-9b7a-1c2d3e4f5a6b';
 const OTHER = '9a8b7c6d-5e4f-4a3b-8c2d-1e0f9a8b7c6d';
@@ -66,16 +62,5 @@ describe('createClientIdProvider', () => {
     const provide = createClientIdProvider(blocked, generate);
     expect([provide(), provide(), provide()]).toEqual([UUID, UUID, UUID]);
     expect(generate).toHaveBeenCalledTimes(1);
-  });
-});
-
-describe('createBrowserClientIdProvider', () => {
-  it('CID-06 persists a real UUID in localStorage', () => {
-    localStorage.clear();
-    const id = createBrowserClientIdProvider()();
-    expect(id).toMatch(/^[0-9a-f]{8}-[0-9a-f]{4}-4[0-9a-f]{3}-[89ab][0-9a-f]{3}-[0-9a-f]{12}$/);
-    expect(localStorage.getItem(CLIENT_ID_STORAGE_KEY)).toBe(id);
-    expect(createBrowserClientIdProvider()()).toBe(id);
-    localStorage.clear();
   });
 });

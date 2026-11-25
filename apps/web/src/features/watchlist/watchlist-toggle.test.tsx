@@ -1,10 +1,10 @@
+import { ApiClientError } from '@nabd/api-client';
 import type { WatchlistItem } from '@nabd/shared';
 import { watchlistItem } from '@nabd/testing';
 import { render, screen, waitFor } from '@testing-library/react';
 import userEvent from '@testing-library/user-event';
 import { describe, expect, it } from 'vitest';
 
-import { ApiClientError } from '../../lib/api';
 import { createFeatureHarness } from '../../test/feature-harness';
 import { WatchlistToggle } from './watchlist-toggle';
 

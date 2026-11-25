@@ -1,9 +1,9 @@
+import { ApiClientError } from '@nabd/api-client';
 import { createFakeApi } from '@nabd/testing';
 import { aapl, aaplHistory, brkb, stocksPage } from '@nabd/testing';
 import { act, renderHook, waitFor } from '@testing-library/react';
 import { describe, expect, it } from 'vitest';
 
-import { ApiClientError } from '../../lib/api';
 import { queryKeys } from '../../lib/query';
 import { createQueryWrapper } from '../../test/query-wrapper';
 import { useHistory, useStock, useStocksBySymbols, useStocksPages } from './stock-queries';

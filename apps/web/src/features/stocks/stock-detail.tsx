@@ -1,9 +1,9 @@
+import { ApiClientError } from '@nabd/api-client';
 import type { StockWithQuote } from '@nabd/shared';
 import type { ReactNode } from 'react';
 import { useTranslation } from 'react-i18next';
 import { Link } from 'react-router';
 
-import { ApiClientError } from '../../lib/api';
 import { formatPrice, formatVolume } from '../../lib/format/format';
 import { Button, buttonVariants, ChangeBadge, Skeleton, StateMessage } from '../../shared/ui';
 import { useSubscription } from '../market-data';

@@ -1,10 +1,10 @@
+import { ApiClientError } from '@nabd/api-client';
 import { aapl, aaplHistory } from '@nabd/testing';
 import { act, render, screen, within } from '@testing-library/react';
 import userEvent from '@testing-library/user-event';
 import { useState } from 'react';
 import { afterEach, describe, expect, it, vi } from 'vitest';
 
-import { ApiClientError } from '../../lib/api';
 import { createFeatureHarness } from '../../test/feature-harness';
 import { StockDetail } from './stock-detail';
 

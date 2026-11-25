@@ -1,7 +1,7 @@
 import { API_PREFIX, apiErrorSchema, CLIENT_ID_HEADER } from '@nabd/shared';
 import type { z } from 'zod';
 
-import { ApiClientError } from './api-error';
+import { ApiClientError } from './api-error.js';
 
 export interface RequestOptions {
   method: 'GET' | 'PUT' | 'DELETE';

@@ -16,9 +16,7 @@ import {
   watchlistResponseSchema,
 } from '@nabd/shared';
 
-import type { HttpClient } from './http-client';
-
-export type { HistoryRange, StocksListQuery, StocksPage };
+import type { HttpClient } from './http-client.js';
 
 export interface Api {
   listStocks(query: StocksListQuery, signal?: AbortSignal): Promise<StocksPage>;

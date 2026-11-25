@@ -1,9 +1,9 @@
+import type { Api } from '@nabd/api-client';
 import { renderHook } from '@testing-library/react';
 import type { ReactNode } from 'react';
 import { describe, expect, it, vi } from 'vitest';
 
 import { ApiProvider, useApi } from './api-provider';
-import type { Api } from './endpoints';
 
 const fakeApi: Api = {
   listStocks: vi.fn(),

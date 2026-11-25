@@ -1,10 +1,11 @@
+import { ApiClientError } from '@nabd/api-client';
 import { type HistoryData, PERIOD_CONFIG } from '@nabd/shared';
+import { type HistoryRange } from '@nabd/shared';
 import { aaplHistory } from '@nabd/testing';
 import { act, render, renderHook, screen } from '@testing-library/react';
 import userEvent from '@testing-library/user-event';
 import { afterEach, describe, expect, it, vi } from 'vitest';
 
-import { ApiClientError, type HistoryRange } from '../../lib/api';
 import { createFeatureHarness } from '../../test/feature-harness';
 import { useChartLoader } from './chart-context';
 import { StockChart } from './stock-chart';

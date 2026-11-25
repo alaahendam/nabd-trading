@@ -1,10 +1,10 @@
+import { ApiClientError } from '@nabd/api-client';
 import type { StockWithQuote } from '@nabd/shared';
 import { aapl, fakeStocksServer } from '@nabd/testing';
 import { act, render, screen } from '@testing-library/react';
 import userEvent from '@testing-library/user-event';
 import { afterEach, describe, expect, it, vi } from 'vitest';
 
-import { ApiClientError } from '../../lib/api';
 import { installFakeIntersectionObserver } from '../../test/fake-intersection-observer';
 import { createFeatureHarness } from '../../test/feature-harness';
 import { StockList } from './stock-list';

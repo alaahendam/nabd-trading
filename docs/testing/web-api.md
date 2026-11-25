@@ -1,6 +1,6 @@
 # Test matrix: web API client, query client
 
-Modules: `apps/web/src/lib/api` (`client-id.ts`, `api-error.ts`, `http-client.ts`, `endpoints.ts`, `api-provider.tsx`), `src/lib/query` (`query-client.ts`, `query-keys.ts`). The only code that may call `fetch` (lint-enforced). Tested against a mock server (MSW) that fails any request without a handler.
+Modules: `packages/api-client/src` (`client-id.ts`, `api-error.ts`, `http-client.ts`, `endpoints.ts`: shared by web and mobile since mobile M0), `apps/web/src/lib/api` (`api-provider.tsx`, and `browser-client-id.ts`, the `localStorage` and `crypto.randomUUID` way to keep the ID), `apps/web/src/lib/query` (`query-client.ts`, `query-keys.ts`). The package is the only code that may call `fetch` (lint-enforced). Tested against a mock server (MSW) that fails any request without a handler.
 
 ## Purpose and public surface
 

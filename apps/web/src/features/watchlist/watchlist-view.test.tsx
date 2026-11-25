@@ -1,9 +1,9 @@
+import { ApiClientError } from '@nabd/api-client';
 import { aapl, brkb, fakeStocksServer, watchlistItem } from '@nabd/testing';
 import { act, render, screen, waitFor, within } from '@testing-library/react';
 import userEvent from '@testing-library/user-event';
 import { describe, expect, it } from 'vitest';
 
-import { ApiClientError } from '../../lib/api';
 import { createFeatureHarness } from '../../test/feature-harness';
 import { WatchlistView } from './watchlist-view';
 

@@ -1,4 +1,4 @@
-import type { HistoryRange } from '../api/endpoints';
+import type { HistoryRange } from '@nabd/shared';
 
 export const queryKeys = {
   stocks: () => ['stocks'] as const,

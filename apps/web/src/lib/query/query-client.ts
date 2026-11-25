@@ -1,6 +1,5 @@
+import { isRetryable } from '@nabd/api-client';
 import { QueryClient } from '@tanstack/react-query';
-
-import { isRetryable } from '../api';
 
 const MAX_RETRIES = 2;
 const BASE_DELAY_MS = 1000;

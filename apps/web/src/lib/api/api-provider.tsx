@@ -1,7 +1,6 @@
+import type { Api } from '@nabd/api-client';
 import type { ReactNode } from 'react';
 import { createContext, use } from 'react';
-
-import type { Api } from './endpoints';
 
 const ApiContext = createContext<Api | undefined>(undefined);
 

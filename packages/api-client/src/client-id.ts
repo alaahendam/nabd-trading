@@ -45,14 +45,3 @@ export function createClientIdProvider(
     return created;
   };
 }
-
-export const createBrowserClientIdProvider = (): ClientIdProvider =>
-  createClientIdProvider(
-    {
-      getItem: (key) => localStorage.getItem(key),
-      setItem: (key, value) => {
-        localStorage.setItem(key, value);
-      },
-    },
-    () => crypto.randomUUID(),
-  );

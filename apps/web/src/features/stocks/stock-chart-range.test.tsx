@@ -1,10 +1,10 @@
+import type { HistoryRange } from '@nabd/shared';
 import { type HistoryData, PERIOD_CONFIG } from '@nabd/shared';
 import { aaplHistory } from '@nabd/testing';
 import { act, fireEvent, render, screen } from '@testing-library/react';
 import userEvent from '@testing-library/user-event';
 import { afterEach, beforeEach, describe, expect, it, vi } from 'vitest';
 
-import type { HistoryRange } from '../../lib/api';
 import { createFeatureHarness } from '../../test/feature-harness';
 import { StockChart } from './stock-chart';
 

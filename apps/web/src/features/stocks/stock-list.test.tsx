@@ -1,3 +1,4 @@
+import { ApiClientError } from '@nabd/api-client';
 import type { StockWithQuote } from '@nabd/shared';
 import { aapl, brkb, fakeStocksServer } from '@nabd/testing';
 import { act, render, screen, within } from '@testing-library/react';
@@ -5,7 +6,6 @@ import userEvent from '@testing-library/user-event';
 import { useState } from 'react';
 import { afterEach, describe, expect, it, vi } from 'vitest';
 
-import { ApiClientError } from '../../lib/api';
 import { createFeatureHarness } from '../../test/feature-harness';
 import { StockList } from './stock-list';
 

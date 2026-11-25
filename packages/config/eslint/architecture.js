@@ -11,18 +11,18 @@ const chartLibrary = {
 };
 const httpClients = ['axios', 'ky'].map((name) => ({
   name,
-  message: 'HTTP requests go through lib/api.',
+  message: 'HTTP requests go through @nabd/api-client.',
 }));
 const sharedDeepImports = {
-  group: ['@nabd/shared/*'],
-  message: 'Import from the @nabd/shared entry point, not its internals.',
+  group: ['@nabd/shared/*', '@nabd/api-client/*'],
+  message: 'Import a workspace package from its entry point, not its internals.',
 };
 
 /**
  * Web architecture, enforced as lint errors:
  *   app -> features -> shared / lib, never the other way round.
  *   A feature is only reachable through its public `index.ts`.
- *   socket.io-client lives in features/market-data, the HTTP client in lib/api.
+ *   socket.io-client lives in features/market-data, the HTTP client in @nabd/api-client.
  *   No deep imports into @nabd/shared.
  */
 export const webArchitecture = defineConfig(
@@ -83,8 +83,8 @@ export const webArchitecture = defineConfig(
       ],
       'no-restricted-globals': [
         'error',
-        { name: 'fetch', message: 'HTTP requests go through lib/api.' },
-        { name: 'XMLHttpRequest', message: 'HTTP requests go through lib/api.' },
+        { name: 'fetch', message: 'HTTP requests go through @nabd/api-client.' },
+        { name: 'XMLHttpRequest', message: 'HTTP requests go through @nabd/api-client.' },
         { name: 'WebSocket', message: 'Realtime goes through features/market-data.' },
       ],
     },
@@ -99,8 +99,8 @@ export const webArchitecture = defineConfig(
       ],
       'no-restricted-globals': [
         'error',
-        { name: 'fetch', message: 'HTTP requests go through lib/api.' },
-        { name: 'XMLHttpRequest', message: 'HTTP requests go through lib/api.' },
+        { name: 'fetch', message: 'HTTP requests go through @nabd/api-client.' },
+        { name: 'XMLHttpRequest', message: 'HTTP requests go through @nabd/api-client.' },
       ],
     },
   },
@@ -113,9 +113,5 @@ export const webArchitecture = defineConfig(
         { paths: [socketIo, ...httpClients], patterns: [sharedDeepImports] },
       ],
     },
-  },
-  {
-    files: ['src/lib/api/**/*.{ts,tsx}'],
-    rules: { 'no-restricted-globals': 'off' },
   },
 );

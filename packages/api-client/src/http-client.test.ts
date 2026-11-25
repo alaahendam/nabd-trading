@@ -4,8 +4,8 @@ import { delay, http, HttpResponse } from 'msw';
 import { describe, expect, it, vi } from 'vitest';
 import { z } from 'zod';
 
-import { ApiClientError } from './api-error';
-import { createHttpClient } from './http-client';
+import { ApiClientError } from './api-error.js';
+import { createHttpClient } from './http-client.js';
 
 const CLIENT_ID = '3f2b8c1e-5a4d-4e6f-9b7a-1c2d3e4f5a6b';
 const itemSchema = z.object({ data: z.object({ name: z.string(), count: z.number().default(1) }) });

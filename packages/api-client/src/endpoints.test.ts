@@ -3,9 +3,9 @@ import { API_URL, server } from '@nabd/testing/msw';
 import { http, HttpResponse } from 'msw';
 import { describe, expect, it } from 'vitest';
 
-import { ApiClientError } from './api-error';
-import { createApi } from './endpoints';
-import { createHttpClient } from './http-client';
+import { ApiClientError } from './api-error.js';
+import { createApi } from './endpoints.js';
+import { createHttpClient } from './http-client.js';
 
 const api = createApi(
   createHttpClient({ baseUrl: API_URL, getClientId: () => '3f2b8c1e-5a4d-4e6f-9b7a-1c2d3e4f5a6b' }),

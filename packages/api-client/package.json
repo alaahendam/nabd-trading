@@ -1,0 +1,38 @@
+{
+  "name": "@nabd/api-client",
+  "private": true,
+  "version": "0.0.0",
+  "description": "The API client shared by web and mobile: fetch-based, every response validated with the shared Zod schemas",
+  "license": "UNLICENSED",
+  "type": "module",
+  "main": "./dist/index.js",
+  "types": "./dist/index.d.ts",
+  "exports": {
+    ".": {
+      "types": "./dist/index.d.ts",
+      "default": "./dist/index.js"
+    }
+  },
+  "files": [
+    "dist"
+  ],
+  "scripts": {
+    "build": "tsc -p tsconfig.build.json",
+    "dev": "tsc -p tsconfig.build.json --watch --preserveWatchOutput",
+    "lint": "eslint --max-warnings 0 .",
+    "typecheck": "tsc --noEmit",
+    "test": "vitest run --coverage"
+  },
+  "dependencies": {
+    "@nabd/shared": "workspace:*",
+    "zod": "^4.6.7"
+  },
+  "devDependencies": {
+    "@nabd/config": "workspace:*",
+    "@nabd/testing": "workspace:*",
+    "@vitest/coverage-v8": "^5.1.1",
+    "msw": "^3.0.7",
+    "typescript": "~6.0.3",
+    "vitest": "^5.1.1"
+  }
+}
