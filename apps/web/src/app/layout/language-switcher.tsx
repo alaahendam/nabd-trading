@@ -1,7 +1,7 @@
+import { LANGUAGE_NAMES, LANGUAGES, parseLanguage } from '@nabd/i18n';
 import { useTranslation } from 'react-i18next';
 
 import { useLanguage } from '../../lib/i18n/i18n-provider';
-import { LANGUAGE_NAMES, LANGUAGES, parseLanguage } from '../../lib/i18n/language';
 import { GlobeIcon, Select } from '../../shared/ui';
 
 /** Each language is named in itself, so a reader can always find theirs. */

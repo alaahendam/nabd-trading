@@ -1,0 +1,39 @@
+{
+  "name": "@nabd/i18n",
+  "private": true,
+  "version": "0.0.0",
+  "description": "Words and numbers shared by web and mobile: English and Arabic translations with typed keys, the language rules, and the formatters (Latin digits in both languages)",
+  "license": "UNLICENSED",
+  "type": "module",
+  "main": "./dist/index.js",
+  "types": "./dist/index.d.ts",
+  "exports": {
+    ".": {
+      "types": "./dist/index.d.ts",
+      "default": "./dist/index.js"
+    }
+  },
+  "files": [
+    "dist"
+  ],
+  "scripts": {
+    "build": "tsc -p tsconfig.build.json",
+    "dev": "tsc -p tsconfig.build.json --watch --preserveWatchOutput",
+    "lint": "eslint --max-warnings 0 .",
+    "typecheck": "tsc --noEmit",
+    "test": "vitest run --coverage"
+  },
+  "peerDependencies": {
+    "i18next": "^27.2.5",
+    "react-i18next": "^18.0.3"
+  },
+  "devDependencies": {
+    "@nabd/config": "workspace:*",
+    "@vitest/coverage-v8": "^5.1.1",
+    "i18next": "^27.2.5",
+    "react": "19.3.0",
+    "react-i18next": "^18.0.3",
+    "typescript": "~6.0.3",
+    "vitest": "^5.1.1"
+  }
+}

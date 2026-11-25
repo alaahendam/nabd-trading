@@ -1,5 +1,7 @@
 import { ApiProvider } from '@nabd/data';
 import { createQueryClient } from '@nabd/data';
+import type { Language } from '@nabd/i18n';
+import { createI18n } from '@nabd/i18n';
 import { PriceStore, RealtimeClient, RealtimeProvider } from '@nabd/market-data';
 import { createFakeApi } from '@nabd/testing';
 import { FakeSocket } from '@nabd/testing';
@@ -10,8 +12,6 @@ import { I18nextProvider } from 'react-i18next';
 import { MemoryRouter } from 'react-router';
 
 import { ChartProvider } from '../features/stocks/chart-context';
-import { createI18n } from '../lib/i18n/i18n';
-import type { Language } from '../lib/i18n/language';
 import { ThemeStore } from '../lib/theme/theme';
 import { ThemeProvider } from '../lib/theme/theme-hooks';
 import { createFakeChart } from './fake-chart';

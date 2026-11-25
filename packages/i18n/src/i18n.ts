@@ -1,8 +1,8 @@
 import i18next, { type i18n } from 'i18next';
 import { initReactI18next } from 'react-i18next';
 
-import { DEFAULT_LANGUAGE, type Language, LANGUAGES } from './language';
-import { defaultNS, resources } from './resources';
+import { DEFAULT_LANGUAGE, type Language, LANGUAGES } from './language.js';
+import { defaultNS, resources } from './resources.js';
 
 /**
  * A ready i18next instance. Resources are bundled, so initialisation is synchronous (`t` works

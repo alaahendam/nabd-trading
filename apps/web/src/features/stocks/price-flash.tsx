@@ -1,8 +1,7 @@
+import { type ChangeDirection, formatPrice } from '@nabd/i18n';
 import type { Freshness } from '@nabd/market-data';
 import { clsx } from 'clsx';
 import { useTranslation } from 'react-i18next';
-
-import { type ChangeDirection, formatPrice } from '../../lib/format/format';
 
 const FLASH: Readonly<Record<ChangeDirection, string>> = {
   up: 'animate-flash-up',

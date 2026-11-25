@@ -1,13 +1,13 @@
 import { createApi } from '@nabd/api-client';
 import { createHttpClient } from '@nabd/api-client';
 import { createQueryClient } from '@nabd/data';
+import type { Language } from '@nabd/i18n';
+import { createI18n } from '@nabd/i18n';
 import { PriceStore, RealtimeClient } from '@nabd/market-data';
 import { FakeSocket } from '@nabd/testing';
 import { API_URL } from '@nabd/testing/msw';
 
 import type { AppServices } from '../app/providers/services';
-import { createI18n } from '../lib/i18n/i18n';
-import type { Language } from '../lib/i18n/language';
 import { LanguageStore } from '../lib/i18n/language-store';
 import { ThemeStore } from '../lib/theme/theme';
 import { createFakeChart } from './fake-chart';

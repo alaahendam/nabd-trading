@@ -1,3 +1,4 @@
+import { type Direction, directionOf, type Language } from '@nabd/i18n';
 import type { i18n } from 'i18next';
 import {
   createContext,
@@ -8,7 +9,6 @@ import {
 } from 'react';
 import { I18nextProvider } from 'react-i18next';
 
-import { type Direction, directionOf, type Language } from './language';
 import type { LanguageStore } from './language-store';
 
 const LanguageContext = createContext<LanguageStore | undefined>(undefined);

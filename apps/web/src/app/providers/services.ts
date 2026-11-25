@@ -1,13 +1,12 @@
 import { type Api, createApi, createHttpClient } from '@nabd/api-client';
 import { createQueryClient } from '@nabd/data';
+import { createI18n, DEFAULT_LANGUAGE } from '@nabd/i18n';
 import { createRealtimeClient, type RealtimeClient } from '@nabd/market-data';
 import type { QueryClient } from '@tanstack/react-query';
 import type { i18n } from 'i18next';
 
 import { type ChartLoader, loadLightweightChart } from '../../features/stocks';
 import { createBrowserClientIdProvider } from '../../lib/api';
-import { createI18n } from '../../lib/i18n/i18n';
-import { DEFAULT_LANGUAGE } from '../../lib/i18n/language';
 import { browserLanguageEnvironment, LanguageStore } from '../../lib/i18n/language-store';
 import { browserThemeEnvironment, ThemeStore } from '../../lib/theme/theme';
 

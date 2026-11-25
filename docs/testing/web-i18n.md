@@ -1,6 +1,6 @@
 # Test matrix: web i18n, RTL and formatters
 
-Modules: `apps/web/src/lib/i18n` (`language.ts`, `resources.ts`, `i18n.ts`, `language-store.ts`, `i18n-provider.tsx`), `src/lib/format/format.ts`, and the language part of the pre-paint script in `index.html`.
+Modules: `packages/i18n/src` (`language.ts`, `resources.ts`, `i18n.ts`, `format.ts`: shared by web and mobile since mobile M0; before that in `apps/web/src/lib/i18n` and `lib/format`), `apps/web/src/lib/i18n` (`language-store.ts`, `i18n-provider.tsx`, and `pre-paint-script.test.ts`, which runs the language part of the inline script in `index.html` against the package's `detectLanguage`). The web app types `t()` with its own `src/i18next.d.ts`.
 
 ## Purpose and public surface
 

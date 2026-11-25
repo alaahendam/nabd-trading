@@ -1,9 +1,9 @@
+import { createI18n } from '@nabd/i18n';
 import { act, render, renderHook, screen } from '@testing-library/react';
 import type { ReactNode } from 'react';
 import { useTranslation } from 'react-i18next';
 import { describe, expect, it, vi } from 'vitest';
 
-import { createI18n } from './i18n';
 import { I18nProvider, useLanguage } from './i18n-provider';
 import { LanguageStore } from './language-store';
 

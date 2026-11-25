@@ -7,7 +7,7 @@ import {
   formatPercentMagnitude,
   formatPrice,
   formatVolume,
-} from './format';
+} from './format.js';
 
 describe('formatPrice', () => {
   it.each([

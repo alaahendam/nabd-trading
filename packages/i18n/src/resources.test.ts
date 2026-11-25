@@ -1,7 +1,7 @@
 import { describe, expect, it } from 'vitest';
 
-import { createI18n } from './i18n';
-import { resources } from './resources';
+import { createI18n } from './i18n.js';
+import { resources } from './resources.js';
 
 interface Tree {
   readonly [key: string]: string | Tree;
