@@ -1,4 +1,10 @@
-import { type Api, createApi, createClientIdProvider, createHttpClient } from '@nabd/api-client';
+import {
+  type Api,
+  type ClientIdStorage,
+  createApi,
+  createClientIdProvider,
+  createHttpClient,
+} from '@nabd/api-client';
 import { createQueryClient } from '@nabd/data';
 import { createI18n } from '@nabd/i18n';
 import { createRealtimeClient, type RealtimeClient } from '@nabd/market-data';
@@ -17,7 +23,7 @@ export interface Services {
   themeStore: ThemeStore;
 }
 
-export function createServices(storage: StartupStorage): Services {
+export function createServices(storage: ClientIdStorage): Services {
   return {
     i18n: createI18n(readLanguage(storage)),
     themeStore: new ThemeStore({ storage, ...deviceScheme }),

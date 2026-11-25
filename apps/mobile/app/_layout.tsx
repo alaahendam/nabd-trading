@@ -1,5 +1,4 @@
 import AsyncStorage from '@react-native-async-storage/async-storage';
-import { Stack } from 'expo-router';
 import { StatusBar } from 'expo-status-bar';
 import { useMemo } from 'react';
 import { AppState } from 'react-native';
@@ -10,6 +9,7 @@ import { networkConnectivity } from '../src/lib/network/network-connectivity';
 import { wireQueryClient } from '../src/lib/query/wire-query-client';
 import type { StartupStorage } from '../src/lib/storage/startup-storage';
 import { AppProviders } from '../src/providers/app-providers';
+import { AppStack } from '../src/providers/app-stack';
 import { Bootstrap, holdSplash } from '../src/providers/bootstrap';
 import { ConfigGate } from '../src/providers/config-gate';
 import { DataProviders } from '../src/providers/data-providers';
@@ -20,6 +20,8 @@ import { createDataServices, createServices } from '../src/providers/services';
 // exactly like this, and handed to the check.
 const env = readEnv({ EXPO_PUBLIC_API_URL: process.env.EXPO_PUBLIC_API_URL });
 
+export { ErrorBoundary } from '../src/providers/error-boundary';
+
 holdSplash();
 wireQueryClient({ appState: AppState, connectivity: networkConnectivity });
 const prepare = () => prepareApp({ store: AsyncStorage, loadFonts });
@@ -29,7 +31,7 @@ function DataRoot({ storage, apiUrl }: { storage: StartupStorage; apiUrl: string
 
   return (
     <DataProviders services={services}>
-      <Stack screenOptions={{ headerShown: false }} />
+      <AppStack />
     </DataProviders>
   );
 }

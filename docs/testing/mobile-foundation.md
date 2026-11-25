@@ -67,14 +67,15 @@ Written before the code. IDs appear in the test names. jest-expo with React Nati
 
 ## Screens
 
-| ID     | Behaviour                                                                                      |
-| ------ | ---------------------------------------------------------------------------------------------- |
-| CON-01 | The connection status shows the translated label of each of the four states                    |
-| CON-02 | It is a polite live region, so a change is announced once, never per tick                      |
-| ERR-01 | The error screen shows the translated title and description and a retry button                 |
-| ERR-02 | Pressing retry calls the retry function                                                        |
-| ERR-03 | The retry button has a role and a label, and is at least 48 high                               |
-| ROU-04 | `/stock/AAPL` opens the detail placeholder with the symbol, above the tabs, with a back action |
-| ROU-05 | The simulated-data notice is on the tab screens                                                |
+| ID     | Behaviour                                                                                                  |
+| ------ | ---------------------------------------------------------------------------------------------------------- |
+| CON-01 | The connection status shows the translated label of each of the four states                                |
+| CON-02 | It is a polite live region, so a change is announced once, never per tick                                  |
+| ERR-01 | The error screen shows the translated title and description and a retry button                             |
+| ERR-02 | Pressing retry calls the retry function                                                                    |
+| ERR-03 | The retry button has a role and a label, and is at least 48 high                                           |
+| ERR-04 | The error boundary brings its own providers, so it works when the layout is gone                           |
+| ROU-04 | `/stock/AAPL` opens the detail placeholder with the symbol, above the tabs, and going back returns to them |
+| ROU-05 | The simulated-data notice and the connection status are on both tabs and the detail                        |
 
 Coverage: at least 90% overall, 100% for `src/lib` logic (storage, theme store, connectivity, lifecycle).
