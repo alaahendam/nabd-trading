@@ -18,6 +18,7 @@ export default {
     'src/**/*.{ts,tsx}',
     '!**/*.test.{ts,tsx}',
     '!src/test-utils.tsx',
+    '!src/**/generated/**',
     '!**/*.d.ts',
   ],
   coverageReporters: ['text', 'lcov'],

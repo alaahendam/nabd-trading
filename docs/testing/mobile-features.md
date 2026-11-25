@@ -67,7 +67,7 @@ Written before the code. IDs appear in the test names. jest-expo with React Nati
 | DET-08 | The star is on the detail and works as in the watchlist                              |
 | DET-09 | The symbol in the address is read case-insensitively (`aapl` opens AAPL)             |
 
-## Chart (completed after the spike)
+## Chart (Lightweight Charts in a WebView, ADR 0013)
 
 | ID     | Behaviour                                                                                |
 | ------ | ---------------------------------------------------------------------------------------- |
@@ -78,5 +78,12 @@ Written before the code. IDs appear in the test names. jest-expo with React Nati
 | CHT-05 | The text summary says the period, start and end price, change, high and low              |
 | CHT-06 | The chart has an accessible label with the symbol and period                             |
 | CHT-07 | A period seen before comes from the cache without a second request                       |
+| CHT-08 | A live tick updates the last candle                                                      |
+| CHT-09 | The chart gets the theme's colors and the app language's locale, and follows changes     |
+| CHT-10 | The TradingView notice is shown under the chart                                          |
+| CHT-11 | The WebView is hidden from screen readers; the label and the summary are read instead    |
+| CHT-12 | The surface sends nothing before the page is ready, then the latest state, in order      |
+| CHT-13 | The page holds the library inline and nothing from the network; commands are valid JS    |
+| CHT-14 | If the page fails to load, an error with a retry button shows, and retry reloads it      |
 
 Coverage: at least 90% overall; 100% for logic (`useLiveQuote`, list and star behaviour).

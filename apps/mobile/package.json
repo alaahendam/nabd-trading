@@ -6,12 +6,12 @@
   "license": "UNLICENSED",
   "main": "expo-router/entry",
   "scripts": {
-    "start": "expo start",
-    "android": "expo start --android",
-    "lint": "eslint --max-warnings 0 .",
-    "typecheck": "tsc --noEmit",
-    "test": "jest --coverage",
-    "build": "expo export --platform android",
+    "start": "node scripts/build-chart-page.mjs && expo start",
+    "android": "node scripts/build-chart-page.mjs && expo start --android",
+    "lint": "node scripts/build-chart-page.mjs && eslint --max-warnings 0 .",
+    "typecheck": "node scripts/build-chart-page.mjs && tsc --noEmit",
+    "test": "node scripts/build-chart-page.mjs && jest --coverage",
+    "build": "node scripts/build-chart-page.mjs && expo export --platform android",
     "doctor": "expo-doctor",
     "typegen": "node scripts/generate-route-types.mjs"
   },
