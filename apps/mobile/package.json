@@ -12,7 +12,8 @@
     "typecheck": "tsc --noEmit",
     "test": "jest --coverage",
     "build": "expo export --platform android",
-    "doctor": "expo-doctor"
+    "doctor": "expo-doctor",
+    "typegen": "node scripts/generate-route-types.mjs"
   },
   "dependencies": {
     "@expo/metro-runtime": "~58.0.17",
