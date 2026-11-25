@@ -13,7 +13,7 @@ Part of `docs/MOBILE-PLAN.md` (section 5). Goal: the three features of M3, finis
 
 ## Tasks
 
-- [ ] **T1 Test matrix.** `docs/testing/mobile-polish.md`, before the code.
+- [x] **T1 Test matrix.** `docs/testing/mobile-polish.md`, before the code.
 - [ ] **T2 Tab icons.** An icon per tab, named by its title; checked on the phone.
 - [ ] **T3 Safe areas.** Screens and the tab bar clear the notch, the gesture bar and the cutout, in both orientations of use (portrait only is supported).
 - [ ] **T4 Dynamic Type.** Scaling with a cap; rows and the period switcher survive large sizes.
