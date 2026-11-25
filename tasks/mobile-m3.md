@@ -15,7 +15,7 @@ Part of `docs/MOBILE-PLAN.md` (section 5). Goal: the three features of the web a
 ## Tasks
 
 - [x] **T1 Test matrix.** `docs/testing/mobile-features.md`, before the code.
-- [ ] **T2 Rows.** `useLiveQuote`, price and change text, the stock row.
+- [x] **T2 Rows.** `useLiveQuote`, price and change text, the stock row.
 - [ ] **T3 Stock list.** FlashList, loading, empty, error, paging, refresh, subscriptions, the Stocks tab.
 - [ ] **T4 Watchlist.** The star with optimistic update and rollback, the Watchlist tab with its states.
 - [ ] **T5 Stock detail.** Header, stats, states (loading, not found, error), the star, live price.
