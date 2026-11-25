@@ -5,7 +5,7 @@ import { fontFamily } from '../../../lib/fonts';
 import { fontSize } from '../../../lib/theme/theme';
 import { useTheme } from '../../../lib/theme/theme-provider';
 
-type Variant = 'body' | 'title' | 'muted';
+type Variant = 'body' | 'title' | 'muted' | 'display';
 
 interface Props extends TextProps {
   variant?: Variant;
@@ -19,6 +19,11 @@ export function Text({ variant = 'body', style, ...rest }: Props) {
       StyleSheet.create({
         body: { color: colors.text, fontSize: fontSize.body, fontFamily: fontFamily.regular },
         title: { color: colors.text, fontSize: fontSize.title, fontFamily: fontFamily.semibold },
+        display: {
+          color: colors.text,
+          fontSize: fontSize.display,
+          fontFamily: fontFamily.semibold,
+        },
         muted: { color: colors.muted, fontSize: fontSize.body, fontFamily: fontFamily.regular },
       }),
     [colors],

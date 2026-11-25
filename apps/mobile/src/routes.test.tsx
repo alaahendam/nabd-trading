@@ -16,7 +16,7 @@ function stubServer() {
     }
     if (path.endsWith('/watchlist')) return Promise.resolve(Response.json({ data: [] }));
     return Promise.resolve(
-      Response.json({ error: { code: 'not_found', message: 'Not found' } }, { status: 404 }),
+      Response.json({ error: { code: 'NOT_FOUND', message: 'Not found' } }, { status: 404 }),
     );
   });
 }
@@ -37,7 +37,7 @@ describe('routes', () => {
   it('ROU-02 opens the watchlist', async () => {
     await renderRouter('./app', { initialUrl: '/watchlist' });
 
-    expect(await screen.findByRole('header', { name: 'Watchlist' })).toBeOnTheScreen();
+    expect(await screen.findByText('Your watchlist is empty')).toBeOnTheScreen();
     expect(screen).toHavePathname('/watchlist');
   });
 
