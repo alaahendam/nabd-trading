@@ -1,6 +1,9 @@
 /** @type {import('jest').Config} */
 export default {
   preset: 'jest-expo',
+  // The first Expo Router render in a run loads and transforms the whole router, which takes
+  // several seconds on a cold cache and longer while the other workspaces' tests run beside it.
+  testTimeout: 30_000,
   testMatch: ['<rootDir>/app/**/*.test.{ts,tsx}', '<rootDir>/src/**/*.test.{ts,tsx}'],
   // The pnpm form from the Expo docs: packages in the store are only transformed when they are
   // React Native or Expo ones. The workspace packages are symlinks to folders outside node_modules,
