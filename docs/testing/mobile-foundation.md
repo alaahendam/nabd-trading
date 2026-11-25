@@ -54,6 +54,7 @@ Written before the code. IDs appear in the test names. jest-expo with React Nati
 | BOOT-02 | Nothing is rendered until storage and fonts are ready                          |
 | BOOT-03 | When ready, the children render and the splash is hidden once                  |
 | BOOT-04 | If fonts fail to load, the app still starts (system font) and hides the splash |
+| BOOT-05 | Leaving before it is ready neither renders the children nor hides the splash   |
 
 ## Screens
 

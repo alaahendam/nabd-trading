@@ -16,7 +16,7 @@ Part of `docs/MOBILE-PLAN.md` (section 5). Goal: everything a screen needs aroun
 ## Tasks
 
 - [x] **T1 Test matrix.** `docs/testing/mobile-foundation.md`, before the code.
-- [ ] **T2 Storage and bootstrap.** `StartupStorage`, the client ID on top of it, fonts, the splash hold (`Bootstrap`).
+- [x] **T2 Storage and bootstrap.** `StartupStorage`, the client ID on top of it, fonts, the splash hold (`Bootstrap`).
 - [ ] **T3 Theme and language.** Theme store and provider, themed `Text` and `Screen`, language read.
 - [ ] **T4 Data and realtime.** Query client wired to `AppState` and the network, the API, the realtime client and provider, the lifecycle handling.
 - [ ] **T5 Shell UI.** Connection status, error boundary, the stock detail route in a stack above the tabs, tab titles and the simulated-data notice.

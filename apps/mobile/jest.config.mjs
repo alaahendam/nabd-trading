@@ -1,6 +1,7 @@
 /** @type {import('jest').Config} */
 export default {
   preset: 'jest-expo',
+  setupFilesAfterEnv: ['<rootDir>/jest.setup.ts'],
   // The first Expo Router render in a run loads and transforms the whole router, which takes
   // several seconds on a cold cache and longer while the other workspaces' tests run beside it.
   testTimeout: 30_000,
