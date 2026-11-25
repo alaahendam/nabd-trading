@@ -95,6 +95,7 @@ apps/web                 React app (Vite, Tailwind v4, TanStack Query, React Rou
   src/test                 test harness: providers around the shared fakes, the fake chart
   e2e                      Playwright specs (main flow, states, accessibility, keyboard, Arabic)
   screenshots              the script that generates docs/screenshots
+apps/mobile              Expo app (SDK 58, Expo Router, jest-expo); a shell with placeholder tabs and the configuration check until M2, see docs/MOBILE-PLAN.md
 apps/server              NestJS API and Socket.IO gateway
   src/modules/market       the simulator, the history generator, the stock universe, the market service
   src/modules/stocks       REST: list (paged, filtered), one stock, history

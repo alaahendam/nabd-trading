@@ -26,7 +26,7 @@ Part of `docs/MOBILE-PLAN.md` (section 5). Goal: `apps/mobile` exists under the 
 - [x] **T2 Configuration copy.** `config.error.*` strings in English and Arabic in `@nabd/i18n`.
 - [x] **T3 The app shell.** `apps/mobile`: `package.json`, `app.config.ts`, Expo Router with the tabs and placeholder screens, the environment check (`EXPO_PUBLIC_API_URL`, required, a static `process.env` reference, Zod) and the configuration error screen, `.env.example`, TypeScript, Prettier, ESLint, jest-expo with RNTL and coverage thresholds. Test matrix first.
 - [x] **T4 Metro spike.** Does Metro bundle the compiled ESM packages (`exports` maps, `.js` extensions, dependencies like `socket.io-client` and `zod` behind pnpm's isolated installs)? Proven by an export build of an app that imports every package; the finding goes in an ADR.
-- [ ] **T5 CI and gates.** A mobile CI job (lint, typecheck, test, `expo-doctor`, route type generation, an export build), the whole-repo gates, the spike's ADR, the README and plan updated.
+- [x] **T5 CI and gates.** A mobile CI job (lint, typecheck, test, `expo-doctor`, route type generation, an export build), the whole-repo gates, the spike's ADR, the README and plan updated.
 
 ## Gate for the phase
 
