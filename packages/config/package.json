@@ -19,7 +19,8 @@
     "./stylelint": "./stylelint/index.js",
     "./tsconfig/library.json": "./tsconfig/library.json",
     "./tsconfig/portable.json": "./tsconfig/portable.json",
-    "./eslint/portable": "./eslint/portable.js"
+    "./eslint/portable": "./eslint/portable.js",
+    "./eslint/portable-react": "./eslint/portable-react.js"
   },
   "dependencies": {
     "@eslint/js": "^9.39.5",

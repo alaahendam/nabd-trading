@@ -4,6 +4,33 @@ import { base } from './base.js';
 
 const appPackages = ['@nabd/web', '@nabd/web/*', '@nabd/mobile', '@nabd/mobile/*', '@nabd/server'];
 
+const restrictedPaths = [
+  { name: 'react-dom', message: 'Portable packages must not depend on React DOM.' },
+  { name: 'react-native', message: 'Portable packages must not depend on React Native.' },
+  { name: 'socket.io-client', message: 'Only @nabd/market-data may import socket.io-client.' },
+  {
+    name: 'lightweight-charts',
+    message: 'Only the web chart adapter may import the chart library.',
+  },
+];
+
+/**
+ * The import restrictions of a portable package, as the options of `no-restricted-imports`.
+ * A package that exists to own one library passes its name in `except` for the files that use it.
+ *
+ * @param {string[]} [except] Names of restricted libraries this package may import.
+ */
+export const restrictImports = (except = []) => ({
+  paths: restrictedPaths.filter(({ name }) => !except.includes(name)),
+  patterns: [
+    { group: appPackages, message: 'A package never imports an app.' },
+    {
+      group: ['@nabd/shared/*', '@nabd/api-client/*'],
+      message: 'Import a workspace package from its entry point, not its internals.',
+    },
+  ],
+});
+
 /**
  * Config for portable packages (`packages/*` other than `config` and `shared`): code that runs
  * unchanged in the web app and in the mobile app.
@@ -28,35 +55,6 @@ export const portable = defineConfig(base, {
       { name: 'XMLHttpRequest', message: 'HTTP requests go through @nabd/api-client.' },
       { name: 'WebSocket', message: 'Realtime goes through @nabd/market-data.' },
     ],
-    'no-restricted-imports': [
-      'error',
-      {
-        paths: [
-          {
-            name: 'react-dom',
-            message: 'Portable packages must not depend on React DOM.',
-          },
-          {
-            name: 'react-native',
-            message: 'Portable packages must not depend on React Native.',
-          },
-          {
-            name: 'socket.io-client',
-            message: 'Only @nabd/market-data may import socket.io-client.',
-          },
-          {
-            name: 'lightweight-charts',
-            message: 'Only the web chart adapter may import the chart library.',
-          },
-        ],
-        patterns: [
-          { group: appPackages, message: 'A package never imports an app.' },
-          {
-            group: ['@nabd/shared/*'],
-            message: 'Import from the @nabd/shared entry point, not its internals.',
-          },
-        ],
-      },
-    ],
+    'no-restricted-imports': ['error', restrictImports()],
   },
 });
