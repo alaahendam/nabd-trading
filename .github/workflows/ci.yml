@@ -118,7 +118,7 @@ jobs:
         run: pnpm exec turbo run build --filter='@nabd/mobile^...'
 
       - name: Expo doctor
-        run: pnpm --filter @nabd/mobile doctor
+        run: pnpm --filter @nabd/mobile run doctor
 
       - name: Generate the route types
         run: pnpm --filter @nabd/mobile typegen
