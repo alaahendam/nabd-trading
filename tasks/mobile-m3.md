@@ -19,7 +19,7 @@ Part of `docs/MOBILE-PLAN.md` (section 5). Goal: the three features of the web a
 - [x] **T3 Stock list.** FlashList, loading, empty, error, paging, refresh, subscriptions, the Stocks tab.
 - [x] **T4 Watchlist.** The star with optimistic update and rollback, the Watchlist tab with its states.
 - [x] **T5 Stock detail.** Header, stats, states (loading, not found, error), the star, live price.
-- [ ] **T6 Chart spike and ADR.** Three candidates on the same data, measured, decided.
+- [x] **T6 Chart spike and ADR.** Three candidates on the same data, measured, decided (ADR 0013).
 - [ ] **T7 Chart.** The chosen chart behind a port, the period switcher, its states, the text summary.
 - [ ] **T8 Gates.** Whole-repo gates, CI green on the PR, plan ticked, README limits.
 
