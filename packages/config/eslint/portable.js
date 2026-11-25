@@ -1,6 +1,7 @@
 import { defineConfig } from 'eslint/config';
 
 import { base } from './base.js';
+import { colorLiteralSelectors } from './design-system.js';
 
 const appPackages = ['@nabd/web', '@nabd/web/*', '@nabd/mobile', '@nabd/mobile/*', '@nabd/server'];
 
@@ -56,5 +57,7 @@ export const portable = defineConfig(base, {
       { name: 'WebSocket', message: 'Realtime goes through @nabd/market-data.' },
     ],
     'no-restricted-imports': ['error', restrictImports()],
+    // Colors are defined once, in the palette of @nabd/tokens.
+    'no-restricted-syntax': ['error', ...colorLiteralSelectors],
   },
 });

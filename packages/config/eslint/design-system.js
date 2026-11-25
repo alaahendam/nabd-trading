@@ -10,6 +10,20 @@ const COLOR_STYLE_KEYS =
 
 const colorMessage = 'Colors come from design tokens, never literals. Use a semantic utility.';
 
+/**
+ * `no-restricted-syntax` selectors that reject color literals (hex, rgb(), hsl(), ...). Shared with
+ * the portable preset: the palette in @nabd/tokens is the one place allowed to have them.
+ */
+export const colorLiteralSelectors = [
+  { selector: `Literal[value=/${HEX_COLOR}/]`, message: colorMessage },
+  { selector: `TemplateElement[value.raw=/${HEX_COLOR}/]`, message: colorMessage },
+  { selector: `Literal[value=/(^|[^0-9A-Za-z_])${COLOR_FUNCTIONS}/]`, message: colorMessage },
+  {
+    selector: `TemplateElement[value.raw=/(^|[^0-9A-Za-z_])${COLOR_FUNCTIONS}/]`,
+    message: colorMessage,
+  },
+];
+
 /** Physical-direction utilities, which break RTL. Logical equivalents: ms-, me-, ps-, pe-, start-, end-. */
 const PHYSICAL_DIRECTION =
   '(^|:)-?(ml|mr|pl|pr|left|right|scroll-ml|scroll-mr|scroll-pl|scroll-pr|border-l|border-r|rounded-l|rounded-r|rounded-tl|rounded-tr|rounded-bl|rounded-br|text-left|text-right|float-left|float-right|clear-left|clear-right)(-|$)';
@@ -46,13 +60,7 @@ export const designSystem = defineConfig({
     ],
     'no-restricted-syntax': [
       'error',
-      { selector: `Literal[value=/${HEX_COLOR}/]`, message: colorMessage },
-      { selector: `TemplateElement[value.raw=/${HEX_COLOR}/]`, message: colorMessage },
-      { selector: `Literal[value=/(^|[^0-9A-Za-z_])${COLOR_FUNCTIONS}/]`, message: colorMessage },
-      {
-        selector: `TemplateElement[value.raw=/(^|[^0-9A-Za-z_])${COLOR_FUNCTIONS}/]`,
-        message: colorMessage,
-      },
+      ...colorLiteralSelectors,
       {
         selector: `JSXAttribute[name.name='style'] Property[key.name=/${COLOR_STYLE_KEYS}/]`,
         message: 'No inline color styles. Use a semantic utility class.',
