@@ -95,7 +95,7 @@ apps/web                 React app (Vite, Tailwind v4, TanStack Query, React Rou
   src/test                 test harness: providers around the shared fakes, the fake chart
   e2e                      Playwright specs (main flow, states, accessibility, keyboard, Arabic)
   screenshots              the script that generates docs/screenshots
-apps/mobile              Expo app (SDK 58, Expo Router, jest-expo); a shell with placeholder tabs and the configuration check until M2, see docs/MOBILE-PLAN.md
+apps/mobile              Expo app (SDK 58, Expo Router, jest-expo); the stock list, watchlist, stock detail and chart (milestones M0 to M3 of docs/MOBILE-PLAN.md; polish and release are M4 and M5)
 apps/server              NestJS API and Socket.IO gateway
   src/modules/market       the simulator, the history generator, the stock universe, the market service
   src/modules/stocks       REST: list (paged, filtered), one stock, history
@@ -223,6 +223,10 @@ The web app is on **Vercel** and the API on **Railway**, both deploying from `ma
 - **The hosted API runs on a Railway trial** that lasts until late December 2026. After that the live API may be offline; everything still runs locally with `pnpm dev`.
 - **`SIGTERM` does not trigger Nest's shutdown hooks on Windows.** A Node limitation on that platform.
 - **The chart attribution** follows the library's notice (its logo is on and a link is in the footer); that is a reading of the notice, not legal advice.
+- **The mobile app has no custom date range.** The chart offers the five periods (1D, 1W, 1M, 3M, 1Y); the web app also has a custom range (ADR 0008).
+- **The mobile app was checked on one Android phone, in Expo Go.** iOS has not been run, there is no store build yet, and no real screen reader was used on mobile. The Android package id is an assumption until a store listing exists.
+- **The mobile chart is a WebView** (ADR 0013), which a screen reader cannot read; the numbers behind it are shown as text beneath it. Only the chart page loads, and links in it are not followed.
+- **The Arabic text in the mobile app** reuses the web strings, plus the ones M3 added, and has not had a professional localization review.
 
 ## What I would do next
 
