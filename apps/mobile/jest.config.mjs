@@ -2,7 +2,10 @@
 export default {
   preset: 'jest-expo',
   setupFilesAfterEnv: ['<rootDir>/jest.setup.ts'],
-  moduleNameMapper: { '^socket.io-client$': '<rootDir>/test-support/socket-io-client.ts' },
+  moduleNameMapper: {
+    '^socket.io-client$': '<rootDir>/test-support/socket-io-client.ts',
+    '^react-native-webview$': '<rootDir>/test-support/react-native-webview.tsx',
+  },
   // The first Expo Router render in a run loads and transforms the whole router, which takes
   // several seconds on a cold cache and longer while the other workspaces' tests run beside it.
   testTimeout: 30_000,

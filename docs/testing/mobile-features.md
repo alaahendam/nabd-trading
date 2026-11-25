@@ -85,5 +85,6 @@ Written before the code. IDs appear in the test names. jest-expo with React Nati
 | CHT-12 | The surface sends nothing before the page is ready, then the latest state, in order      |
 | CHT-13 | The page holds the library inline and nothing from the network; commands are valid JS    |
 | CHT-14 | If the page fails to load, an error with a retry button shows, and retry reloads it      |
+| CHT-15 | The page cannot navigate away: a link in it, such as the logo, is not followed           |
 
 Coverage: at least 90% overall; 100% for logic (`useLiveQuote`, list and star behaviour).
