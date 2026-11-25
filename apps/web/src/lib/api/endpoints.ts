@@ -1,4 +1,11 @@
-import type { HistoryData, Period, StockWithQuote, WatchlistItem } from '@nabd/shared';
+import type {
+  HistoryData,
+  HistoryRange,
+  StocksListQuery,
+  StocksPage,
+  StockWithQuote,
+  WatchlistItem,
+} from '@nabd/shared';
 import {
   historyResponseSchema,
   ROUTES,
@@ -11,24 +18,7 @@ import {
 
 import type { HttpClient } from './http-client';
 
-/** A fixed period ("1D", "1W"…), or a custom range of epoch milliseconds. */
-export type HistoryRange = Period | { from: number; to: number };
-
-export interface StocksListQuery {
-  /** Page size. Without it the whole list comes back. */
-  limit?: number;
-  /** The last symbol of the previous page. */
-  cursor?: string;
-  /** Only these stocks, in list order. A filtered list is not paged. */
-  symbols?: readonly string[];
-}
-
-export interface StocksPage {
-  stocks: StockWithQuote[];
-  /** The cursor of the next page, or `null` at the end. */
-  nextCursor: string | null;
-  total: number;
-}
+export type { HistoryRange, StocksListQuery, StocksPage };
 
 export interface Api {
   listStocks(query: StocksListQuery, signal?: AbortSignal): Promise<StocksPage>;
