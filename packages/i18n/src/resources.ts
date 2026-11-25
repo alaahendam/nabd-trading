@@ -111,6 +111,16 @@ const en = {
       '1Y': 'Past year',
     },
   },
+  config: {
+    error: {
+      title: 'This app is not set up',
+      description:
+        'A setting the app needs is missing or not valid. Fix it in the environment file and start the app again.',
+      setting: '{{name}}: {{problem}}',
+      problem: { missing: 'it is missing', invalid: 'it is not a valid URL' },
+      hint: 'Copy .env.example to .env and fill in the values.',
+    },
+  },
   count: { stocks_one: '{{count}} stock', stocks_other: '{{count}} stocks' },
 } as const;
 
@@ -221,6 +231,16 @@ const ar: Tree = {
       '1M': 'الشهر الماضي',
       '3M': 'آخر 3 أشهر',
       '1Y': 'السنة الماضية',
+    },
+  },
+  config: {
+    error: {
+      title: 'التطبيق غير مهيأ',
+      description:
+        'إعداد يحتاجه التطبيق مفقود أو غير صالح. أصلحه في ملف البيئة ثم شغّل التطبيق من جديد.',
+      setting: '{{name}}: {{problem}}',
+      problem: { missing: 'غير موجود', invalid: 'ليس رابطًا صالحًا' },
+      hint: 'انسخ الملف .env.example إلى .env واملأ القيم.',
     },
   },
   count: {
