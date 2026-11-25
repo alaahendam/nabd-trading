@@ -1,18 +1,24 @@
-import { useTranslation } from 'react-i18next';
+import { useRouter } from 'expo-router';
 
 import { MarketBanner } from '../../src/features/market-data';
-import { Screen, Text } from '../../src/shared/ui';
+import { WatchlistView } from '../../src/features/watchlist';
+import { Screen } from '../../src/shared/ui';
 
-/** The watchlist. A placeholder until M3. */
+/** The stocks the user follows. */
 export default function WatchlistTab() {
-  const { t } = useTranslation();
+  const router = useRouter();
 
   return (
     <Screen>
       <MarketBanner />
-      <Text variant="title" accessibilityRole="header">
-        {t('nav.watchlist')}
-      </Text>
+      <WatchlistView
+        onOpenStock={(symbol) => {
+          router.push({ pathname: '/stock/[symbol]', params: { symbol } });
+        }}
+        onBrowse={() => {
+          router.navigate('/');
+        }}
+      />
     </Screen>
   );
 }

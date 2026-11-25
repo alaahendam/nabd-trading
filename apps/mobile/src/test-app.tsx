@@ -19,7 +19,11 @@ export function createTestApp(saved: Record<string, string> = {}) {
   const socket = new FakeSocket();
   const api = createFakeApi();
   const queryClient = new QueryClient({
-    defaultOptions: { queries: { retry: false }, mutations: { retry: false } },
+    // An endless cache lifetime sets no garbage-collection timer, which would keep Jest alive.
+    defaultOptions: {
+      queries: { retry: false, gcTime: Infinity },
+      mutations: { retry: false, gcTime: Infinity },
+    },
   });
   const realtime = new RealtimeClient(
     socket,
