@@ -35,6 +35,27 @@ test('Arabic runs right to left, keeps Latin digits and leaves the chart left to
   expect(language).not.toBeNull();
   expect(logo?.x ?? 0).toBeGreaterThan(language?.x ?? Infinity);
 
+  // An English name keeps its own order inside the right-to-left page: the full stop of
+  // "Apple Inc." stays at the end, to the right of the "c", and not at the far left.
+  const nameOrder = await page.evaluate(() => {
+    const name = [...document.querySelectorAll('bdi')].find(
+      (bdi) => bdi.textContent === 'Apple Inc.',
+    );
+    const text = name?.firstChild;
+    if (!text) {
+      return undefined;
+    }
+    const x = (index: number) => {
+      const range = document.createRange();
+      range.setStart(text, index);
+      range.setEnd(text, index + 1);
+      return range.getBoundingClientRect().left;
+    };
+    return { first: x(0), last: x((text.textContent ?? '').length - 1) };
+  });
+  expect(nameOrder).toBeDefined();
+  expect(nameOrder?.last ?? 0).toBeGreaterThan(nameOrder?.first ?? Infinity);
+
   // Each detail starts on the same side as its title (the right edge, in Arabic).
   const misaligned = await page.evaluate(() =>
     [...document.querySelectorAll('dl dt')].flatMap((title) => {

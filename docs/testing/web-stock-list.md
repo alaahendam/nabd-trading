@@ -55,14 +55,15 @@ Scope: `features/stocks` list: `useLiveQuote`, `PriceFlash`, `StockRow`, `StockL
 
 ## useOnVisible
 
-| ID     | Behavior                              | Input                                             | Expected                                                          | Level     |
-| ------ | ------------------------------------- | ------------------------------------------------- | ----------------------------------------------------------------- | --------- |
-| OBS-01 | Calls back when the element shows     | an element that intersects                        | the callback runs once per intersection report                    | hook      |
-| OBS-02 | Ignores a report of not visible       | an entry that does not intersect                  | no call                                                           | hook      |
-| OBS-03 | Does nothing while disabled           | `enabled` false                                   | no observer is created                                            | hook      |
-| OBS-04 | Cleans up                             | unmount, or `enabled` turning false               | the observer is disconnected                                      | hook      |
-| OBS-05 | Works without observer support        | no `IntersectionObserver` in the environment      | nothing is watched and nothing throws; the button still works     | hook      |
-| LST-24 | A failed filtered list can be retried | `symbols` given, the request fails, then succeeds | an alert with a retry button; pressing it shows the filtered rows | component |
+| ID     | Behavior                                        | Input                                             | Expected                                                                                                     | Level     |
+| ------ | ----------------------------------------------- | ------------------------------------------------- | ------------------------------------------------------------------------------------------------------------ | --------- |
+| OBS-01 | Calls back when the element shows               | an element that intersects                        | the callback runs once per intersection report                                                               | hook      |
+| OBS-02 | Ignores a report of not visible                 | an entry that does not intersect                  | no call                                                                                                      | hook      |
+| OBS-03 | Does nothing while disabled                     | `enabled` false                                   | no observer is created                                                                                       | hook      |
+| OBS-04 | Cleans up                                       | unmount, or `enabled` turning false               | the observer is disconnected                                                                                 | hook      |
+| OBS-05 | Works without observer support                  | no `IntersectionObserver` in the environment      | nothing is watched and nothing throws; the button still works                                                | hook      |
+| LST-24 | A failed filtered list can be retried           | `symbols` given, the request fails, then succeeds | an alert with a retry button; pressing it shows the filtered rows                                            | component |
+| LST-25 | English names stay in their own order in Arabic | a row in the Arabic app                           | the company name is wrapped in `<bdi>` (the full stop of "Apple Inc." would otherwise jump to the other end) | component |
 
 ## useStockList
 

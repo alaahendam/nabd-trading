@@ -102,8 +102,13 @@ function StockDetailBody({
             <h1 className="text-2xl font-semibold">{stock.symbol}</h1>
             {renderAction?.(stock.symbol)}
           </div>
-          <p className="text-content-muted">{stock.name}</p>
-          <p className="text-sm text-content-muted">{`${stock.exchange} · ${stock.sector}`}</p>
+          {/* English names stay in their own direction inside Arabic text: <bdi> isolates them. */}
+          <p className="text-content-muted">
+            <bdi>{stock.name}</bdi>
+          </p>
+          <p className="text-sm text-content-muted">
+            <bdi>{`${stock.exchange} · ${stock.sector}`}</bdi>
+          </p>
         </div>
         <div className="flex flex-col items-end gap-1">
           <PriceFlash

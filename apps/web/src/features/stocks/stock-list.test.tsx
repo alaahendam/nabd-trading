@@ -164,6 +164,12 @@ describe('StockList', () => {
     expect(api.listStocks).toHaveBeenCalledTimes(2);
   });
 
+  it('LST-25 isolates the company name, so English keeps its own order inside Arabic', async () => {
+    renderFeatureWith([aapl]);
+    // Without isolation the full stop of "Apple Inc." moves to the wrong end in a right-to-left page.
+    expect((await screen.findByText('Apple Inc.')).tagName).toBe('BDI');
+  });
+
   it('LST-15 keeps the rows when a refresh fails after they loaded', async () => {
     const { api, queryClient } = renderFeatureWith([aapl]);
     await screen.findByText('Apple Inc.');

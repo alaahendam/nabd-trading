@@ -65,6 +65,13 @@ describe('StockDetail', () => {
     expect(screen.getByText('+$2.00 (+0.88%)')).toBeInTheDocument();
   });
 
+  it('DET-13 isolates the English name and the exchange line inside Arabic text', async () => {
+    renderDetail({ language: 'ar' });
+    await screen.findByRole('heading', { name: 'AAPL' });
+    expect(screen.getByText('Apple Inc.').tagName).toBe('BDI');
+    expect(screen.getByText('NASDAQ · Technology').tagName).toBe('BDI');
+  });
+
   it('DET-03 shows the live price, its change and the live volume', async () => {
     const { connect, tick } = renderDetail();
     await screen.findByRole('heading', { name: 'AAPL' });
