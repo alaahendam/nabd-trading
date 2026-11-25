@@ -1,12 +1,13 @@
+// @vitest-environment jsdom
 import { ApiClientError } from '@nabd/api-client';
 import { createFakeApi } from '@nabd/testing';
 import { aapl, aaplHistory, brkb, stocksPage } from '@nabd/testing';
 import { act, renderHook, waitFor } from '@testing-library/react';
 import { describe, expect, it } from 'vitest';
 
-import { queryKeys } from '../../lib/query';
-import { createQueryWrapper } from '../../test/query-wrapper';
-import { useHistory, useStock, useStocksBySymbols, useStocksPages } from './stock-queries';
+import { queryKeys } from './query-keys.js';
+import { useHistory, useStock, useStocksBySymbols, useStocksPages } from './stock-queries.js';
+import { createQueryWrapper } from './test-wrapper.js';
 
 describe('stock queries', () => {
   it('STK-01 loads the first page of the stock list', async () => {

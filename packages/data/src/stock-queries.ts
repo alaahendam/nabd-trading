@@ -1,8 +1,8 @@
 import { type HistoryRange } from '@nabd/shared';
 import { keepPreviousData, useInfiniteQuery, useQuery } from '@tanstack/react-query';
 
-import { useApi } from '../../lib/api';
-import { queryKeys } from '../../lib/query';
+import { useApi } from './api-provider.js';
+import { queryKeys } from './query-keys.js';
 
 /** How many stocks one page of the list holds. */
 export const STOCKS_PAGE_SIZE = 10;

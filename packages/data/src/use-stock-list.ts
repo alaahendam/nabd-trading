@@ -1,7 +1,7 @@
 import type { StockWithQuote } from '@nabd/shared';
 import { useCallback } from 'react';
 
-import { useStocksBySymbols, useStocksPages } from './stock-queries';
+import { useStocksBySymbols, useStocksPages } from './stock-queries.js';
 
 export interface StockListData {
   stocks: StockWithQuote[];

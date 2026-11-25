@@ -19,6 +19,7 @@
     "@fontsource/ibm-plex-sans": "^5.3.0",
     "@fontsource/ibm-plex-sans-arabic": "^5.3.0",
     "@nabd/api-client": "workspace:*",
+    "@nabd/data": "workspace:*",
     "@nabd/domain": "workspace:*",
     "@nabd/market-data": "workspace:*",
     "@nabd/shared": "workspace:*",

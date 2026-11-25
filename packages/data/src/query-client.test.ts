@@ -1,7 +1,7 @@
 import { ApiClientError } from '@nabd/api-client';
 import { afterEach, describe, expect, it, vi } from 'vitest';
 
-import { createQueryClient, retryDelay, shouldRetry } from './query-client';
+import { createQueryClient, retryDelay, shouldRetry } from './query-client.js';
 
 const network = new ApiClientError({ kind: 'network', message: 'down' });
 const http = (status: number) => new ApiClientError({ kind: 'http', status, message: 'x' });

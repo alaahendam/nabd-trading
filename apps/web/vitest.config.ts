@@ -46,12 +46,6 @@ export default defineConfig({
           functions: 100,
           lines: 100,
         },
-        'src/lib/api/api-provider.tsx': {
-          statements: 100,
-          branches: 100,
-          functions: 100,
-          lines: 100,
-        },
         'src/app/**/*.{ts,tsx}': { statements: 100, branches: 100, functions: 100, lines: 100 },
         'src/features/watchlist/**/*.{ts,tsx}': {
           statements: 100,
@@ -66,18 +60,6 @@ export default defineConfig({
           lines: 100,
         },
         'src/shared/**/*.{ts,tsx}': { statements: 100, branches: 100, functions: 100, lines: 100 },
-        'src/lib/query/query-client.ts': {
-          statements: 100,
-          branches: 100,
-          functions: 100,
-          lines: 100,
-        },
-        'src/lib/query/query-keys.ts': {
-          statements: 100,
-          branches: 100,
-          functions: 100,
-          lines: 100,
-        },
         'src/lib/theme/theme.ts': { statements: 100, branches: 100, functions: 100, lines: 100 },
         'src/lib/theme/theme-hooks.tsx': {
           statements: 100,

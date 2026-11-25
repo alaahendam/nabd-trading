@@ -1,8 +1,8 @@
+import { useWatchlist, useWatchlistToggle } from '@nabd/data';
 import { clsx } from 'clsx';
 import { useTranslation } from 'react-i18next';
 
 import { Button } from '../../shared/ui';
-import { useWatchlist, useWatchlistToggle } from './use-watchlist';
 
 const STAR = { on: '★', off: '☆' } as const;
 

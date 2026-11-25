@@ -1,3 +1,4 @@
+// @vitest-environment jsdom
 import { ApiClientError } from '@nabd/api-client';
 import type { WatchlistItem } from '@nabd/shared';
 import { createFakeApi } from '@nabd/testing';
@@ -5,9 +6,9 @@ import { watchlistItem } from '@nabd/testing';
 import { act, renderHook, waitFor } from '@testing-library/react';
 import { describe, expect, it, vi } from 'vitest';
 
-import { queryKeys } from '../../lib/query';
-import { createQueryWrapper } from '../../test/query-wrapper';
-import { useWatchlist, useWatchlistToggle } from './use-watchlist';
+import { queryKeys } from './query-keys.js';
+import { createQueryWrapper } from './test-wrapper.js';
+import { useWatchlist, useWatchlistToggle } from './use-watchlist.js';
 
 const msft: WatchlistItem = { symbol: 'MSFT', addedAt: 1_700_000_100_000 };
 

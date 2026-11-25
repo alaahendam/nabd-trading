@@ -1,3 +1,4 @@
+import { useApi } from '@nabd/data';
 import { useConnectionStatus } from '@nabd/market-data';
 import { useQueryClient } from '@tanstack/react-query';
 import { renderHook } from '@testing-library/react';
@@ -5,7 +6,6 @@ import type { ReactNode } from 'react';
 import { useTranslation } from 'react-i18next';
 import { describe, expect, it } from 'vitest';
 
-import { useApi } from '../../lib/api';
 import { useLanguage } from '../../lib/i18n/i18n-provider';
 import { useTheme } from '../../lib/theme/theme-hooks';
 import { createTestServices } from '../../test/app-services';

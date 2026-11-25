@@ -1,0 +1,47 @@
+{
+  "name": "@nabd/data",
+  "private": true,
+  "version": "0.0.0",
+  "description": "The data layer shared by web and mobile: query keys and defaults, the stock, history and watchlist hooks with optimistic updates, and the API context",
+  "license": "UNLICENSED",
+  "type": "module",
+  "main": "./dist/index.js",
+  "types": "./dist/index.d.ts",
+  "exports": {
+    ".": {
+      "types": "./dist/index.d.ts",
+      "default": "./dist/index.js"
+    }
+  },
+  "files": [
+    "dist"
+  ],
+  "scripts": {
+    "build": "tsc -p tsconfig.build.json",
+    "dev": "tsc -p tsconfig.build.json --watch --preserveWatchOutput",
+    "lint": "eslint --max-warnings 0 .",
+    "typecheck": "tsc --noEmit",
+    "test": "vitest run --coverage"
+  },
+  "dependencies": {
+    "@nabd/api-client": "workspace:*",
+    "@nabd/shared": "workspace:*"
+  },
+  "peerDependencies": {
+    "@tanstack/react-query": "^5.108.4",
+    "react": "19.3.0"
+  },
+  "devDependencies": {
+    "@nabd/config": "workspace:*",
+    "@nabd/testing": "workspace:*",
+    "@tanstack/react-query": "^5.108.4",
+    "@testing-library/react": "^16.3.3",
+    "@types/react": "^19.3.0",
+    "@vitest/coverage-v8": "^5.1.1",
+    "jsdom": "^31.0.1",
+    "react": "19.3.0",
+    "react-dom": "19.3.0",
+    "typescript": "~6.0.3",
+    "vitest": "^5.1.1"
+  }
+}

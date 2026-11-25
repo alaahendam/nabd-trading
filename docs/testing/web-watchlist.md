@@ -1,6 +1,6 @@
 # Watchlist: test matrix
 
-Scope: `features/watchlist`: the data hooks (`useWatchlist`, `useWatchlistToggle`), `WatchlistToggle` (the star) and `WatchlistView` (the page body). The server's add and remove are idempotent, so the client may repeat them safely. Tests use the fake `Api` and the feature harness.
+Scope: `features/watchlist` and the data hooks (`useWatchlist`, `useWatchlistToggle`, which live in `packages/data/src/use-watchlist.ts` since mobile M0), `WatchlistToggle` (the star) and `WatchlistView` (the page body). The server's add and remove are idempotent, so the client may repeat them safely. Tests use the fake `Api` and the feature harness.
 
 ## Data hooks
 

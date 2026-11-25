@@ -1,3 +1,4 @@
+import { useHistory } from '@nabd/data';
 import { applyLivePrice, toCandles, toVolumeBars } from '@nabd/domain';
 import { summarizeHistory } from '@nabd/domain';
 import { type ChartRange, describeCustomRange, toHistoryRange } from '@nabd/domain';
@@ -14,7 +15,6 @@ import { useChartLoader } from './chart-context';
 import { chartLocale } from './chart-locale';
 import type { Candle, ChartPort } from './chart-port';
 import { RangeSwitcher } from './range-switcher';
-import { useHistory } from './stock-queries';
 
 /** A candlestick chart with volume, a period switcher, and the live price on the last candle. */
 export function StockChart({ symbol }: { symbol: string }) {

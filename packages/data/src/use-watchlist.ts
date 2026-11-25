@@ -1,8 +1,8 @@
 import type { WatchlistItem } from '@nabd/shared';
 import { useMutation, useQuery, useQueryClient } from '@tanstack/react-query';
 
-import { useApi } from '../../lib/api';
-import { queryKeys } from '../../lib/query';
+import { useApi } from './api-provider.js';
+import { queryKeys } from './query-keys.js';
 
 export function useWatchlist() {
   const api = useApi();

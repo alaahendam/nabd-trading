@@ -1,6 +1,6 @@
 import { describe, expect, it } from 'vitest';
 
-import { queryKeys } from './query-keys';
+import { queryKeys } from './query-keys.js';
 
 describe('queryKeys', () => {
   it('QRY-07 are stable, distinct and hierarchical', () => {
