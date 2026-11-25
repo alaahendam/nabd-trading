@@ -1,7 +1,7 @@
+import { type Freshness, useFreshness, useLivePrice } from '@nabd/market-data';
 import type { Quote } from '@nabd/shared';
 
 import { type ChangeDirection, changeDirection } from '../../lib/format/format';
-import { type Freshness, useFreshness, useLivePrice } from '../market-data';
 
 export interface LiveQuote {
   price: number;

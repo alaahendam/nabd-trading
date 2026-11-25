@@ -1,0 +1,5 @@
+{
+  "extends": "@nabd/config/tsconfig/portable.json",
+  "compilerOptions": { "noEmit": true },
+  "include": ["src", "*.config.ts"]
+}

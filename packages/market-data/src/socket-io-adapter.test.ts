@@ -42,7 +42,7 @@ class FakeIoSocket {
 const mocks = vi.hoisted(() => ({ io: vi.fn() }));
 vi.mock('socket.io-client', () => ({ io: mocks.io }));
 
-const { createSocketIoAdapter } = await import('./socket-io-adapter');
+const { createSocketIoAdapter } = await import('./socket-io-adapter.js');
 
 describe('createSocketIoAdapter', () => {
   let fake: FakeIoSocket;

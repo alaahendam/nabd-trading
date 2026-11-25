@@ -7,9 +7,9 @@ import {
 } from '@nabd/shared';
 import { z } from 'zod';
 
-import type { ConnectionStatus } from './connection-status';
-import type { PriceStore } from './price-store';
-import type { SocketPort } from './socket-port';
+import type { ConnectionStatus } from './connection-status.js';
+import type { PriceStore } from './price-store.js';
+import type { SocketPort } from './socket-port.js';
 
 /** Something unexpected on the wire or in a request. Reported, never thrown. */
 export type RealtimeIssue =
@@ -46,7 +46,7 @@ export class RealtimeClient {
   private readonly onIssue: (issue: RealtimeIssue) => void;
   private reconcileScheduled = false;
   private started = false;
-  private browserOnline = true;
+  private networkOnline = true;
 
   constructor(
     private readonly socket: SocketPort,
@@ -107,9 +107,9 @@ export class RealtimeClient {
     this.setStatus('offline');
   }
 
-  /** Fed by the browser's online and offline events. */
-  setBrowserOnline(online: boolean): void {
-    this.browserOnline = online;
+  /** Fed by the platform's connectivity: the browser's online and offline events, or the network state on a phone. */
+  setNetworkOnline(online: boolean): void {
+    this.networkOnline = online;
     if (!online) {
       this.setStatus('offline');
     } else if (this.started) {
@@ -201,7 +201,7 @@ export class RealtimeClient {
       this.setStatus('offline');
       return;
     }
-    this.setStatus(this.browserOnline ? 'reconnecting' : 'offline');
+    this.setStatus(this.networkOnline ? 'reconnecting' : 'offline');
     if (reason === 'io server disconnect') {
       // Socket.IO does not retry this one by itself.
       this.socket.connect();

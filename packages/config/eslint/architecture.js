@@ -3,7 +3,7 @@ import boundaries from 'eslint-plugin-boundaries';
 
 const socketIo = {
   name: 'socket.io-client',
-  message: 'Only features/market-data may import socket.io-client.',
+  message: 'Only @nabd/market-data may import socket.io-client.',
 };
 const chartLibrary = {
   name: 'lightweight-charts',
@@ -22,7 +22,7 @@ const sharedDeepImports = {
  * Web architecture, enforced as lint errors:
  *   app -> features -> shared / lib, never the other way round.
  *   A feature is only reachable through its public `index.ts`.
- *   socket.io-client lives in features/market-data, the HTTP client in @nabd/api-client.
+ *   socket.io-client lives in @nabd/market-data, the HTTP client in @nabd/api-client.
  *   No deep imports into @nabd/shared.
  */
 export const webArchitecture = defineConfig(
@@ -85,22 +85,7 @@ export const webArchitecture = defineConfig(
         'error',
         { name: 'fetch', message: 'HTTP requests go through @nabd/api-client.' },
         { name: 'XMLHttpRequest', message: 'HTTP requests go through @nabd/api-client.' },
-        { name: 'WebSocket', message: 'Realtime goes through features/market-data.' },
-      ],
-    },
-  },
-  {
-    // The one feature allowed to import socket.io-client.
-    files: ['src/features/market-data/**/*.{ts,tsx}'],
-    rules: {
-      'no-restricted-imports': [
-        'error',
-        { paths: [chartLibrary, ...httpClients], patterns: [sharedDeepImports] },
-      ],
-      'no-restricted-globals': [
-        'error',
-        { name: 'fetch', message: 'HTTP requests go through @nabd/api-client.' },
-        { name: 'XMLHttpRequest', message: 'HTTP requests go through @nabd/api-client.' },
+        { name: 'WebSocket', message: 'Realtime goes through @nabd/market-data.' },
       ],
     },
   },

@@ -2,11 +2,11 @@ import { FakeSocket } from '@nabd/testing';
 import { beforeEach, describe, expect, it, vi } from 'vitest';
 
 const mocks = vi.hoisted(() => ({ createSocketIoAdapter: vi.fn() }));
-vi.mock('./socket-io-adapter', () => ({ createSocketIoAdapter: mocks.createSocketIoAdapter }));
+vi.mock('./socket-io-adapter.js', () => ({ createSocketIoAdapter: mocks.createSocketIoAdapter }));
 
-const { createRealtimeClient } = await import('./create-realtime-client');
-const { PriceStore } = await import('./price-store');
-const { RealtimeClient } = await import('./realtime-client');
+const { createRealtimeClient } = await import('./create-realtime-client.js');
+const { PriceStore } = await import('./price-store.js');
+const { RealtimeClient } = await import('./realtime-client.js');
 
 describe('createRealtimeClient', () => {
   beforeEach(() => {

@@ -1,7 +1,7 @@
 import { type ClientToServerEvents, type ServerToClientEvents, SOCKET_EVENTS } from '@nabd/shared';
 import { io, type Socket } from 'socket.io-client';
 
-import type { SocketPort } from './socket-port';
+import type { SocketPort } from './socket-port.js';
 
 /**
  * The only place that imports `socket.io-client` (enforced by lint). It creates a socket that

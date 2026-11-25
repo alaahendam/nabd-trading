@@ -1,5 +1,5 @@
-import type { ConnectionStatus } from './connection-status';
-import type { LivePrice } from './price-store';
+import type { ConnectionStatus } from './connection-status.js';
+import type { LivePrice } from './price-store.js';
 
 /** Ticks arrive about every second or two per symbol, so ten seconds of silence is a problem. */
 export const STALE_AFTER_MS = 10_000;

@@ -1,7 +1,7 @@
 import type { PriceTick } from '@nabd/shared';
 import { afterEach, beforeEach, describe, expect, it, vi } from 'vitest';
 
-import { animationFrameSchedule, PriceStore } from './price-store';
+import { animationFrameSchedule, PriceStore } from './price-store.js';
 
 const tick = (symbol: string, price: number, timestamp: number, volume = 10): PriceTick => ({
   symbol,
@@ -241,9 +241,15 @@ describe('PriceStore', () => {
 describe('animationFrameSchedule', () => {
   beforeEach(() => {
     vi.useFakeTimers();
+    // Node has no animation frames (a browser and a phone do), so a 16 ms timer stands in for one.
+    vi.stubGlobal('requestAnimationFrame', (callback: () => void) => setTimeout(callback, 16));
+    vi.stubGlobal('cancelAnimationFrame', (handle: number) => {
+      clearTimeout(handle);
+    });
   });
 
   afterEach(() => {
+    vi.unstubAllGlobals();
     vi.useRealTimers();
   });
 

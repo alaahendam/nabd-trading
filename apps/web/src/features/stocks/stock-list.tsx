@@ -1,8 +1,8 @@
+import { useSubscription } from '@nabd/market-data';
 import type { ReactNode } from 'react';
 import { useTranslation } from 'react-i18next';
 
 import { Button, Skeleton, StateMessage } from '../../shared/ui';
-import { useSubscription } from '../market-data';
 import { StockRow } from './stock-row';
 import { useOnVisible } from './use-on-visible';
 import { useStockList } from './use-stock-list';

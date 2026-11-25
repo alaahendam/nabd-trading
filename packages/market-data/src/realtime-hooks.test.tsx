@@ -1,17 +1,44 @@
+// @vitest-environment jsdom
+import '@testing-library/jest-dom/vitest';
+
 import { FakeSocket } from '@nabd/testing';
-import { act, render, renderHook, screen } from '@testing-library/react';
+import { act, cleanup, render, renderHook, screen } from '@testing-library/react';
 import { type ReactNode, StrictMode } from 'react';
 import { afterEach, beforeEach, describe, expect, it, vi } from 'vitest';
 
-import { PriceStore } from './price-store';
-import { RealtimeClient } from './realtime-client';
+import { PriceStore } from './price-store.js';
+import { RealtimeClient } from './realtime-client.js';
 import {
   RealtimeProvider,
   useConnectionStatus,
   useFreshness,
   useLivePrice,
   useSubscription,
-} from './realtime-hooks';
+} from './realtime-hooks.js';
+
+afterEach(cleanup);
+
+/** A connectivity source a test can flip, with the listeners it has been given. */
+const makeConnectivity = (initial = true) => {
+  const listeners = new Set<(online: boolean) => void>();
+  let online = initial;
+  return {
+    listeners,
+    isOnline: () => online,
+    subscribe: (listener: (online: boolean) => void) => {
+      listeners.add(listener);
+      return () => {
+        listeners.delete(listener);
+      };
+    },
+    change: (next: boolean) => {
+      online = next;
+      for (const listener of [...listeners]) {
+        listener(next);
+      }
+    },
+  };
+};
 
 const tick = (symbol: string, price: number, timestamp: number) => ({
   symbol,
@@ -263,41 +290,51 @@ describe('RealtimeProvider', () => {
     expect(socket.calls.disconnect).toBe(1);
   });
 
-  it('HK-07 passes browser online and offline events to the client', () => {
+  it('HK-07 passes connectivity changes to the client', () => {
     const { client, socket } = setup();
-    render(<RealtimeProvider client={client}>content</RealtimeProvider>);
+    const connectivity = makeConnectivity();
+    render(
+      <RealtimeProvider client={client} connectivity={connectivity}>
+        content
+      </RealtimeProvider>,
+    );
     connect(socket);
 
     act(() => {
-      window.dispatchEvent(new Event('offline'));
+      connectivity.change(false);
     });
     expect(client.getStatus()).toBe('offline');
 
     act(() => {
       socket.simulateDisconnect('transport close');
-      window.dispatchEvent(new Event('online'));
+      connectivity.change(true);
     });
     expect(client.getStatus()).toBe('reconnecting');
     expect(socket.calls.connect).toBe(2);
   });
 
-  it('HK-07 stops listening to browser events on unmount', () => {
+  it('HK-07 stops listening to connectivity on unmount', () => {
     const { client } = setup();
-    const { unmount } = render(<RealtimeProvider client={client}>content</RealtimeProvider>);
-    unmount();
+    const connectivity = makeConnectivity();
+    const { unmount } = render(
+      <RealtimeProvider client={client} connectivity={connectivity}>
+        content
+      </RealtimeProvider>,
+    );
+    expect(connectivity.listeners.size).toBe(1);
 
-    const setBrowserOnline = vi.spyOn(client, 'setBrowserOnline');
-    window.dispatchEvent(new Event('offline'));
-    window.dispatchEvent(new Event('online'));
-    expect(setBrowserOnline).not.toHaveBeenCalled();
+    unmount();
+    expect(connectivity.listeners.size).toBe(0);
   });
 
-  it('HK-07 starts offline when the browser already is', () => {
+  it('HK-07 starts offline when the device already is', () => {
     const { client } = setup();
-    const onLine = vi.spyOn(navigator, 'onLine', 'get').mockReturnValue(false);
-    render(<RealtimeProvider client={client}>content</RealtimeProvider>);
+    render(
+      <RealtimeProvider client={client} connectivity={makeConnectivity(false)}>
+        content
+      </RealtimeProvider>,
+    );
     expect(client.getStatus()).toBe('offline');
-    onLine.mockRestore();
   });
 });
 

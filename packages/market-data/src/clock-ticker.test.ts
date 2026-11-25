@@ -1,6 +1,6 @@
 import { afterEach, beforeEach, describe, expect, it, vi } from 'vitest';
 
-import { subscribeTick } from './clock-ticker';
+import { subscribeTick } from './clock-ticker.js';
 
 describe('subscribeTick', () => {
   beforeEach(() => {

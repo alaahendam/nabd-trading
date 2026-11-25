@@ -34,6 +34,12 @@ export default defineConfig({
         },
         'src/lib/i18n/i18n.ts': { statements: 100, branches: 100, functions: 100, lines: 100 },
         'src/lib/format/format.ts': { statements: 100, branches: 100, functions: 100, lines: 100 },
+        'src/lib/connectivity/browser-connectivity.ts': {
+          statements: 100,
+          branches: 100,
+          functions: 100,
+          lines: 100,
+        },
         'src/lib/api/browser-client-id.ts': {
           statements: 100,
           branches: 100,
@@ -74,54 +80,6 @@ export default defineConfig({
         },
         'src/lib/theme/theme.ts': { statements: 100, branches: 100, functions: 100, lines: 100 },
         'src/lib/theme/theme-hooks.tsx': {
-          statements: 100,
-          branches: 100,
-          functions: 100,
-          lines: 100,
-        },
-        'src/features/market-data/realtime-hooks.tsx': {
-          statements: 100,
-          branches: 100,
-          functions: 100,
-          lines: 100,
-        },
-        'src/features/market-data/clock-ticker.ts': {
-          statements: 100,
-          branches: 100,
-          functions: 100,
-          lines: 100,
-        },
-        'src/features/market-data/create-realtime-client.ts': {
-          statements: 100,
-          branches: 100,
-          functions: 100,
-          lines: 100,
-        },
-        'src/features/market-data/realtime-client.ts': {
-          statements: 100,
-          branches: 100,
-          functions: 100,
-          lines: 100,
-        },
-        'src/features/market-data/socket-io-adapter.ts': {
-          statements: 100,
-          branches: 100,
-          functions: 100,
-          lines: 100,
-        },
-        'src/features/market-data/price-store.ts': {
-          statements: 100,
-          branches: 100,
-          functions: 100,
-          lines: 100,
-        },
-        'src/features/market-data/staleness.ts': {
-          statements: 100,
-          branches: 100,
-          functions: 100,
-          lines: 100,
-        },
-        'src/features/market-data/connection-status.ts': {
           statements: 100,
           branches: 100,
           functions: 100,

@@ -1,6 +1,6 @@
 # Test matrix: web realtime layer
 
-Module: `apps/web/src/features/market-data`. Design: ADR 0005. Contracts: `@nabd/shared` (`ticksPayloadSchema`, `socketErrorSchema`, `MAX_SYMBOLS_PER_REQUEST`, `symbolSchema`).
+Module: `packages/market-data/src` (shared by web and mobile since mobile M0; before that `apps/web/src/features/market-data`), and `apps/web/src/lib/connectivity` (the browser's connectivity source). Design: ADR 0005. Contracts: `@nabd/shared` (`ticksPayloadSchema`, `socketErrorSchema`, `MAX_SYMBOLS_PER_REQUEST`, `symbolSchema`).
 
 ## Purpose and public surface
 
@@ -48,7 +48,7 @@ Module: `apps/web/src/features/market-data`. Design: ADR 0005. Contracts: `@nabd
 | RTC-04 | A server-initiated disconnect reconnects        | `disconnect` with `io server disconnect`                                                     | status `reconnecting` and `socket.connect()` called (Socket.IO does not retry this reason itself)               | unit  |
 | RTC-05 | A client disconnect is offline                  | `client.disconnect()`                                                                        | the socket disconnects, status `offline`                                                                        | unit  |
 | RTC-06 | Reconnect attempts and failure                  | `reconnect_attempt`; `reconnect_failed`                                                      | `reconnecting`; `offline`                                                                                       | unit  |
-| RTC-07 | Browser offline and online                      | `setBrowserOnline(false)`, then `true`                                                       | `offline`; then `socket.connect()` is called and the status is `reconnecting`                                   | unit  |
+| RTC-07 | Network offline and online                      | `setNetworkOnline(false)`, then `true`                                                       | `offline`; then `socket.connect()` is called and the status is `reconnecting`                                   | unit  |
 | RTC-08 | Subscribe waits for the connection              | `acquire(['AAPL'])` before `connect`                                                         | nothing emitted; after `connect` one `subscribe(['AAPL'])`                                                      | unit  |
 | RTC-09 | Subscribe at once when connected                | connected, `acquire(['AAPL','MSFT'])`, then `acquire(['MSFT','NVDA'])`                       | first call subscribes both; second only `NVDA`                                                                  | unit  |
 | RTC-10 | Reference counting                              | two acquirers of `AAPL`; release one; release the other                                      | one subscribe; no unsubscribe after the first release; one unsubscribe after the second                         | unit  |
@@ -65,7 +65,7 @@ Module: `apps/web/src/features/market-data`. Design: ADR 0005. Contracts: `@nabd
 | RTC-21 | Release then acquire in one tick sends nothing  | connected and subscribed; `release()` and `acquire` the same symbol in the same tick         | no subscribe and no unsubscribe is sent                                                                         | unit  |
 | RTC-22 | One tick, one message                           | three single-symbol acquires, then three releases, each batch in its own tick                | one subscribe with all three symbols; one unsubscribe with all three                                            | unit  |
 | RTC-23 | The server is forgotten across a disconnect     | subscribed, `disconnect()`, `connect()`, socket connects                                     | the symbol is subscribed again                                                                                  | unit  |
-| RTC-24 | A browser blip does not strand the status       | connected, `setBrowserOnline(false)`, then `true` while the socket never dropped             | status returns to `connected` and `socket.connect()` is not called again                                        | unit  |
+| RTC-24 | A network blip does not strand the status       | connected, `setNetworkOnline(false)`, then `true` while the socket never dropped             | status returns to `connected` and `socket.connect()` is not called again                                        | unit  |
 
 ## Cases: socket.io adapter (mocked `socket.io-client`)
 
@@ -78,18 +78,18 @@ Module: `apps/web/src/features/market-data`. Design: ADR 0005. Contracts: `@nabd
 
 ## Cases: React bindings (fake client, Testing Library)
 
-| ID    | Case                                     | Input / setup                                                 | Expected                                                                                                                                  | Level     |
-| ----- | ---------------------------------------- | ------------------------------------------------------------- | ----------------------------------------------------------------------------------------------------------------------------------------- | --------- |
-| HK-01 | `useLivePrice` follows the store         | component for `AAPL`, publish a tick                          | `undefined`, then the snapshot after the frame                                                                                            | component |
-| HK-02 | Only the changed symbol re-renders       | components for `AAPL` and `MSFT`, a tick for `AAPL`           | the `AAPL` component re-rendered, the `MSFT` one did not                                                                                  | component |
-| HK-03 | `useSubscription` acquires and releases  | mount, change symbols, unmount                                | acquire on mount; the diff on change (old released, new acquired); release on unmount                                                     | component |
-| HK-04 | StrictMode is safe                       | render inside `StrictMode`                                    | after mount the symbol is acquired exactly once net; after unmount released                                                               | component |
-| HK-05 | `useConnectionStatus` follows the client | change the status                                             | the component shows the new status                                                                                                        | component |
-| HK-06 | `useFreshness` ages with time            | tick, advance fake timers past the threshold; then disconnect | `fresh`, then `stale`; `stale` immediately when not connected                                                                             | component |
-| HK-07 | The provider runs the connection         | mount, unmount                                                | `connect()` on mount, `disconnect()` on unmount; window `offline` and `online` events reach `setBrowserOnline`                            | component |
-| HK-08 | Hooks need the provider                  | render a hook without it                                      | a clear error message                                                                                                                     | component |
-| HK-09 | One shared clock tick                    | many listeners, then unsubscribe them                         | a single timer calls every listener each second; it stops after the last unsubscribes and restarts later; unsubscribing twice is harmless | unit      |
-| HK-10 | The factory builds the app's client      | `createRealtimeClient(url)` with the adapter mocked           | a `RealtimeClient` over the adapter for that URL, with its own `PriceStore`, status `connecting`                                          | unit      |
+| ID    | Case                                     | Input / setup                                                 | Expected                                                                                                                                                                                                                      | Level     |
+| ----- | ---------------------------------------- | ------------------------------------------------------------- | ----------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------- | --------- |
+| HK-01 | `useLivePrice` follows the store         | component for `AAPL`, publish a tick                          | `undefined`, then the snapshot after the frame                                                                                                                                                                                | component |
+| HK-02 | Only the changed symbol re-renders       | components for `AAPL` and `MSFT`, a tick for `AAPL`           | the `AAPL` component re-rendered, the `MSFT` one did not                                                                                                                                                                      | component |
+| HK-03 | `useSubscription` acquires and releases  | mount, change symbols, unmount                                | acquire on mount; the diff on change (old released, new acquired); release on unmount                                                                                                                                         | component |
+| HK-04 | StrictMode is safe                       | render inside `StrictMode`                                    | after mount the symbol is acquired exactly once net; after unmount released                                                                                                                                                   | component |
+| HK-05 | `useConnectionStatus` follows the client | change the status                                             | the component shows the new status                                                                                                                                                                                            | component |
+| HK-06 | `useFreshness` ages with time            | tick, advance fake timers past the threshold; then disconnect | `fresh`, then `stale`; `stale` immediately when not connected                                                                                                                                                                 | component |
+| HK-07 | The provider runs the connection         | mount, unmount                                                | `connect()` on mount, `disconnect()` on unmount; a `Connectivity` the app gives (changes reach `setNetworkOnline`, it starts offline if the device is, it stops listening on unmount); without one the provider just connects | component |
+| HK-08 | Hooks need the provider                  | render a hook without it                                      | a clear error message                                                                                                                                                                                                         | component |
+| HK-09 | One shared clock tick                    | many listeners, then unsubscribe them                         | a single timer calls every listener each second; it stops after the last unsubscribes and restarts later; unsubscribing twice is harmless                                                                                     | unit      |
+| HK-10 | The factory builds the app's client      | `createRealtimeClient(url)` with the adapter mocked           | a `RealtimeClient` over the adapter for that URL, with its own `PriceStore`, status `connecting`                                                                                                                              | unit      |
 
 ## Coverage target
 
@@ -98,3 +98,11 @@ Module: `apps/web/src/features/market-data`. Design: ADR 0005. Contracts: `@nabd
 ## Out of scope
 
 The real server (checked by the browser run in Task 12 and by the server's own end-to-end tests), chart rendering, stock list and detail screens (Phase 5).
+
+## Browser connectivity (`apps/web/src/lib/connectivity`)
+
+| ID     | Behavior                              | Input                                                        | Expected                               | Level     |
+| ------ | ------------------------------------- | ------------------------------------------------------------ | -------------------------------------- | --------- |
+| NET-01 | Reports whether the browser is online | `navigator.onLine` true, then false                          | `isOnline()` follows it                | component |
+| NET-02 | Passes the events on                  | window `offline` then `online`                               | the listener hears `false` then `true` | component |
+| NET-03 | Stops listening when asked            | call the function `subscribe` returned, then dispatch events | the listener is not called             | component |

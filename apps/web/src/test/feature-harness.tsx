@@ -1,3 +1,4 @@
+import { PriceStore, RealtimeClient, RealtimeProvider } from '@nabd/market-data';
 import { createFakeApi } from '@nabd/testing';
 import { FakeSocket } from '@nabd/testing';
 import { QueryClientProvider } from '@tanstack/react-query';
@@ -6,9 +7,6 @@ import type { ReactElement, ReactNode } from 'react';
 import { I18nextProvider } from 'react-i18next';
 import { MemoryRouter } from 'react-router';
 
-import { PriceStore } from '../features/market-data/price-store';
-import { RealtimeClient } from '../features/market-data/realtime-client';
-import { RealtimeProvider } from '../features/market-data/realtime-hooks';
 import { ChartProvider } from '../features/stocks/chart-context';
 import { ApiProvider } from '../lib/api';
 import { createI18n } from '../lib/i18n/i18n';

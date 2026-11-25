@@ -13,7 +13,7 @@ export interface LivePrice {
   readonly low: number;
   /** The server's time of the tick. */
   readonly timestamp: number;
-  /** When this browser received the tick, used to tell when prices have gone stale. */
+  /** When this device received the tick, used to tell when prices have gone stale. */
   readonly receivedAt: number;
 }
 

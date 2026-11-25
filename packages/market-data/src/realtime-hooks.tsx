@@ -7,11 +7,12 @@ import {
   useSyncExternalStore,
 } from 'react';
 
-import { subscribeTick } from './clock-ticker';
-import type { ConnectionStatus } from './connection-status';
-import type { LivePrice } from './price-store';
-import type { RealtimeClient } from './realtime-client';
-import { type Freshness, freshness } from './staleness';
+import { subscribeTick } from './clock-ticker.js';
+import type { ConnectionStatus } from './connection-status.js';
+import type { Connectivity } from './connectivity.js';
+import type { LivePrice } from './price-store.js';
+import type { RealtimeClient } from './realtime-client.js';
+import { type Freshness, freshness } from './staleness.js';
 
 const RealtimeContext = createContext<RealtimeClient | undefined>(undefined);
 
@@ -23,33 +24,33 @@ function useRealtimeClient(): RealtimeClient {
   return client;
 }
 
-/** Runs the connection for the app: connects on mount, closes on unmount, follows the browser. */
+/**
+ * Runs the connection for the app: connects on mount, closes on unmount, and follows the device's
+ * connectivity when the app gives one (the browser's online and offline events, or a phone's
+ * network state). Without one the client simply trusts its socket.
+ */
 export function RealtimeProvider({
   client,
+  connectivity,
   children,
 }: {
   client: RealtimeClient;
+  connectivity?: Connectivity;
   children: ReactNode;
 }) {
   useEffect(() => {
-    const goOnline = () => {
-      client.setBrowserOnline(true);
-    };
-    const goOffline = () => {
-      client.setBrowserOnline(false);
-    };
-    window.addEventListener('online', goOnline);
-    window.addEventListener('offline', goOffline);
-    if (!navigator.onLine) {
-      client.setBrowserOnline(false);
+    const stopListening = connectivity?.subscribe((online) => {
+      client.setNetworkOnline(online);
+    });
+    if (connectivity && !connectivity.isOnline()) {
+      client.setNetworkOnline(false);
     }
     client.connect();
     return () => {
-      window.removeEventListener('online', goOnline);
-      window.removeEventListener('offline', goOffline);
+      stopListening?.();
       client.disconnect();
     };
-  }, [client]);
+  }, [client, connectivity]);
 
   return <RealtimeContext value={client}>{children}</RealtimeContext>;
 }

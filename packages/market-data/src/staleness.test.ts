@@ -1,8 +1,8 @@
 import { describe, expect, it } from 'vitest';
 
-import { CONNECTION_STATUSES } from './connection-status';
-import type { LivePrice } from './price-store';
-import { freshness, STALE_AFTER_MS } from './staleness';
+import { CONNECTION_STATUSES } from './connection-status.js';
+import type { LivePrice } from './price-store.js';
+import { freshness, STALE_AFTER_MS } from './staleness.js';
 
 const NOW = 100_000;
 

@@ -2,8 +2,8 @@ import { MAX_SYMBOLS_PER_REQUEST, type PriceTick } from '@nabd/shared';
 import { FakeSocket } from '@nabd/testing';
 import { describe, expect, it, vi } from 'vitest';
 
-import type { PriceStore } from './price-store';
-import { RealtimeClient, type RealtimeIssue } from './realtime-client';
+import type { PriceStore } from './price-store.js';
+import { RealtimeClient, type RealtimeIssue } from './realtime-client.js';
 
 const tick = (symbol: string, timestamp = 1): PriceTick => ({
   symbol,
@@ -83,37 +83,37 @@ describe('RealtimeClient connection', () => {
 
   it('RTC-07 reacts to the browser going offline and online', () => {
     const { client, socket } = connected();
-    client.setBrowserOnline(false);
+    client.setNetworkOnline(false);
     expect(client.getStatus()).toBe('offline');
 
     socket.simulateDisconnect('transport close');
     expect(client.getStatus()).toBe('offline');
 
-    client.setBrowserOnline(true);
+    client.setNetworkOnline(true);
     expect(client.getStatus()).toBe('reconnecting');
     expect(socket.calls.connect).toBe(2);
   });
 
   it('RTC-07 does nothing about the browser coming online when never started', () => {
     const { client, socket } = setup();
-    client.setBrowserOnline(false);
-    client.setBrowserOnline(true);
+    client.setNetworkOnline(false);
+    client.setNetworkOnline(true);
     expect(socket.calls.connect).toBe(0);
   });
 
   it('RTC-07 does not reconnect on online when the socket is already connected', () => {
     const { client, socket } = connected();
-    client.setBrowserOnline(true);
+    client.setNetworkOnline(true);
     expect(client.getStatus()).toBe('connected');
     expect(socket.calls.connect).toBe(1);
   });
 
   it('RTC-24 returns to connected when the browser blips offline and online with the socket intact', () => {
     const { client, socket } = connected();
-    client.setBrowserOnline(false);
+    client.setNetworkOnline(false);
     expect(client.getStatus()).toBe('offline');
 
-    client.setBrowserOnline(true);
+    client.setNetworkOnline(true);
     expect(client.getStatus()).toBe('connected');
     expect(socket.calls.connect).toBe(1);
   });
