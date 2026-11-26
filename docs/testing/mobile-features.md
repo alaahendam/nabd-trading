@@ -39,6 +39,8 @@ Written before the code. IDs appear in the test names. jest-expo with React Nati
 | LST-08 | Pulling to refresh reloads the list                                                 |
 | LST-09 | A refresh that fails after data arrived keeps showing the rows                      |
 | LST-10 | The last page shows no loading-more indicator                                       |
+| LST-11 | Each row on the Stocks tab has a star that adds the stock to the watchlist          |
+| LST-12 | Pressing a row's star does not open the stock; pressing the row still does          |
 
 ## Watchlist
 
