@@ -14,7 +14,7 @@ Some of this cannot be done by the agent: it needs the author's Expo account, an
 - [x] **T1 Build configuration.** `apps/mobile/eas.json`: an internal APK profile whose API address comes from an EAS environment (BLD-01, BLD-02).
 - [ ] **T2 The first APK.** The author logs in, creates the project and the variable, and builds; the author installs it and checks the icon, the splash, the language switch and the chart on the APK. Closes M4's T7 (ICN-02) and LNG-04 on a development-grade build.
 - [x] **T3 README mobile section.** How to install the APK, how to run locally, that iOS is source-only and untested.
-- [ ] **T4 ADRs.** Decisions of this branch not yet written down.
+- [x] **T4 ADRs.** Decisions of this branch not yet written down.
 - [ ] **T5 `docs/ai`.** The mobile prompts and the lessons from this branch.
 - [ ] **T6 Honesty statement.** In the author's words; the agent only provides the facts.
 - [ ] **T7 Screenshots.** From the APK.
