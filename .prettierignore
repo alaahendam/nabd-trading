@@ -8,3 +8,8 @@ coverage
 playwright-report
 test-results
 apps/mobile/src/features/stocks/generated
+
+# third-party skills copied verbatim from addyosmani/agent-skills (see .claude/skills/UPSTREAM.md)
+.claude/skills
+.claude/references
+.claude/agents
