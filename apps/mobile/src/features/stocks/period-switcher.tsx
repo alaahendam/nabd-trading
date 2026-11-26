@@ -25,9 +25,10 @@ export function PeriodSwitcher({
   const styles = useMemo(
     () =>
       StyleSheet.create({
-        row: { flexDirection: 'row', gap: spacing.small },
+        row: { flexDirection: 'row', flexWrap: 'wrap', gap: spacing.small },
         button: {
-          flex: 1,
+          flexGrow: 1,
+          flexBasis: minTouchTarget,
           minHeight: minTouchTarget,
           minWidth: minTouchTarget,
           alignItems: 'center',

@@ -86,7 +86,7 @@ export function StockChart({ symbol }: { symbol: string }) {
         accessibilityLabel={t('chart.loading')}
         style={[StyleSheet.absoluteFill, styles.overlay]}
       >
-        <Skeleton width={320} height={CHART_HEIGHT} />
+        <Skeleton width="100%" height={CHART_HEIGHT} />
       </View>
     );
   } else if (points === undefined) {

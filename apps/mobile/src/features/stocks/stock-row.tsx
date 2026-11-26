@@ -9,6 +9,9 @@ import { useTheme } from '../../lib/theme/theme-provider';
 import { ChangeBadge, Text } from '../../shared/ui';
 import { useLiveQuote } from './use-live-quote';
 
+/** The narrowest the name column gets before the figures move under it. */
+const NAME_BASIS = 112;
+
 /**
  * One stock in a list. The list recycles rows: this same component is later given another stock,
  * so everything shown comes from `stock` and the live price of `stock.symbol`, and nothing is kept
@@ -41,13 +44,14 @@ export function StockRow({
         main: {
           flex: 1,
           flexDirection: 'row',
+          flexWrap: 'wrap',
           alignItems: 'center',
           justifyContent: 'space-between',
           gap: spacing.medium,
           minHeight: minTouchTarget,
           paddingVertical: spacing.small,
         },
-        name: { flex: 1 },
+        name: { flexGrow: 1, flexBasis: NAME_BASIS },
         figures: { alignItems: 'flex-end' },
       }),
     [colors],

@@ -1,5 +1,5 @@
 import { useMemo } from 'react';
-import { StyleSheet, View } from 'react-native';
+import { type DimensionValue, StyleSheet, View } from 'react-native';
 
 import { radius } from '../../../lib/theme/theme';
 import { useTheme } from '../../../lib/theme/theme-provider';
@@ -8,7 +8,7 @@ import { useTheme } from '../../../lib/theme/theme-provider';
  * A grey block that stands where content is loading. It is hidden from screen readers: the busy
  * status around it says what is loading.
  */
-export function Skeleton({ width, height }: { width: number; height: number }) {
+export function Skeleton({ width, height }: { width: DimensionValue; height: number }) {
   const { colors } = useTheme();
   const styles = useMemo(
     () =>

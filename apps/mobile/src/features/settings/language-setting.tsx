@@ -8,6 +8,9 @@ import { minTouchTarget, radius, spacing } from '../../lib/theme/theme';
 import { useTheme } from '../../lib/theme/theme-provider';
 import { Text } from '../../shared/ui';
 
+/** Each option's base width: two of them fit one line on the narrowest screen. */
+const LANGUAGE_BASIS = 120;
+
 /**
  * Both languages, each by its own name so anyone can find theirs, with the one in use selected.
  * Choosing the other one saves it and reloads the app, because the layout direction only changes
@@ -22,9 +25,10 @@ export function LanguageSetting() {
     () =>
       StyleSheet.create({
         group: { gap: spacing.small },
-        options: { flexDirection: 'row', gap: spacing.small },
+        options: { flexDirection: 'row', flexWrap: 'wrap', gap: spacing.small },
         option: {
-          flex: 1,
+          flexGrow: 1,
+          flexBasis: LANGUAGE_BASIS,
           minHeight: minTouchTarget,
           alignItems: 'center',
           justifyContent: 'center',

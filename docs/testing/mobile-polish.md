@@ -26,6 +26,18 @@ Written before the code, as `tasks/mobile-m4.md` says. Rows marked **device** ca
 | DYN-02 | The cap is one value in one place                                                      |
 | DYN-03 | **device** At the largest system size, a row, the detail and the periods stay readable |
 
+## Screen sizes
+
+The narrowest phone supported is 320 points wide, which leaves 288 inside the screen's padding. These rows prove the layout rules, not the pixels: a test cannot measure a screen.
+
+| ID     | Behaviour                                                                                                 |
+| ------ | --------------------------------------------------------------------------------------------------------- |
+| SIZ-01 | No loading placeholder (list, detail, chart, watchlist) has a fixed width over 288                        |
+| SIZ-02 | A stock row's name column has a base width, and the figures move under it when there is no room beside it |
+| SIZ-03 | A figure on the detail moves under its label when the two do not fit on one line                          |
+| SIZ-04 | The period buttons and the language options wrap onto a second line instead of running off the screen     |
+| SIZ-05 | **device** On the smallest and largest display sizes, with the largest font, nothing is cut off sideways  |
+
 ## Haptics
 
 | ID     | Behaviour                                                               |

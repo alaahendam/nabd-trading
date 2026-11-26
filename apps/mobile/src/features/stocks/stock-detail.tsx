@@ -23,7 +23,13 @@ const styles = StyleSheet.create({
   title: { flexDirection: 'row', alignItems: 'center', gap: spacing.small },
   figures: { alignItems: 'flex-end' },
   stats: { gap: spacing.small },
-  stat: { flexDirection: 'row', justifyContent: 'space-between' },
+  // A label and its figure share a line; when they do not fit, the figure goes under the label.
+  stat: {
+    flexDirection: 'row',
+    flexWrap: 'wrap',
+    justifyContent: 'space-between',
+    gap: spacing.small,
+  },
   loading: { gap: spacing.medium, paddingVertical: spacing.medium },
 });
 
@@ -69,7 +75,7 @@ export function StockDetail({
         style={styles.loading}
       >
         <Skeleton width={180} height={40} />
-        <Skeleton width={320} height={96} />
+        <Skeleton width="100%" height={96} />
       </View>
     );
   }
