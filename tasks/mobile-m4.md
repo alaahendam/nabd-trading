@@ -19,7 +19,7 @@ Part of `docs/MOBILE-PLAN.md` (section 5). Goal: the three features of M3, finis
 - [x] **T4 Dynamic Type.** Scaling with a cap; rows and the period switcher survive large sizes.
 - [x] **T5 Haptics.** The star and the period buttons.
 - [x] **T6 Accessibility pass.** Every screen walked in tests for role, name, state and focus order; fixes.
-- [ ] **T7 Icon and splash.** The app's own icon and splash, in the theme's colors; checked on the phone.
+- [ ] **T7 Icon and splash.** Drawn by `scripts/make-icons.mjs`, wired in `app.config.ts`, tested to exist; the files were looked at, but Expo Go shows its own icon and splash, so ICN-02 waits for the first development build (T8) or the APK.
 - [ ] **T8 Language switch.** The Arabic layout flip with a reload; checked on a development build.
 - [ ] **T9 Maestro flows** for the main path (cuttable).
 - [ ] **T10 Gates.** Whole-repo gates, CI green on the PR, plan ticked, README limits.
