@@ -67,7 +67,11 @@ Scope: `features/stocks` list: `useLiveQuote`, `PriceFlash`, `StockRow`, `StockL
 
 ## useStockList
 
-| ID     | Behavior                             | Input                                                   | Expected                      | Level |
-| ------ | ------------------------------------ | ------------------------------------------------------- | ----------------------------- | ----- |
-| SRC-01 | Loading more twice asks once         | `loadMore()` twice while the next page is still loading | one request for the next page | hook  |
-| SRC-02 | Loading more at the end does nothing | `loadMore()` when there is no next page                 | no request                    | hook  |
+| ID     | Behavior                                   | Input                                                   | Expected                                                                                                                | Level |
+| ------ | ------------------------------------------ | ------------------------------------------------------- | ----------------------------------------------------------------------------------------------------------------------- | ----- |
+| SRC-01 | Loading more twice asks once               | `loadMore()` twice while the next page is still loading | one request for the next page                                                                                           | hook  |
+| SRC-02 | Loading more at the end does nothing       | `loadMore()` when there is no next page                 | no request                                                                                                              | hook  |
+| SRC-03 | A filtered list is served from one request | symbols `AAPL`, `BRK.B`, then `AAPL` only               | both stocks from one request with `symbols`; no paging; a symbol that was removed leaves at once, before the new answer | unit  |
+| SRC-04 | No symbols means nothing to ask for        | an empty symbol list                                    | not pending, has data, empty, and no request                                                                            | unit  |
+| SRC-05 | A filtered list refetches when asked       | `refetch()`                                             | one more request                                                                                                        | unit  |
+| SRC-06 | The paged list refetches when asked        | `refetch()`                                             | one more request                                                                                                        | unit  |

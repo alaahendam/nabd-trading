@@ -1,15 +1,15 @@
+import { ApiClientError } from '@nabd/api-client';
+import { useStock } from '@nabd/data';
+import { formatPrice, formatVolume } from '@nabd/i18n';
+import { useSubscription } from '@nabd/market-data';
 import type { StockWithQuote } from '@nabd/shared';
 import type { ReactNode } from 'react';
 import { useTranslation } from 'react-i18next';
 import { Link } from 'react-router';
 
-import { ApiClientError } from '../../lib/api';
-import { formatPrice, formatVolume } from '../../lib/format/format';
 import { Button, buttonVariants, ChangeBadge, Skeleton, StateMessage } from '../../shared/ui';
-import { useSubscription } from '../market-data';
 import { PriceFlash } from './price-flash';
 import { StockChart } from './stock-chart';
-import { useStock } from './stock-queries';
 import { useLiveQuote } from './use-live-quote';
 
 interface StockDetailProps {

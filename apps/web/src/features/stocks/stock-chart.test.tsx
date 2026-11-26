@@ -1,11 +1,12 @@
+import { ApiClientError } from '@nabd/api-client';
 import { type HistoryData, PERIOD_CONFIG } from '@nabd/shared';
+import { type HistoryRange } from '@nabd/shared';
+import { aaplHistory } from '@nabd/testing';
 import { act, render, renderHook, screen } from '@testing-library/react';
 import userEvent from '@testing-library/user-event';
 import { afterEach, describe, expect, it, vi } from 'vitest';
 
-import { ApiClientError, type HistoryRange } from '../../lib/api';
 import { createFeatureHarness } from '../../test/feature-harness';
-import { aaplHistory } from '../../test/fixtures';
 import { useChartLoader } from './chart-context';
 import { StockChart } from './stock-chart';
 
@@ -22,9 +23,7 @@ const historyFor = (symbol: string, range: HistoryRange): HistoryData => ({
 
 function renderChart(language?: 'en' | 'ar') {
   const harness = createFeatureHarness(language === undefined ? {} : { language });
-  harness.api.getHistory.mockImplementation((symbol, range) =>
-    Promise.resolve(historyFor(symbol, range)),
-  );
+  harness.api.getHistory.implement((symbol, range) => Promise.resolve(historyFor(symbol, range)));
   const view = render(<StockChart symbol="AAPL" />, { wrapper: harness.Wrapper });
   return { ...harness, ...view };
 }
@@ -59,7 +58,7 @@ describe('StockChart', () => {
   it('CHT-02 loads the default period into the chart', async () => {
     const { api, chart } = renderChart();
     await settle();
-    expect(api.getHistory).toHaveBeenCalledWith('AAPL', '1D', expect.any(AbortSignal));
+    expect(api.getHistory.calls).toContainEqual(['AAPL', '1D', expect.any(AbortSignal)]);
     expect(chart.port.setData).toHaveBeenCalledTimes(1);
     const [candles, volume] = chart.port.setData.mock.calls[0] ?? [];
     expect(candles).toHaveLength(2);
@@ -80,7 +79,7 @@ describe('StockChart', () => {
       await Promise.resolve();
     });
 
-    expect(api.getHistory).toHaveBeenCalledWith('AAPL', '1W', expect.any(AbortSignal));
+    expect(api.getHistory.calls).toContainEqual(['AAPL', '1W', expect.any(AbortSignal)]);
     expect(screen.getByRole('button', { name: '1W, Past week' })).toHaveAttribute(
       'aria-pressed',
       'true',
@@ -94,7 +93,7 @@ describe('StockChart', () => {
 
   it('CHT-04 shows a busy status while the history loads', () => {
     const harness = createFeatureHarness();
-    harness.api.getHistory.mockReturnValue(new Promise(() => undefined));
+    harness.api.getHistory.returns(new Promise(() => undefined));
     render(<StockChart symbol="AAPL" />, { wrapper: harness.Wrapper });
     expect(screen.getByRole('status', { name: 'Loading chart…' })).toHaveAttribute(
       'aria-busy',
@@ -105,8 +104,8 @@ describe('StockChart', () => {
   it('CHT-05 shows an error with a retry that loads the data', async () => {
     const harness = createFeatureHarness();
     harness.api.getHistory
-      .mockRejectedValueOnce(new ApiClientError({ kind: 'http', status: 400, message: 'bad' }))
-      .mockResolvedValue(historyFor('AAPL', '1D'));
+      .rejectsOnce(new ApiClientError({ kind: 'http', status: 400, message: 'bad' }))
+      .resolves(historyFor('AAPL', '1D'));
     render(<StockChart symbol="AAPL" />, { wrapper: harness.Wrapper });
 
     expect(await screen.findByRole('alert')).toHaveTextContent('Could not load the chart');
@@ -121,7 +120,7 @@ describe('StockChart', () => {
 
   it('CHT-06 says so when there is no data for the period', async () => {
     const harness = createFeatureHarness();
-    harness.api.getHistory.mockResolvedValue({ ...historyFor('AAPL', '1D'), points: [] });
+    harness.api.getHistory.resolves({ ...historyFor('AAPL', '1D'), points: [] });
     render(<StockChart symbol="AAPL" />, { wrapper: harness.Wrapper });
     expect(await screen.findByText('No chart data for this period')).toBeInTheDocument();
   });
@@ -145,7 +144,7 @@ describe('StockChart', () => {
   it('CHT-08 ignores ticks for other symbols and ticks before the history arrives', async () => {
     const harness = createFeatureHarness();
     let resolve: (history: HistoryData) => void = () => undefined;
-    harness.api.getHistory.mockReturnValue(
+    harness.api.getHistory.returns(
       new Promise<HistoryData>((done) => {
         resolve = done;
       }),
@@ -206,7 +205,7 @@ describe('StockChart', () => {
         };
       }),
     );
-    harness.api.getHistory.mockResolvedValue(historyFor('AAPL', '1D'));
+    harness.api.getHistory.resolves(historyFor('AAPL', '1D'));
     const view = render(<StockChart symbol="AAPL" />, { wrapper: harness.Wrapper });
     view.unmount();
     expect(harness.chart.port.dispose).not.toHaveBeenCalled();
@@ -237,7 +236,7 @@ describe('StockChart', () => {
 
   it('CHT-13 shows an error when the chart library fails to load, and retries', async () => {
     const harness = createFeatureHarness();
-    harness.api.getHistory.mockResolvedValue(historyFor('AAPL', '1D'));
+    harness.api.getHistory.resolves(historyFor('AAPL', '1D'));
     harness.chart.loader.mockRejectedValueOnce(new Error('chunk failed'));
     render(<StockChart symbol="AAPL" />, { wrapper: harness.Wrapper });
 
@@ -278,7 +277,7 @@ describe('StockChart', () => {
         };
       }),
     );
-    harness.api.getHistory.mockResolvedValue(historyFor('AAPL', '1D'));
+    harness.api.getHistory.resolves(historyFor('AAPL', '1D'));
     const view = render(<StockChart symbol="AAPL" />, { wrapper: harness.Wrapper });
     view.unmount();
 
@@ -328,7 +327,7 @@ describe('the chart text alternative', () => {
 
   const renderWith = (points: HistoryData['points'], language?: 'en' | 'ar') => {
     const harness = createFeatureHarness(language === undefined ? {} : { language });
-    harness.api.getHistory.mockImplementation((symbol, range) =>
+    harness.api.getHistory.implement((symbol, range) =>
       Promise.resolve({ ...historyFor(symbol, range), points }),
     );
     render(<StockChart symbol="AAPL" />, { wrapper: harness.Wrapper });
@@ -393,7 +392,7 @@ describe('the chart text alternative', () => {
 
   it('CHT-28 has no description while there is nothing to describe', async () => {
     const harness = createFeatureHarness();
-    harness.api.getHistory.mockReturnValue(new Promise(() => undefined));
+    harness.api.getHistory.returns(new Promise(() => undefined));
     render(<StockChart symbol="AAPL" />, { wrapper: harness.Wrapper });
     expect(screen.getByRole('figure')).not.toHaveAttribute('aria-describedby');
 

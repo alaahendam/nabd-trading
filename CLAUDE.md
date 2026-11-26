@@ -20,13 +20,15 @@ Nabd is an independent project, not affiliated with or a copy of any real produc
 - `apps/server`: NestJS, Socket.IO gateway, simulated market data
 - `packages/shared`: Zod schemas and the types derived from them, socket event names. Single source of truth for contracts between web and server
 - `packages/config`: shared tsconfig, ESLint, Prettier, Stylelint configs
-- Package names: `@nabd/web`, `@nabd/server`, `@nabd/shared`, `@nabd/config`
+- Portable packages, shared by the web and the planned mobile app (`docs/MOBILE-PLAN.md`, ADR 0011): `@nabd/api-client`, `@nabd/domain`, `@nabd/market-data`, `@nabd/data`, `@nabd/i18n`, `@nabd/tokens`, `@nabd/testing`
+- Package names: `@nabd/web`, `@nabd/server`, `@nabd/shared`, `@nabd/config`, and the portable packages above
 
 ## Architecture rules (enforced by ESLint, not by goodwill)
 
 - Web imports flow one way: `app → features → shared/lib`. `shared` never imports from `features`.
 - A feature never imports from another feature's internals. Each feature exposes a public `index.ts`.
-- `socket.io-client` is imported only inside `features/market-data`. The HTTP client lives only in `lib/api`.
+- `socket.io-client` is imported only inside `@nabd/market-data`. The HTTP client lives only in `@nabd/api-client`.
+- Portable packages never read the browser (`window`, `document`, `navigator`, storage) and never import an app, React DOM or React Native; the platform is passed in as an argument. Colors exist only in the palette of `@nabd/tokens`. The `portable` ESLint preset enforces all of it.
 - Live prices live in an external store read with `useSyncExternalStore` and per-symbol selectors. They do not go through TanStack Query. One socket for the whole app, ref-counted subscriptions, updates batched per animation frame.
 - Server modules talk to each other only through exported providers. Contracts come from `@nabd/shared`.
 - No Redux. Server state is TanStack Query, live prices are the external store.

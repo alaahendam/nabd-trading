@@ -1,9 +1,9 @@
+import { useWatchlist } from '@nabd/data';
 import { useTranslation } from 'react-i18next';
 import { Link } from 'react-router';
 
 import { Button, buttonVariants, Skeleton, StateMessage } from '../../shared/ui';
 import { StockList } from '../stocks';
-import { useWatchlist } from './use-watchlist';
 import { WatchlistToggle } from './watchlist-toggle';
 
 /** The stocks the user follows, live, each with a star to take it off. */

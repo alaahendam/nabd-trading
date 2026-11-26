@@ -76,9 +76,12 @@ jobs:
       - name: Install the browser
         run: pnpm --filter @nabd/web exec playwright install --with-deps chromium
 
-      # Playwright builds and starts the server and the web app itself (see playwright.config.ts).
+      # The root script goes through Turborepo, which builds the workspace packages first; the web
+      # app cannot build without them. Playwright then builds and starts the server and the web app
+      # itself (see playwright.config.ts). Running the web workspace's script directly, on a clean
+      # checkout, fails because nothing is built yet.
       - name: Run the end-to-end tests
-        run: pnpm --filter @nabd/web test:e2e
+        run: pnpm test:e2e
 
       - name: Keep the report when a test fails
         if: failure()
@@ -89,3 +92,41 @@ jobs:
             apps/web/playwright-report
             apps/web/test-results
           retention-days: 7
+
+  # `verify` already lints, tests, typechecks and builds the mobile app with everything else. This
+  # job adds what only the mobile app needs: Expo's own health check, the typed-route declarations
+  # (so a link to a route that does not exist fails the typecheck), and the Android export, which
+  # also proves Metro resolves every shared package.
+  mobile:
+    name: Mobile
+    runs-on: ubuntu-latest
+    timeout-minutes: 15
+    steps:
+      - uses: actions/checkout@v4
+
+      - uses: pnpm/action-setup@v4
+
+      - uses: actions/setup-node@v4
+        with:
+          node-version-file: .nvmrc
+          cache: pnpm
+
+      - name: Install (frozen lockfile)
+        run: pnpm install --frozen-lockfile
+
+      - name: Build the shared packages
+        run: pnpm exec turbo run build --filter='@nabd/mobile^...'
+
+      - name: Expo doctor
+        run: pnpm --filter @nabd/mobile run doctor
+
+      - name: Generate the route types
+        run: pnpm --filter @nabd/mobile typegen
+
+      - name: Typecheck with the route types
+        run: pnpm --filter @nabd/mobile typecheck
+
+      - name: Export the Android bundle
+        run: pnpm --filter @nabd/mobile build
+        env:
+          EXPO_PUBLIC_API_URL: https://example.invalid

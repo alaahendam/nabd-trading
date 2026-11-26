@@ -3,6 +3,7 @@
   "framework": "vite",
   "buildCommand": "cd ../.. && pnpm turbo run build --filter=@nabd/web",
   "outputDirectory": "dist",
+  "git": { "deploymentEnabled": { "feat/mobile": false } },
   "rewrites": [{ "source": "/(.*)", "destination": "/index.html" }],
   "headers": [
     {

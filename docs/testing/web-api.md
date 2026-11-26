@@ -1,6 +1,6 @@
 # Test matrix: web API client, query client
 
-Modules: `apps/web/src/lib/api` (`client-id.ts`, `api-error.ts`, `http-client.ts`, `endpoints.ts`, `api-provider.tsx`), `src/lib/query` (`query-client.ts`, `query-keys.ts`). The only code that may call `fetch` (lint-enforced). Tested against a mock server (MSW) that fails any request without a handler.
+Modules: `packages/api-client/src` (`client-id.ts`, `api-error.ts`, `http-client.ts`, `endpoints.ts`: shared by web and mobile since mobile M0), `apps/web/src/lib/api` (`browser-client-id.ts`, the `localStorage` and `crypto.randomUUID` way to keep the ID), and `packages/data/src` (`api-provider.tsx`, `query-client.ts`, `query-keys.ts`: the query layer shared by web and mobile since mobile M0). The package is the only code that may call `fetch` (lint-enforced). Tested against a mock server (MSW) that fails any request without a handler.
 
 ## Purpose and public surface
 
@@ -82,7 +82,7 @@ Modules: `apps/web/src/lib/api` (`client-id.ts`, `api-error.ts`, `http-client.ts
 
 ## Coverage target
 
-100% statements, branches, functions and lines for every file in `lib/api` and `lib/query` (per-file thresholds).
+100% statements, branches, functions and lines for every file in `packages/api-client`, `packages/data` and `lib/api` (thresholds in each package's Vitest config).
 
 ## Out of scope
 

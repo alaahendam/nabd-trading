@@ -1,7 +1,7 @@
+import { useConnectionStatus } from '@nabd/market-data';
 import { useTranslation } from 'react-i18next';
 import { Link, NavLink } from 'react-router';
 
-import { useConnectionStatus } from '../../features/market-data';
 import { buttonVariants, ConnectionBadge, Logo } from '../../shared/ui';
 import { LanguageSwitcher } from './language-switcher';
 import { ThemeSwitcher } from './theme-switcher';

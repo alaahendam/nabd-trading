@@ -1,5 +1,13 @@
 packages:
   - apps/*
   - packages/*
+# Dependency install scripts: every one is decided here, none runs by default (ADR 0001, the
+# security notes in docs/decisions).
 allowBuilds:
   '@swc/core': true
+  # Its install script builds from source only when npm_config_build_from_source=true; otherwise it
+  # does nothing, and the prebuilt binary for each platform comes as an optional dependency.
+  '@parcel/watcher': false
+overrides:
+  react: 19.3.0
+  react-dom: 19.3.0

@@ -1,12 +1,12 @@
+import { ApiClientError } from '@nabd/api-client';
 import type { StockWithQuote } from '@nabd/shared';
+import { aapl, fakeStocksServer } from '@nabd/testing';
 import { act, render, screen } from '@testing-library/react';
 import userEvent from '@testing-library/user-event';
 import { afterEach, describe, expect, it, vi } from 'vitest';
 
-import { ApiClientError } from '../../lib/api';
 import { installFakeIntersectionObserver } from '../../test/fake-intersection-observer';
 import { createFeatureHarness } from '../../test/feature-harness';
-import { aapl, fakeStocksServer } from '../../test/fixtures';
 import { StockList } from './stock-list';
 
 const letters = 'ABCDEFGHIJKLMNOPQRSTUVWXYZ';
@@ -21,7 +21,7 @@ const rows = () => screen.queryAllByRole('listitem');
 
 function renderList(props: { symbols?: readonly string[] } = {}) {
   const harness = createFeatureHarness();
-  harness.api.listStocks.mockImplementation(fakeStocksServer(stocks));
+  harness.api.listStocks.implement(fakeStocksServer(stocks));
   const view = render(<StockList {...props} />, { wrapper: harness.Wrapper });
   return { ...harness, ...view };
 }
@@ -34,7 +34,7 @@ describe('StockList paging', () => {
   it('LST-16 loads the first page and shows the total', async () => {
     const { api } = renderList();
     expect(await screen.findByText('21 stocks')).toBeInTheDocument();
-    expect(api.listStocks.mock.calls[0]?.[0]).toEqual({ limit: 10 });
+    expect(api.listStocks.calls[0]?.[0]).toEqual({ limit: 10 });
     expect(rows()).toHaveLength(10);
   });
 
@@ -46,13 +46,13 @@ describe('StockList paging', () => {
     await vi.waitFor(() => {
       expect(rows()).toHaveLength(20);
     });
-    expect(api.listStocks.mock.calls[1]?.[0]).toEqual({ limit: 10, cursor: 'J' });
+    expect(api.listStocks.calls[1]?.[0]).toEqual({ limit: 10, cursor: 'J' });
 
     await userEvent.click(loadMoreButton());
     await vi.waitFor(() => {
       expect(rows()).toHaveLength(21);
     });
-    expect(api.listStocks.mock.calls[2]?.[0]).toEqual({ limit: 10, cursor: 'T' });
+    expect(api.listStocks.calls[2]?.[0]).toEqual({ limit: 10, cursor: 'T' });
     expect(screen.queryByRole('button', { name: 'Load more stocks' })).not.toBeInTheDocument();
   });
 
@@ -65,7 +65,7 @@ describe('StockList paging', () => {
     act(() => {
       observers.live()[0]?.report(false);
     });
-    expect(api.listStocks).toHaveBeenCalledTimes(1);
+    expect(api.listStocks.calls).toHaveLength(1);
 
     act(() => {
       observers.live()[0]?.report(true);
@@ -73,7 +73,7 @@ describe('StockList paging', () => {
     await vi.waitFor(() => {
       expect(rows()).toHaveLength(20);
     });
-    expect(api.listStocks).toHaveBeenCalledTimes(2);
+    expect(api.listStocks.calls).toHaveLength(2);
 
     act(() => {
       observers.live()[0]?.report(true);
@@ -81,14 +81,14 @@ describe('StockList paging', () => {
     await vi.waitFor(() => {
       expect(rows()).toHaveLength(21);
     });
-    expect(api.listStocks).toHaveBeenCalledTimes(3);
+    expect(api.listStocks.calls).toHaveLength(3);
     expect(observers.live()).toHaveLength(0);
   });
 
   it('LST-19 shows that the next page is loading', async () => {
     const { api } = renderList();
     await screen.findByText('21 stocks');
-    api.listStocks.mockReturnValue(new Promise(() => undefined));
+    api.listStocks.returns(new Promise(() => undefined));
 
     await userEvent.click(loadMoreButton());
 
@@ -100,15 +100,13 @@ describe('StockList paging', () => {
   it('LST-20 keeps the rows when the next page fails, and retries', async () => {
     const { api } = renderList();
     await screen.findByText('21 stocks');
-    api.listStocks.mockRejectedValueOnce(
-      new ApiClientError({ kind: 'http', status: 400, message: 'bad' }),
-    );
+    api.listStocks.rejectsOnce(new ApiClientError({ kind: 'http', status: 400, message: 'bad' }));
 
     await userEvent.click(loadMoreButton());
 
     expect(await screen.findByRole('alert')).toHaveTextContent('Could not load more stocks');
     expect(rows()).toHaveLength(10);
-    api.listStocks.mockImplementation(fakeStocksServer(stocks));
+    api.listStocks.implement(fakeStocksServer(stocks));
     await userEvent.click(screen.getByRole('button', { name: 'Try again' }));
     await vi.waitFor(() => {
       expect(rows()).toHaveLength(20);
@@ -121,7 +119,7 @@ describe('StockList paging', () => {
     await vi.waitFor(() => {
       expect(rows()).toHaveLength(2);
     });
-    expect(api.listStocks.mock.calls[0]?.[0]).toEqual({ symbols: ['A', 'B'] });
+    expect(api.listStocks.calls[0]?.[0]).toEqual({ symbols: ['A', 'B'] });
     expect(screen.queryByRole('button', { name: 'Load more stocks' })).not.toBeInTheDocument();
     expect(screen.getByText('2 stocks')).toBeInTheDocument();
   });
@@ -129,7 +127,7 @@ describe('StockList paging', () => {
   it('LST-22 asks for nothing when the filter is empty', async () => {
     const { api } = renderList({ symbols: [] });
     expect(await screen.findByText('No stocks to show')).toBeInTheDocument();
-    expect(api.listStocks).not.toHaveBeenCalled();
+    expect(api.listStocks.calls).toHaveLength(0);
   });
 
   it('LST-23 subscribes to the rows of every loaded page', async () => {
@@ -157,8 +155,8 @@ describe('StockList filtered retry', () => {
   it('LST-24 retries a failed filtered list', async () => {
     const harness = createFeatureHarness();
     harness.api.listStocks
-      .mockRejectedValueOnce(new ApiClientError({ kind: 'http', status: 400, message: 'bad' }))
-      .mockImplementation(fakeStocksServer(stocks));
+      .rejectsOnce(new ApiClientError({ kind: 'http', status: 400, message: 'bad' }))
+      .implement(fakeStocksServer(stocks));
     render(<StockList symbols={['A', 'B']} />, { wrapper: harness.Wrapper });
 
     expect(await screen.findByRole('alert')).toHaveTextContent('Could not load stocks');
@@ -167,6 +165,6 @@ describe('StockList filtered retry', () => {
     await vi.waitFor(() => {
       expect(rows()).toHaveLength(2);
     });
-    expect(harness.api.listStocks).toHaveBeenCalledTimes(2);
+    expect(harness.api.listStocks.calls).toHaveLength(2);
   });
 });

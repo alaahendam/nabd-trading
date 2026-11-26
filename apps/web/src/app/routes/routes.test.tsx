@@ -1,3 +1,11 @@
+import { aapl, watchlistItem } from '@nabd/testing';
+import {
+  historyHandler,
+  server,
+  stockHandler,
+  stocksHandler,
+  watchlistHandler,
+} from '@nabd/testing/msw';
 import { act, fireEvent, render, screen, within } from '@testing-library/react';
 import userEvent from '@testing-library/user-event';
 import { use } from 'react';
@@ -6,14 +14,6 @@ import { RouterProvider } from 'react-router/dom';
 import { afterEach, beforeEach, describe, expect, it, vi } from 'vitest';
 
 import { createTestServices } from '../../test/app-services';
-import { aapl, watchlistItem } from '../../test/fixtures';
-import {
-  historyHandler,
-  server,
-  stockHandler,
-  stocksHandler,
-  watchlistHandler,
-} from '../../test/msw';
 import { Shell } from '../layout/shell';
 import { Providers } from '../providers/providers';
 import { StockPage } from './pages/stock-page';

@@ -1,7 +1,6 @@
+import { changeDirection, formatChange, formatPercent } from '@nabd/i18n';
 import { cva } from 'class-variance-authority';
 import { useTranslation } from 'react-i18next';
-
-import { changeDirection, formatChange, formatPercent } from '../../../lib/format/format';
 
 export const changeBadgeVariants = cva('inline-flex items-center gap-1 text-sm font-medium', {
   variants: {

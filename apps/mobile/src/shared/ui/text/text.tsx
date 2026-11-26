@@ -1,0 +1,35 @@
+import { useMemo } from 'react';
+import { StyleSheet, Text as NativeText, type TextProps } from 'react-native';
+
+import { fontFamily } from '../../../lib/fonts';
+import { fontSize, maxFontScale } from '../../../lib/theme/theme';
+import { useTheme } from '../../../lib/theme/theme-provider';
+
+type Variant = 'body' | 'title' | 'muted' | 'display';
+
+interface Props extends TextProps {
+  variant?: Variant;
+}
+
+/** The app's text: the theme's color, font and size, so no screen styles text by itself. */
+export function Text({ variant = 'body', style, ...rest }: Props) {
+  const { colors } = useTheme();
+  const styles = useMemo(
+    () =>
+      StyleSheet.create({
+        body: { color: colors.text, fontSize: fontSize.body, fontFamily: fontFamily.regular },
+        title: { color: colors.text, fontSize: fontSize.title, fontFamily: fontFamily.semibold },
+        display: {
+          color: colors.text,
+          fontSize: fontSize.display,
+          fontFamily: fontFamily.semibold,
+        },
+        muted: { color: colors.muted, fontSize: fontSize.body, fontFamily: fontFamily.regular },
+      }),
+    [colors],
+  );
+  // Text follows the system font size up to the cap; no caller sets its own.
+  return (
+    <NativeText {...rest} maxFontSizeMultiplier={maxFontScale} style={[styles[variant], style]} />
+  );
+}

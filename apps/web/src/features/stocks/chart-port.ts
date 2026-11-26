@@ -1,17 +1,6 @@
-/** One candle. `time` is in seconds, which is what the chart library expects. */
-export interface Candle {
-  time: number;
-  open: number;
-  high: number;
-  low: number;
-  close: number;
-}
+import type { Candle, VolumeBar } from '@nabd/domain';
 
-export interface VolumeBar {
-  time: number;
-  value: number;
-  direction: 'up' | 'down';
-}
+export type { Candle, VolumeBar };
 
 /** Resolved color values (not token names), read from the CSS tokens. */
 export interface ChartColors {

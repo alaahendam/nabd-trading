@@ -24,6 +24,9 @@ export default defineConfig({
     trace: 'on-first-retry',
   },
   projects: [{ name: 'chromium', use: { ...devices['Desktop Chrome'] } }],
+  // Run this suite with `pnpm test:e2e` from the repository root: Turborepo builds the workspace
+  // packages first (`^build`), and the web build below needs them. Running `playwright test` here
+  // on a clean checkout fails with "failed to resolve import @nabd/...".
   webServer: [
     {
       // Turbo builds the shared package first, then the server.

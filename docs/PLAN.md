@@ -54,7 +54,7 @@ Linting (shared flat config, `--max-warnings 0`)
 
 - `typescript-eslint` strict-type-checked: no `any`, no non-null assertions, consistent type imports.
 - Architecture: `eslint-plugin-boundaries` — `app → features → shared/lib` only; features never import another feature's internals (public `index.ts` only); `shared` never imports `features`.
-- `no-restricted-imports`: `socket.io-client` only inside `features/market-data`; HTTP client only inside `lib/api`; no deep imports into `packages/shared`.
+- `no-restricted-imports`: `socket.io-client` only inside `features/market-data`; HTTP client only inside `lib/api`; no deep imports into `packages/shared`. (Since the mobile M0 extraction these live in `@nabd/market-data` and `@nabd/api-client`: see ADR 0011.)
 - Design system: Tailwind lint (`eslint-plugin-better-tailwindcss`) — no arbitrary values (`bg-[#…]`, `p-[13px]`), no unregistered classes, no physical direction classes (`ml-`, `mr-`, `left-`, `pl-`…) → must use logical (`ms-`, `me-`, `start-`, `ps-`…).
 - `no-restricted-syntax`: no hex/rgb/hsl literals or inline `style` colors in TSX.
 - Stylelint for CSS: color literals allowed only in the tokens file; logical properties enforced (`stylelint-use-logical`).

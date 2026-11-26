@@ -1,0 +1,34 @@
+{
+  "name": "@nabd/tokens",
+  "private": true,
+  "version": "0.0.0",
+  "description": "Design tokens as typed values, shared by web and mobile: the palette, the light and dark semantic layers, and the generator of the web's tokens.css",
+  "license": "UNLICENSED",
+  "type": "module",
+  "main": "./dist/index.js",
+  "types": "./dist/index.d.ts",
+  "exports": {
+    ".": {
+      "types": "./dist/index.d.ts",
+      "default": "./dist/index.js"
+    }
+  },
+  "files": [
+    "dist"
+  ],
+  "scripts": {
+    "build": "tsc -p tsconfig.build.json",
+    "dev": "tsc -p tsconfig.build.json --watch --preserveWatchOutput",
+    "generate": "pnpm run build && node scripts/generate-css.mjs ../../apps/web/src/styles/tokens.css",
+    "lint": "eslint --max-warnings 0 .",
+    "typecheck": "tsc --noEmit",
+    "test": "vitest run --coverage"
+  },
+  "devDependencies": {
+    "@nabd/config": "workspace:*",
+    "@vitest/coverage-v8": "^5.1.1",
+    "globals": "^17.14.0",
+    "typescript": "~6.0.3",
+    "vitest": "^5.1.1"
+  }
+}

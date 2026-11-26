@@ -1,9 +1,11 @@
 /*
- * Design tokens. The only file with color literals (ADR 0006).
+ * Design tokens, generated from @nabd/tokens (ADR 0006). Do not edit by hand: change the typed
+ * tokens in packages/tokens and run `pnpm --filter @nabd/tokens run generate`. A test fails when
+ * this file is out of date.
  *
  * Primitives are the raw palette. Semantic tokens say what a color is for and are the only
  * layer the rest of the app sees. Light is the default; dark redefines the semantic layer only.
- * Every text and background pairing the UI uses is checked for WCAG contrast in tokens.test.ts.
+ * Every text and background pairing the UI uses is checked for WCAG contrast in the package.
  */
 
 :root {

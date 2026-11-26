@@ -8,6 +8,8 @@ build/
 coverage/
 .turbo/
 .vite/
+.expo/
+expo-env.d.ts
 *.tsbuildinfo
 
 # env files (keep examples)
@@ -34,3 +36,6 @@ Thumbs.db
 
 # claude code local files
 .claude/settings.local.json
+
+# the chart library as a string, built by scripts/build-chart-page.mjs
+apps/mobile/src/features/stocks/generated/

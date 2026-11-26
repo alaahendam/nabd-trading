@@ -1,6 +1,6 @@
 # Stocks data hooks: test matrix
 
-Scope: `features/stocks/stock-queries.ts` (`useStocks`, `useStock`, `useHistory`). The hooks are thin wrappers over the API client and the query keys; the tests use a fake `Api` so they pin what the hooks ask for and how they cache, not the network (that is covered by the endpoint tests).
+Scope: `packages/data/src/stock-queries.ts` and `use-stock-list.ts` (`useStocksPages`, `useStocksBySymbols`, `useStock`, `useHistory`, `useStockList`), shared by web and mobile since mobile M0; before that in `features/stocks`. The hooks are thin wrappers over the API client and the query keys; the tests use a fake `Api` so they pin what the hooks ask for and how they cache, not the network (that is covered by the endpoint tests).
 
 | ID     | Behavior                                | Input                                            | Expected                                                                                | Level |
 | ------ | --------------------------------------- | ------------------------------------------------ | --------------------------------------------------------------------------------------- | ----- |

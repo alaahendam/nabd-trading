@@ -19,7 +19,6 @@ export default defineConfig({
         branches: 90,
         functions: 90,
         lines: 90,
-        'src/lib/i18n/language.ts': { statements: 100, branches: 100, functions: 100, lines: 100 },
         'src/lib/i18n/language-store.ts': {
           statements: 100,
           branches: 100,
@@ -32,18 +31,13 @@ export default defineConfig({
           functions: 100,
           lines: 100,
         },
-        'src/lib/i18n/i18n.ts': { statements: 100, branches: 100, functions: 100, lines: 100 },
-        'src/lib/format/format.ts': { statements: 100, branches: 100, functions: 100, lines: 100 },
-        'src/lib/api/api-error.ts': { statements: 100, branches: 100, functions: 100, lines: 100 },
-        'src/lib/api/client-id.ts': { statements: 100, branches: 100, functions: 100, lines: 100 },
-        'src/lib/api/http-client.ts': {
+        'src/lib/connectivity/browser-connectivity.ts': {
           statements: 100,
           branches: 100,
           functions: 100,
           lines: 100,
         },
-        'src/lib/api/endpoints.ts': { statements: 100, branches: 100, functions: 100, lines: 100 },
-        'src/lib/api/api-provider.tsx': {
+        'src/lib/api/browser-client-id.ts': {
           statements: 100,
           branches: 100,
           functions: 100,
@@ -63,68 +57,8 @@ export default defineConfig({
           lines: 100,
         },
         'src/shared/**/*.{ts,tsx}': { statements: 100, branches: 100, functions: 100, lines: 100 },
-        'src/lib/query/query-client.ts': {
-          statements: 100,
-          branches: 100,
-          functions: 100,
-          lines: 100,
-        },
-        'src/lib/query/query-keys.ts': {
-          statements: 100,
-          branches: 100,
-          functions: 100,
-          lines: 100,
-        },
         'src/lib/theme/theme.ts': { statements: 100, branches: 100, functions: 100, lines: 100 },
         'src/lib/theme/theme-hooks.tsx': {
-          statements: 100,
-          branches: 100,
-          functions: 100,
-          lines: 100,
-        },
-        'src/features/market-data/realtime-hooks.tsx': {
-          statements: 100,
-          branches: 100,
-          functions: 100,
-          lines: 100,
-        },
-        'src/features/market-data/clock-ticker.ts': {
-          statements: 100,
-          branches: 100,
-          functions: 100,
-          lines: 100,
-        },
-        'src/features/market-data/create-realtime-client.ts': {
-          statements: 100,
-          branches: 100,
-          functions: 100,
-          lines: 100,
-        },
-        'src/features/market-data/realtime-client.ts': {
-          statements: 100,
-          branches: 100,
-          functions: 100,
-          lines: 100,
-        },
-        'src/features/market-data/socket-io-adapter.ts': {
-          statements: 100,
-          branches: 100,
-          functions: 100,
-          lines: 100,
-        },
-        'src/features/market-data/price-store.ts': {
-          statements: 100,
-          branches: 100,
-          functions: 100,
-          lines: 100,
-        },
-        'src/features/market-data/staleness.ts': {
-          statements: 100,
-          branches: 100,
-          functions: 100,
-          lines: 100,
-        },
-        'src/features/market-data/connection-status.ts': {
           statements: 100,
           branches: 100,
           functions: 100,

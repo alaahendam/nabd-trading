@@ -19,6 +19,12 @@ Concrete cases from this repository. Each says what went wrong, how it was caugh
 | 11  | An RTL text bug visible only in the README screenshots                 | Looking at the generated screenshots     | `44e61f4`                       |
 | 12  | Documentation that had drifted from the code                           | Checking each ADR against the code       | `bf1b22b`                       |
 | 13  | Deployment failed twice on configuration, once silently                | The platform log and the browser console | `docs/deployment.md`            |
+| 14  | A reload that did nothing, and said nothing, in Expo Go                | The author using the app on the phone    | `d292085`, ADR 0015, SWL-08     |
+| 15  | A build that was green in CI and failed on the build server            | The EAS build log                        | `18ec99f`, `a522022`, ADR 0016  |
+| 16  | A failed page of the list was retried in a loop                        | The test written for the failure case    | `f79c98a`, LST-07               |
+| 17  | Tests that guessed what the app does                                   | Running them, then looking at the app    | `348e290`, `217ebe1`, `c817a4a` |
+| 18  | Type probes that were never type-checked                               | Checking in the real file                | `bc87c9f`                       |
+| 19  | A safe-area gap that every test accepted                               | The author looking at the phone          | `5784f88`, SAF-01               |
 
 ## 1. A plan that was wrong about the ecosystem
 
@@ -72,7 +78,31 @@ The ADRs were written as decisions were made and then not touched. Reviewing eac
 
 Deploying produced two failures that no test in the repository could see. Railway's default build ran `pnpm --filter @nabd/server build` and skipped Turborepo, so the shared package was never built (`Cannot find module '@nabd/shared'`). Vercel served a blank page because `VITE_API_URL` was entered without `https://`; the app's startup validation caught it, but the user saw an empty page. Both were diagnosed from the platform log and the browser console, and the fixes are recorded in `docs/deployment.md`. A readable error screen for a bad configuration is not built yet (see the README, "What I would do next").
 
+## 14. A call that succeeds without doing anything
+
+Choosing a language in the mobile app saved it and reloaded the app, according to the tests. On the phone, in Expo Go, nothing reloaded until the author reloaded by hand. `reloadAppAsync` calls `globalThis.expo?.reloadAppAsync(...)`: a host without that native function ignores it, with no error. The unit tests had replaced the whole device module, so they could not see it. The author's report found it; reading the library's source gave the cause; the reload now asks the native side first and falls back to the dev menu's reload in development (`d292085`, ADR 0015, SWL-08). The same ADR records what is still unproven: a release build has no fallback.
+
+## 15. Green in CI, red on the build server
+
+The first EAS build failed in its "Read app config" phase. `app.config.ts` imported `@nabd/tokens`, whose compiled output is not in git; CI builds the shared packages before it runs anything, so CI never saw it, and the build log said only that `expo config` exited with an error. The config now imports no workspace package (`18ec99f`). Looking further for what else the server skips found a second failure waiting: it bundles with Gradle and runs none of the package scripts, so the compiled packages and the generated chart library would have been missing (`a522022`). The second build finished. The first cause was inferred, not reproduced with the old config (ADR 0016).
+
+## 16. A bug the failure test found
+
+The first version of the stock list called "load more" again whenever the list reached its end, including after a page had failed, so a failing request repeated in a loop. Writing the test for the failed page (`LST-07`: a message and a retry button, and no retry by itself) showed it; the list now turns off `onEndReached` once a page has failed (`f79c98a`).
+
+## 17. Tests that guessed
+
+Three tests, written in the same weeks, assumed something about the app that was not true. The chart test for "a period seen before is not requested again" failed because the test app's query client had no `staleTime`; the real client keeps results for 30 seconds, so the test app now starts from the real settings and overrides only what a test must (`348e290`). The haptics tests pressed the star before the watchlist had loaded, while the button is disabled, and passed or failed with the machine's speed (`217ebe1`). The test for the star on the Stocks tab expected `POST /watchlist`; the app sends `PUT /watchlist/AAPL`, which showed up only when the requests were printed (`c817a4a`). In each case the app was right and the test was wrong, and a read of the code would have said so first.
+
+## 18. Probes that were never type-checked
+
+Chasing a TypeScript error where a WebView's props became `never`, short probe files in a dot-folder compiled cleanly and seemed to clear each suspect. They were not being compiled at all: a `tsconfig` `include` of `**/*.ts` skips folders that start with a dot. Moving the check to the real file found the real cause, the library class's default type argument (`undefined`) making its props `never` (`bc87c9f`, with a comment in the code). It is lesson 10 again, in the agent's own tooling.
+
+## 19. A gap no test minded
+
+The Stocks screen had an empty band under its header. Every test passed, because a test can see which safe-area edges a screen asks for but not that the navigation header already covers the top one. The author saw it in a screenshot of the phone. Screens inside a navigator now leave out the edges the header and the tab bar cover (`5784f88`, SAF-01). The matrix marks the rows a test cannot prove as **device** rows, and none of them is ticked until the author has looked.
+
 ## Patterns across the cases
 
 - The mistakes that cost the most were not syntax errors; they were confident assumptions: that a rule would fit, that a test was testing something, that a change would help, that a wait was long enough.
-- What caught them was always something external to the agent's own reading of its code: a failing test, a linter, a real browser, axe, a measurement, a second platform, or a person looking at the screen.
+- What caught them was always something external to the agent's own reading of its code: a failing test, a linter, a real browser, axe, a measurement, a second platform, a build server, or a person looking at the screen. On the mobile app that last one was the author, on a real phone, more often than anything else.

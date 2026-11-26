@@ -1,12 +1,11 @@
-import type { i18n } from 'i18next';
-
 import {
   applyDocumentLanguage,
   detectLanguage,
   type DocumentRootLike,
   type Language,
   LANGUAGE_STORAGE_KEY,
-} from './language';
+} from '@nabd/i18n';
+import type { i18n } from 'i18next';
 
 export interface LanguageState {
   readonly language: Language;

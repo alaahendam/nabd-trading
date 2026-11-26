@@ -1,7 +1,6 @@
+import { createI18n, LANGUAGE_STORAGE_KEY } from '@nabd/i18n';
 import { afterEach, describe, expect, it, vi } from 'vitest';
 
-import { createI18n } from './i18n';
-import { LANGUAGE_STORAGE_KEY } from './language';
 import { browserLanguageEnvironment, LanguageStore } from './language-store';
 
 const makeStorage = (initial?: string) => {

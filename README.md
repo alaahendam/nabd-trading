@@ -33,16 +33,17 @@ To run the browser tests once: `pnpm --filter @nabd/web exec playwright install 
 
 Run from the repository root; Turborepo runs each across the workspaces.
 
-| Script                                | What it does                                                               |
-| ------------------------------------- | -------------------------------------------------------------------------- |
-| `pnpm dev`                            | Web (Vite) and API (Nest, watch mode) together                             |
-| `pnpm build`                          | Build every workspace (the shared package first)                           |
-| `pnpm lint`                           | ESLint in each workspace and at the root, plus Stylelint for CSS           |
-| `pnpm typecheck`                      | TypeScript in each workspace                                               |
-| `pnpm test`                           | Vitest with coverage thresholds in each workspace                          |
-| `pnpm test:e2e`                       | Playwright against the real built server and web app (ports 3300 and 4273) |
-| `pnpm format` / `pnpm format:check`   | Prettier write / check                                                     |
-| `pnpm --filter @nabd/web screenshots` | Regenerate the README screenshots into `docs/screenshots`                  |
+| Script                                    | What it does                                                                     |
+| ----------------------------------------- | -------------------------------------------------------------------------------- |
+| `pnpm dev`                                | Web (Vite) and API (Nest, watch mode) together                                   |
+| `pnpm build`                              | Build every workspace (the shared package first)                                 |
+| `pnpm lint`                               | ESLint in each workspace and at the root, plus Stylelint for CSS                 |
+| `pnpm typecheck`                          | TypeScript in each workspace                                                     |
+| `pnpm test`                               | Vitest with coverage thresholds in each workspace                                |
+| `pnpm test:e2e`                           | Playwright against the real built server and web app (ports 3300 and 4273)       |
+| `pnpm format` / `pnpm format:check`       | Prettier write / check                                                           |
+| `pnpm --filter @nabd/web screenshots`     | Regenerate the README screenshots into `docs/screenshots`                        |
+| `pnpm --filter @nabd/tokens run generate` | Rewrite the web `tokens.css` from the typed tokens (a test fails if it is stale) |
 
 ## Architecture
 
@@ -51,7 +52,7 @@ flowchart LR
   subgraph Browser["apps/web (React 19, Vite, Tailwind v4)"]
     UI["features: stocks, watchlist"]
     Q["TanStack Query<br/>(REST data, optimistic watchlist)"]
-    RT["features/market-data<br/>RealtimeClient + PriceStore<br/>(one socket, per-frame batching)"]
+    RT["@nabd/market-data<br/>RealtimeClient + PriceStore<br/>(one socket, per-frame batching)"]
     CH["Chart port<br/>(Lightweight Charts, lazy chunk)"]
     UI --> Q
     UI --> RT
@@ -87,13 +88,14 @@ The web app and the server share code only through `packages/shared`: every requ
 ```
 apps/web                 React app (Vite, Tailwind v4, TanStack Query, React Router, i18next)
   src/app                  layout (shell, header, footer), providers, routes and pages
-  src/features             stocks (list, detail, chart), watchlist, market-data (the only socket code)
-  src/lib                  api client, formatters, i18n, query client, theme
+  src/features             stocks (list, detail, chart), watchlist
+  src/lib                  the browser parts: connectivity, client ID, language store, theme
   src/shared/ui            small shared components, one folder each with its test
   src/styles               design tokens (the only file with color literals) and base styles
-  src/test                 test harness: fake socket, fake API, fake chart, MSW handlers
+  src/test                 test harness: providers around the shared fakes, the fake chart
   e2e                      Playwright specs (main flow, states, accessibility, keyboard, Arabic)
   screenshots              the script that generates docs/screenshots
+apps/mobile              Expo app (SDK 58, Expo Router, jest-expo); the stock list, watchlist, stock detail, chart and a Settings tab for the language (milestones M0 to M4 of docs/MOBILE-PLAN.md; the APK and the write-up are M5)
 apps/server              NestJS API and Socket.IO gateway
   src/modules/market       the simulator, the history generator, the stock universe, the market service
   src/modules/stocks       REST: list (paged, filtered), one stock, history
@@ -103,6 +105,13 @@ apps/server              NestJS API and Socket.IO gateway
   src/modules/chaos        optional injected latency and 503s for testing error states
   src/modules/health       liveness
 packages/shared          Zod contracts, routes, error codes, socket events (compiled ESM)
+packages/api-client      the HTTP client and endpoints, with every response validated (shared with mobile)
+packages/domain          candle math, the chart summary, custom range validation (pure)
+packages/market-data     the price store, the realtime client over Socket.IO, staleness, React bindings
+packages/data            query keys, stock, history and watchlist hooks, optimistic updates
+packages/i18n            English and Arabic resources, language rules, formatters
+packages/tokens          design tokens as typed values, and the generator of the web tokens.css
+packages/testing         recorders, fakes, fixtures and mock API handlers for Vitest and Jest
 packages/config          shared tsconfig, ESLint, Prettier and Stylelint configs
 docs/                    PLAN.md, decisions (ADRs), testing (test matrices), ai, screenshots, deployment
 tasks/                   the plan and task list of the latest phase
@@ -136,7 +145,7 @@ Each is a short ADR with the alternatives that were rejected. The index is [`doc
 - **Matrices first.** Every module has a test matrix in [`docs/testing`](docs/testing) written before its code; test names carry the row IDs (`LST-07`, `CHT-18`).
 - **Coverage thresholds** are enforced in each Vitest config and never lowered: 90% overall, **100% on domain logic** (the simulator and history generator, the watchlist service, the price store and realtime client, the formatters, the API client). Bootstrap files are excluded explicitly with a reason.
 - **Tests must be able to fail.** New checks were run against a deliberately broken version first (a removed focus ring, a mis-aligned value, a plain `span` instead of `bdi`); see [`docs/ai/lessons.md`](docs/ai/lessons.md).
-- Counts at the last full run, made on a fresh clone: **1,051 unit and component tests** (170 contracts, 307 server, 574 web) and **38 browser tests**.
+- Counts at the last full run, made on a fresh clone: **1,096 unit and component tests** (170 contracts, 307 server, 255 web, and 364 in the shared packages) and **38 browser tests**.
 
 ## Quality gates
 
@@ -147,7 +156,7 @@ Rules live in tooling, so a change that breaks them is rejected instead of argue
 | Prettier                  | Style discussions; also sorts Tailwind classes                                                                                                                         |
 | TypeScript                | Loose types: `strict`, `noUncheckedIndexedAccess`, `exactOptionalPropertyTypes`, `noImplicitReturns`                                                                   |
 | ESLint boundaries         | Web imports run `app → features → shared/lib` only; a feature never reaches into another's internals; server modules talk only through exported providers              |
-| ESLint restricted imports | `socket.io-client` only in `features/market-data`, `fetch` only in `lib/api`, `lightweight-charts` only in the chart adapter                                           |
+| ESLint restricted imports | `socket.io-client` only in `@nabd/market-data`, `fetch` only in `@nabd/api-client`, `lightweight-charts` only in the chart adapter                                     |
 | ESLint design system      | No unknown Tailwind classes, no arbitrary values, no color literals, **logical properties only** (`ms-`, `pe-`, `start-`; never `ml-`, `left-`), so RTL cannot regress |
 | ESLint i18n               | Literal user-facing strings in JSX                                                                                                                                     |
 | ESLint a11y and React     | `jsx-a11y`, hooks rules, `button-has-type`, leaked renders                                                                                                             |
@@ -203,6 +212,28 @@ The web app is on **Vercel** and the API on **Railway**, both deploying from `ma
 - **Vercel:** root directory `apps/web` (build, output and routing from `apps/web/vercel.json`); env `VITE_API_URL` = the API's URL with `https://`.
 - **Railway:** build command `pnpm turbo run build --filter=@nabd/server`, health check `/api/health`; env `NODE_ENV=production` and `CORS_ORIGIN` = the Vercel URL. One replica.
 
+## Mobile app
+
+> **This is an experimental branch (`feat/mobile`), not part of `main` and not part of `v1.0.0`.** It was not merged because it does not yet reach the web app's bar; the review against the plan, item by item, is in [`docs/testing/mobile-review.md`](docs/testing/mobile-review.md).
+
+An Android app (Expo and React Native) on the same shared packages, REST API and Socket.IO feed as the web app: the stock list, the watchlist, a stock's detail with a candlestick chart, and a Settings tab for English and Arabic. The plan and its decisions are in [`docs/MOBILE-PLAN.md`](docs/MOBILE-PLAN.md) and [ADR 0011](docs/decisions/0011-shared-packages-for-web-and-mobile.md) to [0016](docs/decisions/0016-the-android-build-on-eas.md).
+
+**Install the APK.** Open [the latest EAS build](https://expo.dev/accounts/alaahendam/projects/nabd/builds/f76fdbd4-de45-4c2b-9556-41e074de1674) on an Android phone and tap Install (Android asks to allow installs from your browser, as it does for any app outside the Play Store). EAS keeps builds for a limited time, so the link can expire: if it has, build it again as described below. An earlier build from the same configuration was installed and worked on the author's phone; this latest one, which adds the star on the stock list, has not yet been checked there, and none has been checked on any other device.
+
+**Run it from source.**
+
+```bash
+pnpm install
+cp apps/mobile/.env.example apps/mobile/.env   # EXPO_PUBLIC_API_URL: the deployed API, or your own
+pnpm --filter @nabd/mobile start               # then open it in Expo Go, or press "a" for an emulator
+```
+
+Expo Go is for development only: it needs the same SDK (58), and it shows its own icon and splash. A phone on your Wi-Fi reaches an API on your computer at `http://<your computer's address>:3000`.
+
+**Build the APK yourself.** From `apps/mobile`, with an Expo account: `eas login`, create the `EXPO_PUBLIC_API_URL` variable in the `preview` EAS environment (plain text; it is not a secret), then `eas build --platform android --profile preview`. The address is never read from a file in git (`eas.json` holds none, and a test checks that).
+
+**iOS is source-only and untested.** The code is cross-platform and nothing in it is Android-specific that the author knows of, but it has not been built or run on iOS.
+
 ## Known limitations
 
 - **Simulated data.** Prices are an approximate snapshot with a random walk on top, the market never closes, and history is relative to the current price, so a past close is not stable (ADR 0004).
@@ -214,6 +245,13 @@ The web app is on **Vercel** and the API on **Railway**, both deploying from `ma
 - **The hosted API runs on a Railway trial** that lasts until late December 2026. After that the live API may be offline; everything still runs locally with `pnpm dev`.
 - **`SIGTERM` does not trigger Nest's shutdown hooks on Windows.** A Node limitation on that platform.
 - **The chart attribution** follows the library's notice (its logo is on and a link is in the footer); that is a reading of the notice, not legal advice.
+- **The mobile app has no custom date range.** The chart offers the five periods (1D, 1W, 1M, 3M, 1Y); the web app also has a custom range (ADR 0008).
+- **The mobile app has only been run on one Android phone, in Expo Go.** iOS has not been run, there is no store build yet, and no real screen reader was used on mobile. The Android package id `com.nabd.trading` is an assumption until a store listing exists.
+- **The mobile chart is a WebView** (ADR 0013), which a screen reader cannot read; the numbers behind it are shown as text beneath it. Only the chart page loads, and links in it are not followed.
+- **The Arabic text in the mobile app** reuses the web strings, plus the ones M3 and M4 added (Settings, the language message), and has not had a professional localization review.
+- **The app icon and splash have not been seen on a device.** They are drawn by `apps/mobile/scripts/make-icons.mjs` and configured, but Expo Go shows its own, so they first appear in a development build or the APK.
+- **There are no Maestro flows.** They need an emulator or a device driven by the Maestro CLI, which was not available; the main path is covered by Jest tests with the data layer faked, and by hand on one phone.
+- **Text scales with the system font size up to twice its size**, and no further. Nothing in the mobile app animates, so there is no reduced-motion code; that is revisited if an animation is added.
 
 ## What I would do next
 
@@ -228,4 +266,4 @@ The web app is on **Vercel** and the API on **Railway**, both deploying from `ma
 
 ## How I worked with AI
 
-Planned in Claude chat, built phase by phase in Claude Code under a written working agreement (`CLAUDE.md`), with the tooling rejecting what breaks the rules and every claim checked by a test, a measurement or a real browser. The honest account, including thirteen cases where the AI was wrong and how each was caught, is in [`docs/ai`](docs/ai/README.md).
+Planned in Claude chat, built phase by phase in Claude Code under a written working agreement (`CLAUDE.md`), with the tooling rejecting what breaks the rules and every claim checked by a test, a measurement or a real browser. The honest account, including nineteen cases where the AI was wrong and how each was caught, is in [`docs/ai`](docs/ai/README.md).
