@@ -3,6 +3,7 @@ import { useMemo } from 'react';
 import { useTranslation } from 'react-i18next';
 import { Pressable, StyleSheet, View } from 'react-native';
 
+import { lightTap } from '../../lib/haptics';
 import { fontSize, minTouchTarget } from '../../lib/theme/theme';
 import { useTheme } from '../../lib/theme/theme-provider';
 import { Text } from '../../shared/ui';
@@ -43,6 +44,7 @@ export function WatchlistToggle({ symbol }: { symbol: string }) {
         accessibilityState={{ selected: watched, disabled: list.isPending }}
         disabled={list.isPending}
         onPress={() => {
+          lightTap();
           toggle.mutate({ symbol, watch: !watched });
         }}
         style={styles.button}

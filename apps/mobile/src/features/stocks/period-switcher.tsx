@@ -3,6 +3,7 @@ import { useMemo } from 'react';
 import { useTranslation } from 'react-i18next';
 import { Pressable, StyleSheet, View } from 'react-native';
 
+import { lightTap } from '../../lib/haptics';
 import { minTouchTarget, radius, spacing } from '../../lib/theme/theme';
 import { useTheme } from '../../lib/theme/theme-provider';
 import { Text } from '../../shared/ui';
@@ -52,6 +53,7 @@ export function PeriodSwitcher({
             accessibilityLabel={`${period}, ${t(`chart.period.${period}`)}`}
             accessibilityState={{ selected }}
             onPress={() => {
+              if (!selected) lightTap();
               onChange(period);
             }}
             style={[styles.button, selected ? styles.selected : undefined]}

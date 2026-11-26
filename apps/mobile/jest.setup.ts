@@ -29,3 +29,9 @@ jest.requireActual<object>('@shopify/flash-list/jestSetup');
 // `findBy…` and `waitFor` wait one second by default. A screen that loads a stock and then its
 // chart needs more than that when the other workspaces' tests are using the machine too.
 configure({ asyncUtilTimeout: 5000 });
+
+// The device's vibration motor is not there; a recorder stands in, so a test can see the tap.
+jest.mock('expo-haptics', () => ({
+  impactAsync: jest.fn(() => Promise.resolve()),
+  ImpactFeedbackStyle: { Light: 'light' },
+}));
