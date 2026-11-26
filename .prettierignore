@@ -7,3 +7,8 @@ coverage
 .vite
 playwright-report
 test-results
+
+# third-party skills copied verbatim from addyosmani/agent-skills (see .claude/skills/UPSTREAM.md)
+.claude/skills
+.claude/references
+.claude/agents
