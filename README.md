@@ -1,9 +1,13 @@
 # Nabd (نبض)
 
-**A mini trading app: a live stock list over WebSockets, stock pages with candlestick charts, and a watchlist. English and Arabic (RTL), light and dark.**
+**A mini trading app: a live stock list over WebSockets, stock pages with candlestick charts, and a watchlist. English and Arabic (right to left), light and dark.**
+
+Nabd means "pulse" in Arabic, a nod to prices that move while you watch them.
 
 - **Live demo:** https://nabd-trading.vercel.app
 - **API health:** https://nabdserver-production-5845f39b.up.railway.app/api/health
+
+> **What to evaluate:** the web app and the API on `main`. The last section of this file is a separate extra (an experimental mobile app on its own branch) and is not part of what is being assessed.
 
 > Nabd is an independent project. It is not affiliated with any company or trading product, and **all market data is simulated**: the tickers are real, the prices are made up by a seeded simulator, and the app says so on every page.
 
@@ -14,6 +18,14 @@
 | ![Watchlist in Arabic](docs/screenshots/watchlist-light-ar.jpg) | ![Stock list in Arabic](docs/screenshots/stocks-dark-ar.jpg) |
 
 All twelve screenshots (three pages, two themes, two languages) are in [`docs/screenshots`](docs/screenshots) and are regenerated with `pnpm --filter @nabd/web screenshots`.
+
+## What is in here
+
+- **A React web app** with a live list, stock pages and candlestick charts, a watchlist with optimistic updates, English and Arabic, light and dark.
+- **A NestJS server** with a REST API and a Socket.IO feed of simulated prices.
+- **One contracts package** that both of them build on, so the two sides cannot quietly disagree about what a request, a response or a tick looks like.
+- **A lot of guard rails:** a test matrix written before each module, coverage thresholds that are never lowered, lint rules that reject what breaks the design system, and CI that repeats everything on a clean machine.
+- **An honest paper trail:** short decision records, and a page of the cases where the AI I worked with was wrong and how each was caught.
 
 ## Quick start
 
@@ -80,7 +92,7 @@ flowchart LR
   SH -. "types and validation" .-> Server
 ```
 
-The web app and the server share code only through `packages/shared`: every request, response, error and socket event is a Zod schema there, and both sides derive their types from it.
+On `main`, the web app and the server share code only through `packages/shared`: every request, response, error and socket event is a Zod schema there, and both sides derive their types from it.
 
 ### Folder structure
 
@@ -210,14 +222,13 @@ The web app is on **Vercel** and the API on **Railway**, both deploying from `ma
 - **No authentication.** The client ID identifies a browser, nothing more. There is no rate limiting.
 - **One allowed web origin.** `CORS_ORIGIN` takes a single URL, so Vercel preview deployments cannot call the API.
 - **A bad configuration shows a blank page.** The app refuses to start on an invalid `VITE_API_URL` (good) but does not say so on screen (not good); the error is only in the console.
-- **Accessibility is checked by tools, not by people.** axe and the keyboard spec read the accessibility tree in Chromium; no real screen reader was run. The Arabic text was reviewed by the project author but has not had a professional localization review.
+- **Accessibility is checked by tools, not by people.** axe and the keyboard spec read the accessibility tree in Chromium; no real screen reader was run. The Arabic text was reviewed by me but has not had a professional localization review.
 - **The hosted API runs on a Railway trial** that lasts until late December 2026. After that the live API may be offline; everything still runs locally with `pnpm dev`.
 - **`SIGTERM` does not trigger Nest's shutdown hooks on Windows.** A Node limitation on that platform.
 - **The chart attribution** follows the library's notice (its logo is on and a link is in the footer); that is a reading of the notice, not legal advice.
 
 ## What I would do next
 
-- **A mobile app** (Expo or React Native) on the same `@nabd/shared` contracts and the same REST and Socket.IO API: the contracts, the tick format and the price-store design carry over; only the UI changes.
 - **Real accounts** (OAuth or passwords with sessions) in place of the anonymous client ID, so a watchlist follows a person across devices.
 - **Persistence:** Postgres behind the existing `WatchlistRepository` interface, which also removes the single-replica limit for watchlists.
 - **A real market data provider** behind the `MarketService` interface, with its licensing, rate limits and a cache; the simulator stays as the offline and test implementation.
@@ -228,4 +239,57 @@ The web app is on **Vercel** and the API on **Railway**, both deploying from `ma
 
 ## How I worked with AI
 
-Planned in Claude chat, built phase by phase in Claude Code under a written working agreement (`CLAUDE.md`), with the tooling rejecting what breaks the rules and every claim checked by a test, a measurement or a real browser. The honest account, including thirteen cases where the AI was wrong and how each was caught, is in [`docs/ai`](docs/ai/README.md).
+I planned in Claude chat and built phase by phase in Claude Code, under a written working agreement (`CLAUDE.md`), with the tooling rejecting what breaks the rules and every claim checked by a test, a measurement or a real browser. The honest account, including thirteen cases where the AI was wrong and how each was caught, is in [`docs/ai`](docs/ai/README.md).
+
+## Extra: an experimental mobile app (not part of what is evaluated)
+
+Everything above is the project: a web app and an API, on `main`. This last section is something extra I tried on a separate branch. **It is not part of the assessed project, it is not in `main`, and nothing above depends on it**, so please do not look for mobile features in the web app or the API.
+
+I include it for two reasons: it shows how far the shared building blocks go, and I want to be open about how I work in an area I do not know. The web app and the API are where my experience is. Mobile is where I had none, so there I leaned much more on research and on the AI, and I say so plainly below.
+
+### One set of building blocks for the web, the server and a phone app
+
+This is the part of the experiment I am proudest of, so here it is in plain words.
+
+**The idea:** anything that has to behave the same everywhere should exist exactly once. If the web app, the server and a phone app each had their own idea of what a "stock" looks like, how a price is formatted, or when a live price counts as stale, they would drift apart, and every fix would have to be made two or three times. So I put those things in small packages and let each app import them.
+
+**On `main` today** that is `packages/shared`: the contracts. Every request, response, error and socket event is a Zod schema, and the server and the web app both take their types from it. The server checks every request against these schemas, and the web client checks every response against the same ones, so a change to the shape of a stock shows up as a compile error on both sides until both are fixed.
+
+**On the experimental mobile branch** I took the idea much further, because a second client was the real test of whether the web code was reusable. I moved seven pieces out of the web app into packages that the web app and the phone app now both import:
+
+| Package             | What it holds                                                                                          | Used by              |
+| ------------------- | ------------------------------------------------------------------------------------------------------ | -------------------- |
+| `@nabd/shared`      | The contracts: Zod schemas, routes, error codes, socket events                                         | server, web, mobile  |
+| `@nabd/api-client`  | A typed HTTP client that validates every response                                                      | web, mobile          |
+| `@nabd/data`        | The data hooks: stock list, one stock, history, and the watchlist with optimistic updates and rollback | web, mobile          |
+| `@nabd/market-data` | The live-price layer: one socket, per-frame batching, connection status, "stale" detection             | web, mobile          |
+| `@nabd/domain`      | The candle maths, the text description of a chart, the custom date range                               | web, mobile          |
+| `@nabd/i18n`        | The English and Arabic strings, language rules, and the number, price and percent formatters           | web, mobile          |
+| `@nabd/tokens`      | The design tokens, turned into CSS for the web and read in code on the phone                           | web, mobile          |
+| `@nabd/testing`     | A fake socket, a fake API and fixtures, so both apps test against the same stand-ins                   | web and mobile tests |
+
+**Why it helps, with real examples rather than promises:**
+
+- **Less to write.** About 2,000 lines of source (not counting tests, comments or blank lines) run unchanged in both the web app and the phone app. The phone app would have needed all of that again, in its own version.
+- **Fewer places to be wrong.** The "should this price count as stale" rule, the socket's reconnect logic and the optimistic watchlist with rollback were each written and tested once. A bug found in one app is fixed for both.
+- **Consistent by construction.** The same function writes the text description of a chart on the web and on the phone. The same formatters keep digits Latin in Arabic text in both. One palette of semantic tokens feeds both, and a test checks the contrast of every pair.
+- **Safe to move.** I moved the code a package at a time, each move its own commit, and the web app's whole test suite and CI stayed green throughout. That was the check that nothing changed for web users.
+- **Honest about what is left.** A few things are still written twice (the hook that lays a live price over a quote, and the chart's language setting). They are noted in the code as candidates for the next move.
+
+This work lives on the [`feat/mobile`](https://github.com/alaahendam/nabd-trading/tree/feat/mobile) branch and is not in `main` yet; the reasoning is in [ADR 0011](https://github.com/alaahendam/nabd-trading/blob/feat/mobile/docs/decisions/0011-shared-packages-for-web-and-mobile.md) on that branch.
+
+### The Android app
+
+I had never built a mobile app. I wanted to find out how far the shared building blocks above would take me, so I built an Android app on a separate branch, [`feat/mobile`](https://github.com/alaahendam/nabd-trading/tree/feat/mobile). It has the live stock list, the watchlist (with a star on each stock), a stock page with a candlestick chart, and a Settings tab that switches between English and Arabic and flips the layout to right to left.
+
+**How I went about it.** Because I have no real mobile experience, I did not guess. I read up on the options and compared them with the AI before writing anything:
+
+- I looked at how to share code between a web app and a phone app, and chose Expo with React Native so the shared packages could be reused as they are.
+- For the chart, I compared three ways to draw candlesticks, built the two that could work, and measured them on my own phone before choosing (a web view running the same chart library as the website). The reasoning is written down in an ADR, including the option I ruled out from its documentation without running it.
+- For saving settings, switching the language, and building the installable app, I read the platform's documentation with the AI, wrote each decision down as a short record, and checked the result on a real device.
+
+**How much is the AI's work, and how much is reused.** Honestly: most of the mobile-only code was written by the AI, in the way people call "vibe coding", with me deciding what to build, reviewing how it behaves, and trying it on my phone as it grew. As a rough measure, **counted in lines of source code at commit `c817a4a`, about 51% of what runs on the phone is mobile-only code (screens, the chart, the language switch), and about 49% is the shared logic from the web app** (the API client, the data layer, live prices, translations and tokens). That is a count of lines, not of effort or understanding, and the AI helped write the shared packages too, as it did the rest of this repository.
+
+**Install it.** Open [the latest Android build](https://expo.dev/accounts/alaahendam/projects/nabd/builds/f76fdbd4-de45-4c2b-9556-41e074de1674) on an Android phone and tap Install (Android will ask to allow installs from your browser, as it does for any app outside the Play Store). The link may expire after a while; the branch's README explains how to build it again. An earlier build from the same setup worked on my phone; the latest one adds the star on the stock list and I am still checking it there.
+
+**Why it is not merged.** I keep it as an experimental branch on purpose. The plan for it said it would join `main` only if it reached the same bar as the web app, and it does not yet: I have not checked small and large phone screens on an emulator, I have no end-to-end tests that drive the app on a phone (there are 222 unit and component tests, but not flows), I have tested on a single Android phone, and iOS has never been built or run. The review, item by item, is in [`docs/testing/mobile-review.md`](https://github.com/alaahendam/nabd-trading/blob/feat/mobile/docs/testing/mobile-review.md) on the branch, and the account of where the AI went wrong while building it (six more cases than the thirteen above, several of which I caught simply by using the app on my phone) is in the [AI notes on that branch](https://github.com/alaahendam/nabd-trading/blob/feat/mobile/docs/ai/lessons.md).
