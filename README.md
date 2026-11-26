@@ -214,9 +214,11 @@ The web app is on **Vercel** and the API on **Railway**, both deploying from `ma
 
 ## Mobile app
 
-An Android app (Expo and React Native) on the same shared packages, REST API and Socket.IO feed as the web app: the stock list, the watchlist, a stock's detail with a candlestick chart, and a Settings tab for English and Arabic. The plan and its decisions are in [`docs/MOBILE-PLAN.md`](docs/MOBILE-PLAN.md) and [ADR 0011](docs/decisions/0011-shared-packages-for-web-and-mobile.md) to [0013](docs/decisions/0013-mobile-chart-webview-lightweight-charts.md).
+> **This is an experimental branch (`feat/mobile`), not part of `main` and not part of `v1.0.0`.** It was not merged because it does not yet reach the web app's bar; the review against the plan, item by item, is in [`docs/testing/mobile-review.md`](docs/testing/mobile-review.md).
 
-**Install the APK.** The link to the Android build is added here after the first EAS build (`tasks/mobile-m5.md`, T2). Until then there is none: do not rely on this section for a reviewer route.
+An Android app (Expo and React Native) on the same shared packages, REST API and Socket.IO feed as the web app: the stock list, the watchlist, a stock's detail with a candlestick chart, and a Settings tab for English and Arabic. The plan and its decisions are in [`docs/MOBILE-PLAN.md`](docs/MOBILE-PLAN.md) and [ADR 0011](docs/decisions/0011-shared-packages-for-web-and-mobile.md) to [0016](docs/decisions/0016-the-android-build-on-eas.md).
+
+**Install the APK.** Open [the latest EAS build](https://expo.dev/accounts/alaahendam/projects/nabd/builds/f76fdbd4-de45-4c2b-9556-41e074de1674) on an Android phone and tap Install (Android asks to allow installs from your browser, as it does for any app outside the Play Store). EAS keeps builds for a limited time, so the link can expire: if it has, build it again as described below. An earlier build from the same configuration was installed and worked on the author's phone; this latest one, which adds the star on the stock list, has not yet been checked there, and none has been checked on any other device.
 
 **Run it from source.**
 
@@ -264,4 +266,4 @@ Expo Go is for development only: it needs the same SDK (58), and it shows its ow
 
 ## How I worked with AI
 
-Planned in Claude chat, built phase by phase in Claude Code under a written working agreement (`CLAUDE.md`), with the tooling rejecting what breaks the rules and every claim checked by a test, a measurement or a real browser. The honest account, including thirteen cases where the AI was wrong and how each was caught, is in [`docs/ai`](docs/ai/README.md).
+Planned in Claude chat, built phase by phase in Claude Code under a written working agreement (`CLAUDE.md`), with the tooling rejecting what breaks the rules and every claim checked by a test, a measurement or a real browser. The honest account, including nineteen cases where the AI was wrong and how each was caught, is in [`docs/ai`](docs/ai/README.md).
