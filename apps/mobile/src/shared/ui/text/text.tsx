@@ -2,7 +2,7 @@ import { useMemo } from 'react';
 import { StyleSheet, Text as NativeText, type TextProps } from 'react-native';
 
 import { fontFamily } from '../../../lib/fonts';
-import { fontSize } from '../../../lib/theme/theme';
+import { fontSize, maxFontScale } from '../../../lib/theme/theme';
 import { useTheme } from '../../../lib/theme/theme-provider';
 
 type Variant = 'body' | 'title' | 'muted' | 'display';
@@ -28,5 +28,8 @@ export function Text({ variant = 'body', style, ...rest }: Props) {
       }),
     [colors],
   );
-  return <NativeText {...rest} style={[styles[variant], style]} />;
+  // Text follows the system font size up to the cap; no caller sets its own.
+  return (
+    <NativeText {...rest} maxFontSizeMultiplier={maxFontScale} style={[styles[variant], style]} />
+  );
 }

@@ -5,6 +5,8 @@ import type { ResolvedTheme } from './theme-store';
 /** Spacing and type sizes do not change with the theme. Numbers are device-independent pixels. */
 export const spacing = { small: 8, medium: 16, large: 24 } as const;
 export const fontSize = { body: 16, title: 22, small: 14, display: 32 } as const;
+/** The most the system font size may enlarge text: twice. Beyond that a layout could not hold. */
+export const maxFontScale = 2;
 export const radius = { medium: 8 } as const;
 /** The smallest touch target: 48 covers 44 pt on iOS and 48 dp on Android. */
 export const minTouchTarget = 48;

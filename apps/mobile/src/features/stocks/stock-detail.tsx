@@ -13,7 +13,13 @@ import { useLiveQuote } from './use-live-quote';
 
 const styles = StyleSheet.create({
   content: { gap: spacing.large, paddingVertical: spacing.medium },
-  header: { flexDirection: 'row', alignItems: 'flex-start', justifyContent: 'space-between' },
+  header: {
+    flexDirection: 'row',
+    flexWrap: 'wrap',
+    alignItems: 'flex-start',
+    justifyContent: 'space-between',
+    gap: spacing.medium,
+  },
   title: { flexDirection: 'row', alignItems: 'center', gap: spacing.small },
   figures: { alignItems: 'flex-end' },
   stats: { gap: spacing.small },
