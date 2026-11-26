@@ -17,7 +17,7 @@ Part of `docs/MOBILE-PLAN.md` (section 5). Goal: the three features of M3, finis
 - [x] **T2 Tab icons.** An icon per tab, named by its title; checked on the phone.
 - [x] **T3 Safe areas.** Screens and the tab bar clear the notch, the gesture bar and the cutout, in both orientations of use (portrait only is supported).
 - [x] **T4 Dynamic Type.** Scaling with a cap; rows and the period switcher survive large sizes.
-- [ ] **T5 Haptics.** The star and the period buttons.
+- [x] **T5 Haptics.** The star and the period buttons.
 - [ ] **T6 Accessibility pass.** Every screen walked in tests for role, name, state and focus order; fixes.
 - [ ] **T7 Icon and splash.** The app's own icon and splash, in the theme's colors; checked on the phone.
 - [ ] **T8 Language switch.** The Arabic layout flip with a reload; checked on a development build.
