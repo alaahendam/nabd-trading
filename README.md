@@ -212,6 +212,26 @@ The web app is on **Vercel** and the API on **Railway**, both deploying from `ma
 - **Vercel:** root directory `apps/web` (build, output and routing from `apps/web/vercel.json`); env `VITE_API_URL` = the API's URL with `https://`.
 - **Railway:** build command `pnpm turbo run build --filter=@nabd/server`, health check `/api/health`; env `NODE_ENV=production` and `CORS_ORIGIN` = the Vercel URL. One replica.
 
+## Mobile app
+
+An Android app (Expo and React Native) on the same shared packages, REST API and Socket.IO feed as the web app: the stock list, the watchlist, a stock's detail with a candlestick chart, and a Settings tab for English and Arabic. The plan and its decisions are in [`docs/MOBILE-PLAN.md`](docs/MOBILE-PLAN.md) and [ADR 0011](docs/decisions/0011-shared-packages-for-web-and-mobile.md) to [0013](docs/decisions/0013-mobile-chart-webview-lightweight-charts.md).
+
+**Install the APK.** The link to the Android build is added here after the first EAS build (`tasks/mobile-m5.md`, T2). Until then there is none: do not rely on this section for a reviewer route.
+
+**Run it from source.**
+
+```bash
+pnpm install
+cp apps/mobile/.env.example apps/mobile/.env   # EXPO_PUBLIC_API_URL: the deployed API, or your own
+pnpm --filter @nabd/mobile start               # then open it in Expo Go, or press "a" for an emulator
+```
+
+Expo Go is for development only: it needs the same SDK (58), and it shows its own icon and splash. A phone on your Wi-Fi reaches an API on your computer at `http://<your computer's address>:3000`.
+
+**Build the APK yourself.** From `apps/mobile`, with an Expo account: `eas login`, create the `EXPO_PUBLIC_API_URL` variable in the `preview` EAS environment (plain text; it is not a secret), then `eas build --platform android --profile preview`. The address is never read from a file in git (`eas.json` holds none, and a test checks that).
+
+**iOS is source-only and untested.** The code is cross-platform and nothing in it is Android-specific that the author knows of, but it has not been built or run on iOS.
+
 ## Known limitations
 
 - **Simulated data.** Prices are an approximate snapshot with a random walk on top, the market never closes, and history is relative to the current price, so a past close is not stable (ADR 0004).
