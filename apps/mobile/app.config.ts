@@ -27,6 +27,8 @@ const config: ExpoConfig = {
     ],
   ],
   experiments: { typedRoutes: true },
+  // The EAS project the APK is built in. An ID, not a secret; `eas init` cannot write it here.
+  extra: { eas: { projectId: '0368e4b7-af34-4228-ab5b-4fd9fa3035ce' } },
   android: {
     package: 'com.nabd.trading',
     adaptiveIcon: { foregroundImage: './assets/adaptive-icon.png', backgroundColor: brand },

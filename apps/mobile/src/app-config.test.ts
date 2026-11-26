@@ -26,4 +26,12 @@ describe('app configuration', () => {
       backgroundColor: brand,
     });
   });
+
+  it('BLD-05 names the EAS project the build goes to', () => {
+    const eas = (config.extra as { eas?: { projectId?: string } } | undefined)?.eas;
+
+    expect(eas?.projectId).toMatch(
+      /^[0-9a-f]{8}-[0-9a-f]{4}-[0-9a-f]{4}-[0-9a-f]{4}-[0-9a-f]{12}$/,
+    );
+  });
 });
