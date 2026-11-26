@@ -59,6 +59,7 @@ describe('accessibility pass', () => {
     ['/', 'Apple Inc.'],
     ['/watchlist', 'Apple Inc.'],
     ['/stock/AAPL', 'Could not load the chart'],
+    ['/settings', 'English'],
   ])(
     'A11-01 every pressable on %s has a role, a name and a 48-point target',
     async (url, ready) => {
@@ -73,6 +74,7 @@ describe('accessibility pass', () => {
     ['/', 'Apple Inc.'],
     ['/watchlist', 'Apple Inc.'],
     ['/stock/AAPL', 'Could not load the chart'],
+    ['/settings', 'English'],
   ])('A11-02 %s has a header for a screen reader to jump to', async (url, ready) => {
     await renderRouter('./app', { initialUrl: url });
     await screen.findByText(ready);

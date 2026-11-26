@@ -39,10 +39,18 @@ describe('tab icons', () => {
     await renderRouter('./app');
     await screen.findByText('Apple Inc.');
 
-    expect(screen.getByRole('button', { name: 'Stocks, tab, 1 of 2' })).toBeOnTheScreen();
-    expect(screen.getByRole('button', { name: 'Watchlist, tab, 2 of 2' })).toBeOnTheScreen();
+    expect(screen.getByRole('button', { name: 'Stocks, tab, 1 of 3' })).toBeOnTheScreen();
+    expect(screen.getByRole('button', { name: 'Watchlist, tab, 2 of 3' })).toBeOnTheScreen();
     expect(icon('trending-up')).not.toHaveLength(0);
     expect(icon('star')).not.toHaveLength(0);
+  });
+
+  it('TAB-04 adds a Settings tab with an icon, named by its title', async () => {
+    await renderRouter('./app');
+    await screen.findByText('Apple Inc.');
+
+    expect(screen.getByRole('button', { name: 'Settings, tab, 3 of 3' })).toBeOnTheScreen();
+    expect(icon('settings')).not.toHaveLength(0);
   });
 
   it('TAB-01 hides the icons from screen readers', async () => {

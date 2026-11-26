@@ -6,6 +6,7 @@ import { act, render, renderHook } from '@testing-library/react-native';
 import type { ReactElement, ReactNode } from 'react';
 
 import { StartupStorage } from './lib/storage/startup-storage';
+import { StorageProvider } from './lib/storage/storage-context';
 import { AppProviders } from './providers/app-providers';
 import { DataProviders } from './providers/data-providers';
 import { createServices } from './providers/services';
@@ -52,7 +53,9 @@ export function createTestApp(saved: Record<string, string> = {}) {
     return function Wrapper({ children }: { children: ReactNode }) {
       return (
         <AppProviders services={services}>
-          <DataProviders services={{ api, queryClient, realtime }}>{children}</DataProviders>
+          <StorageProvider storage={storage}>
+            <DataProviders services={{ api, queryClient, realtime }}>{children}</DataProviders>
+          </StorageProvider>
         </AppProviders>
       );
     };

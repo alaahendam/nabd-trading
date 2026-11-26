@@ -13,7 +13,7 @@ function TabIcon({
   focused,
   size,
 }: {
-  name: 'trending-up' | 'star';
+  name: 'trending-up' | 'star' | 'settings';
   focused: boolean;
   size: number;
 }) {
@@ -58,6 +58,15 @@ export default function TabsLayout() {
         options={{
           title: t('nav.watchlist'),
           tabBarIcon: ({ focused, size }) => <TabIcon name="star" focused={focused} size={size} />,
+        }}
+      />
+      <Tabs.Screen
+        name="settings"
+        options={{
+          title: t('nav.settings'),
+          tabBarIcon: ({ focused, size }) => (
+            <TabIcon name="settings" focused={focused} size={size} />
+          ),
         }}
       />
     </Tabs>

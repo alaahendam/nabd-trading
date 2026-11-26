@@ -80,6 +80,7 @@ describe('safe areas', () => {
   it.each([
     ['/', ['left', 'right']],
     ['/watchlist', ['left', 'right']],
+    ['/settings', ['left', 'right']],
     ['/stock/AAPL', ['bottom', 'left', 'right']],
     ['/nowhere', ['bottom', 'left', 'right', 'top']],
   ])(

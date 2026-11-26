@@ -8,6 +8,7 @@ import { loadFonts } from '../src/lib/fonts';
 import { networkConnectivity } from '../src/lib/network/network-connectivity';
 import { wireQueryClient } from '../src/lib/query/wire-query-client';
 import type { StartupStorage } from '../src/lib/storage/startup-storage';
+import { StorageProvider } from '../src/lib/storage/storage-context';
 import { AppProviders } from '../src/providers/app-providers';
 import { AppStack } from '../src/providers/app-stack';
 import { Bootstrap, holdSplash } from '../src/providers/bootstrap';
@@ -30,9 +31,11 @@ function DataRoot({ storage, apiUrl }: { storage: StartupStorage; apiUrl: string
   const services = useMemo(() => createDataServices(storage, apiUrl), [storage, apiUrl]);
 
   return (
-    <DataProviders services={services}>
-      <AppStack />
-    </DataProviders>
+    <StorageProvider storage={storage}>
+      <DataProviders services={services}>
+        <AppStack />
+      </DataProviders>
+    </StorageProvider>
   );
 }
 
