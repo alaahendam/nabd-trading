@@ -95,7 +95,7 @@ apps/web                 React app (Vite, Tailwind v4, TanStack Query, React Rou
   src/test                 test harness: providers around the shared fakes, the fake chart
   e2e                      Playwright specs (main flow, states, accessibility, keyboard, Arabic)
   screenshots              the script that generates docs/screenshots
-apps/mobile              Expo app (SDK 58, Expo Router, jest-expo); the stock list, watchlist, stock detail and chart (milestones M0 to M3 of docs/MOBILE-PLAN.md; polish and release are M4 and M5)
+apps/mobile              Expo app (SDK 58, Expo Router, jest-expo); the stock list, watchlist, stock detail, chart and a Settings tab for the language (milestones M0 to M4 of docs/MOBILE-PLAN.md; the APK and the write-up are M5)
 apps/server              NestJS API and Socket.IO gateway
   src/modules/market       the simulator, the history generator, the stock universe, the market service
   src/modules/stocks       REST: list (paged, filtered), one stock, history
@@ -226,7 +226,10 @@ The web app is on **Vercel** and the API on **Railway**, both deploying from `ma
 - **The mobile app has no custom date range.** The chart offers the five periods (1D, 1W, 1M, 3M, 1Y); the web app also has a custom range (ADR 0008).
 - **The mobile app has only been run on one Android phone, in Expo Go.** iOS has not been run, there is no store build yet, and no real screen reader was used on mobile. The Android package id `com.nabd.trading` is an assumption until a store listing exists.
 - **The mobile chart is a WebView** (ADR 0013), which a screen reader cannot read; the numbers behind it are shown as text beneath it. Only the chart page loads, and links in it are not followed.
-- **The Arabic text in the mobile app** reuses the web strings, plus the ones M3 added, and has not had a professional localization review.
+- **The Arabic text in the mobile app** reuses the web strings, plus the ones M3 and M4 added (Settings, the language message), and has not had a professional localization review.
+- **The app icon and splash have not been seen on a device.** They are drawn by `apps/mobile/scripts/make-icons.mjs` and configured, but Expo Go shows its own, so they first appear in a development build or the APK.
+- **There are no Maestro flows.** They need an emulator or a device driven by the Maestro CLI, which was not available; the main path is covered by Jest tests with the data layer faked, and by hand on one phone.
+- **Text scales with the system font size up to twice its size**, and no further. Nothing in the mobile app animates, so there is no reduced-motion code; that is revisited if an animation is added.
 
 ## What I would do next
 
