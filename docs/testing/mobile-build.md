@@ -1,0 +1,8 @@
+# Mobile build configuration: test matrix (M5)
+
+| ID     | Behaviour                                                                                     |
+| ------ | --------------------------------------------------------------------------------------------- |
+| BLD-01 | The `preview` profile builds an installable APK (not an app bundle) for internal distribution |
+| BLD-02 | The API address comes from an EAS environment; `eas.json` holds no address and no URL         |
+| BLD-03 | **device** The APK installs on the author's phone and shows data from the deployed API        |
+| BLD-04 | **device** The icon, the splash and the language switch look right on the APK                 |
