@@ -88,4 +88,26 @@ describe('StartupStorage', () => {
     expect(created()).toBe('7d1f0f3a-0c35-4d6e-8a0e-2c8d0e3b6a55');
     expect(second.written).toEqual([['nabd.clientId', '7d1f0f3a-0c35-4d6e-8a0e-2c8d0e3b6a55']]);
   });
+
+  it('STO-07 saves a value and says it reached storage, for a change followed by a reload', async () => {
+    const { store, written } = createFakeStore();
+    const storage = await StartupStorage.load(store, KEYS);
+
+    expect(await storage.saveItem('a', '1')).toBe(true);
+
+    expect(written).toEqual([['a', '1']]);
+    expect(storage.getItem('a')).toBe('1');
+  });
+
+  it('STO-08 says so when a value did not reach storage, and still keeps it for the session', async () => {
+    const store: AsyncKeyValueStore = {
+      multiGet: () => Promise.resolve([]),
+      setItem: () => Promise.reject(new Error('disk full')),
+    };
+    const storage = await StartupStorage.load(store, KEYS);
+
+    expect(await storage.saveItem('a', '1')).toBe(false);
+
+    expect(storage.getItem('a')).toBe('1');
+  });
 });

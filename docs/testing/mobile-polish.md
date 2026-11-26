@@ -9,6 +9,7 @@ Written before the code, as `tasks/mobile-m4.md` says. Rows marked **device** ca
 | TAB-01 | Each tab has an icon, and the tab is named by its title, not by the icon   |
 | TAB-02 | The icon takes the active and inactive colors of the theme, in both themes |
 | TAB-03 | **device** The icons draw (they are not empty boxes) on the phone          |
+| TAB-04 | A third tab, Settings, has an icon and is named by its title               |
 
 ## Safe areas
 
@@ -56,9 +57,14 @@ Written before the code, as `tasks/mobile-m4.md` says. Rows marked **device** ca
 
 ## Language switch
 
-| ID     | Behaviour                                                                       |
-| ------ | ------------------------------------------------------------------------------- |
-| LNG-01 | Choosing Arabic saves it, sets the layout direction right-to-left, and reloads  |
-| LNG-02 | Choosing the language already in use does nothing                               |
-| LNG-03 | The choice is read at startup, so the first frame is already in that language   |
-| LNG-04 | **device** On a development build, the layout flips and the numerals stay Latin |
+| ID     | Behaviour                                                                                               |
+| ------ | ------------------------------------------------------------------------------------------------------- |
+| LNG-01 | Choosing Arabic saves it, sets the layout direction right-to-left, and reloads                          |
+| LNG-02 | Choosing the language already in use does nothing                                                       |
+| LNG-03 | The choice is read at startup, so the first frame is already in that language                           |
+| LNG-04 | **device** On a development build, the layout flips and the numerals stay Latin                         |
+| LNG-05 | A Settings tab lists both languages by their own names, the current one selected, each at least 48 high |
+| LNG-06 | Choosing the other language runs the switch: saved, direction set, reloaded                             |
+| LNG-07 | If the choice cannot be saved, a message says so and nothing reloads                                    |
+| STO-07 | A value can be saved and awaited, for a change that is followed by a reload                             |
+| STO-08 | A value that did not reach storage is reported, and still kept for the session                          |

@@ -35,3 +35,12 @@ jest.mock('expo-haptics', () => ({
   impactAsync: jest.fn(() => Promise.resolve()),
   ImpactFeedbackStyle: { Light: 'light' },
 }));
+
+// Changing the language sets the native layout direction and reloads the app; recorders stand in.
+jest.mock('./src/lib/i18n/device-layout', () => ({
+  deviceLayout: {
+    allowRTL: jest.fn(),
+    forceRTL: jest.fn(),
+    reload: jest.fn(() => Promise.resolve()),
+  },
+}));

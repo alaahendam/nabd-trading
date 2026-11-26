@@ -43,4 +43,18 @@ export class StartupStorage implements ClientIdStorage {
     // Not awaited: the value is already readable, and a failed write only means it is not kept.
     this.store.setItem(key, value).catch(() => undefined);
   }
+
+  /**
+   * Like `setItem`, but waits for storage and says whether the value reached it. For a change
+   * that is followed by a reload, which would otherwise cut the write short.
+   */
+  async saveItem(key: string, value: string): Promise<boolean> {
+    this.values.set(key, value);
+    try {
+      await this.store.setItem(key, value);
+      return true;
+    } catch {
+      return false;
+    }
+  }
 }
