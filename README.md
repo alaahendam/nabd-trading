@@ -116,6 +116,7 @@ packages/config          shared tsconfig, ESLint, Prettier and Stylelint configs
 docs/                    PLAN.md, decisions (ADRs), testing (test matrices), ai, screenshots, deployment
 tasks/                   the plan and task list of the latest phase
 .claude/commands         project commands for the AI agent (see docs/ai)
+.claude/skills           13 skills from addyosmani/agent-skills, copied verbatim (MIT; see UPSTREAM.md there)
 ```
 
 ## Key decisions and trade-offs
