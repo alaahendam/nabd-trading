@@ -22,7 +22,7 @@ Part of `docs/MOBILE-PLAN.md` (section 5). Goal: the three features of M3, finis
 - [ ] **T7 Icon and splash.** Drawn by `scripts/make-icons.mjs`, wired in `app.config.ts`, tested to exist; the files were looked at, but Expo Go shows its own icon and splash, so ICN-02 waits for the first development build (T8) or the APK.
 - [x] **T8 Language switch.** The Arabic layout flip with a reload; checked on the phone in Expo Go.
 - [ ] **T9 Maestro flows** for the main path. Cut (plan, section 6): Maestro needs its CLI and an emulator or device, which this work could not run, and a flow that was never run proves nothing. Revisit with an emulator.
-- [ ] **T10 Gates.** Whole-repo gates, CI green on the PR, plan ticked, README limits.
+- [x] **T10 Gates.** Whole-repo gates and CI green on the PR (`922e470`), plan ticked, README limits. Open on purpose: T7 (icon and splash on a device, waits for the APK) and T9 (cut).
 
 ## Gate
 
