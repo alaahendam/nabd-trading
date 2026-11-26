@@ -20,7 +20,7 @@ describe('haptics', () => {
     app.api.listWatchlist.resolves([]);
     app.api.addToWatchlist.resolves(watchlistItem);
     await app.render(<WatchlistToggle symbol="AAPL" />);
-    await screen.findByRole('button', { name: 'Watch AAPL' });
+    await screen.findByRole('button', { name: 'Watch AAPL', disabled: false });
 
     await fireEvent.press(screen.getByRole('button', { name: 'Watch AAPL' }));
 
@@ -43,6 +43,7 @@ describe('haptics', () => {
 
     await fireEvent.press(screen.getByRole('button', { name: '1W, Past week' }));
     expect(tap).toHaveBeenCalledTimes(1);
+    await screen.findByText(/^Past week: from/);
   });
 
   it('HAP-03 lets the press work when the device refuses the tap', async () => {
@@ -51,7 +52,7 @@ describe('haptics', () => {
     app.api.listWatchlist.resolves([]);
     app.api.addToWatchlist.resolves(watchlistItem);
     await app.render(<WatchlistToggle symbol="AAPL" />);
-    await screen.findByRole('button', { name: 'Watch AAPL' });
+    await screen.findByRole('button', { name: 'Watch AAPL', disabled: false });
 
     await fireEvent.press(screen.getByRole('button', { name: 'Watch AAPL' }));
 
