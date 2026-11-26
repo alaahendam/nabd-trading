@@ -33,4 +33,4 @@ How they were used: the transcript shows the phases started with plain messages 
 
 ## Skills
 
-Not part of the repository. They are installed in the user's Claude Code skills folder (from `addyosmani/agent-skills`) and load by description, so they are listed per phase in `prompts/01-phase-start.md`.
+They were installed in the user's Claude Code skills folder (from the open-source `addyosmani/agent-skills`) and load by description, so they are listed per phase in `prompts/01-phase-start.md`. Verbatim copies of the 13 that were used are in [`.claude/skills`](../../.claude/skills), with the files they link to, the licence and where they came from in [`.claude/skills/UPSTREAM.md`](../../.claude/skills/UPSTREAM.md). They are third-party, not my work.
