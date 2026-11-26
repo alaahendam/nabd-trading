@@ -22,7 +22,7 @@ The device calls live in `device-layout.ts`, a module the tests replace.
 
 In Expo Go, choosing a language saved it but nothing reloaded. `reloadAppAsync` calls `globalThis.expo?.reloadAppAsync(...)`; a host without that native function ignores the call without an error. The author noticed on the phone, because the language only changed after a manual reload (`d292085`).
 
-So the reload asks the native side first, and in development (`__DEV__`) follows with React Native's `DevSettings.reload()`. If the native reload works, as it should in a built app, the fallback never runs. LNG-08 tests the order; LNG-09, the reload on the phone, was checked in Expo Go.
+So the reload asks the native side first, and in development (`__DEV__`) follows with React Native's `DevSettings.reload()`. If the native reload works, as it should in a built app, the fallback never runs. SWL-08 tests the order; SWL-09, the reload on the phone, was checked in Expo Go.
 
 ## Alternatives considered
 

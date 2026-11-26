@@ -16,7 +16,7 @@ beforeEach(() => {
 });
 
 describe('LanguageSetting', () => {
-  it('LNG-05 lists both languages by their own names, the current one selected, 48 high', async () => {
+  it('SWL-05 lists both languages by their own names, the current one selected, 48 high', async () => {
     await createTestApp().render(<LanguageSetting />);
 
     const english = screen.getByRole('button', { name: 'English' });
@@ -29,14 +29,14 @@ describe('LanguageSetting', () => {
     expect(screen.getByRole('header', { name: 'Language' })).toBeOnTheScreen();
   });
 
-  it('LNG-05 selects Arabic when the app is saved in Arabic', async () => {
+  it('SWL-05 selects Arabic when the app is saved in Arabic', async () => {
     await createTestApp({ [LANGUAGE_STORAGE_KEY]: 'ar' }).render(<LanguageSetting />);
 
     expect(screen.getByRole('button', { name: 'العربية' })).toBeSelected();
     expect(screen.getByRole('button', { name: 'English' })).not.toBeSelected();
   });
 
-  it('LNG-06 saves the other language, sets the layout right-to-left, and reloads', async () => {
+  it('SWL-06 saves the other language, sets the layout right-to-left, and reloads', async () => {
     await createTestApp().render(<LanguageSetting />);
 
     await fireEvent.press(screen.getByRole('button', { name: 'العربية' }));
@@ -48,7 +48,7 @@ describe('LanguageSetting', () => {
     expect(layout.forceRTL).toHaveBeenCalledWith(true);
   });
 
-  it('LNG-02 does nothing when the language in use is chosen again', async () => {
+  it('SWL-02 does nothing when the language in use is chosen again', async () => {
     await createTestApp().render(<LanguageSetting />);
 
     await fireEvent.press(screen.getByRole('button', { name: 'English' }));
@@ -57,7 +57,7 @@ describe('LanguageSetting', () => {
     expect(layout.forceRTL).not.toHaveBeenCalled();
   });
 
-  it('LNG-07 says so and does not reload when the choice cannot be saved', async () => {
+  it('SWL-07 says so and does not reload when the choice cannot be saved', async () => {
     const failing: AsyncKeyValueStore = {
       multiGet: () => Promise.resolve([]),
       setItem: () => Promise.reject(new Error('disk full')),

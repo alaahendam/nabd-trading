@@ -59,14 +59,14 @@ Written before the code, as `tasks/mobile-m4.md` says. Rows marked **device** ca
 
 | ID     | Behaviour                                                                                                                                                                   |
 | ------ | --------------------------------------------------------------------------------------------------------------------------------------------------------------------------- |
-| LNG-01 | Choosing Arabic saves it, sets the layout direction right-to-left, and reloads                                                                                              |
-| LNG-02 | Choosing the language already in use does nothing                                                                                                                           |
-| LNG-03 | The choice is read at startup, so the first frame is already in that language                                                                                               |
-| LNG-04 | **device** On a development build, the layout flips and the numerals stay Latin                                                                                             |
-| LNG-05 | A Settings tab lists both languages by their own names, the current one selected, each at least 48 high                                                                     |
-| LNG-06 | Choosing the other language runs the switch: saved, direction set, reloaded                                                                                                 |
-| LNG-07 | If the choice cannot be saved, a message says so and nothing reloads                                                                                                        |
-| LNG-08 | The reload asks the native side first, and in development falls back to the dev menu's reload, because a host without the native call (Expo Go) ignores it without an error |
-| LNG-09 | **device** In Expo Go the app reloads by itself after choosing a language, with no manual reload                                                                            |
+| SWL-01 | Choosing Arabic saves it, sets the layout direction right-to-left, and reloads                                                                                              |
+| SWL-02 | Choosing the language already in use does nothing                                                                                                                           |
+| SWL-03 | The choice is read at startup, so the first frame is already in that language                                                                                               |
+| SWL-04 | **device** On a development build, the layout flips and the numerals stay Latin                                                                                             |
+| SWL-05 | A Settings tab lists both languages by their own names, the current one selected, each at least 48 high                                                                     |
+| SWL-06 | Choosing the other language runs the switch: saved, direction set, reloaded                                                                                                 |
+| SWL-07 | If the choice cannot be saved, a message says so and nothing reloads                                                                                                        |
+| SWL-08 | The reload asks the native side first, and in development falls back to the dev menu's reload, because a host without the native call (Expo Go) ignores it without an error |
+| SWL-09 | **device** In Expo Go the app reloads by itself after choosing a language, with no manual reload                                                                            |
 | STO-07 | A value can be saved and awaited, for a change that is followed by a reload                                                                                                 |
 | STO-08 | A value that did not reach storage is reported, and still kept for the session                                                                                              |

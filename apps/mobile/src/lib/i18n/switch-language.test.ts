@@ -29,7 +29,7 @@ function setup({ saves = true }: { saves?: boolean } = {}) {
 }
 
 describe('switchLanguage', () => {
-  it('LNG-01 saves Arabic, sets the layout right-to-left, then reloads, in that order', async () => {
+  it('SWL-01 saves Arabic, sets the layout right-to-left, then reloads, in that order', async () => {
     const { calls, environment } = setup();
 
     const result = await switchLanguage('ar', environment('en'));
@@ -38,7 +38,7 @@ describe('switchLanguage', () => {
     expect(calls).toEqual(['save nabd.language=ar', 'allowRTL true', 'forceRTL true', 'reload']);
   });
 
-  it('LNG-01 saves English, sets the layout left-to-right, then reloads', async () => {
+  it('SWL-01 saves English, sets the layout left-to-right, then reloads', async () => {
     const { calls, environment } = setup();
 
     await switchLanguage('en', environment('ar'));
@@ -46,7 +46,7 @@ describe('switchLanguage', () => {
     expect(calls).toEqual(['save nabd.language=en', 'allowRTL true', 'forceRTL false', 'reload']);
   });
 
-  it('LNG-02 does nothing for the language already in use', async () => {
+  it('SWL-02 does nothing for the language already in use', async () => {
     const { calls, environment } = setup();
 
     expect(await switchLanguage('en', environment('en'))).toBe('unchanged');
@@ -55,7 +55,7 @@ describe('switchLanguage', () => {
     expect(calls).toEqual([]);
   });
 
-  it('LNG-01 leaves the app alone when the choice cannot be saved', async () => {
+  it('SWL-01 leaves the app alone when the choice cannot be saved', async () => {
     const { calls, environment } = setup({ saves: false });
 
     const result = await switchLanguage('ar', environment('en'));

@@ -19,7 +19,7 @@ Concrete cases from this repository. Each says what went wrong, how it was caugh
 | 11  | An RTL text bug visible only in the README screenshots                 | Looking at the generated screenshots     | `44e61f4`                       |
 | 12  | Documentation that had drifted from the code                           | Checking each ADR against the code       | `bf1b22b`                       |
 | 13  | Deployment failed twice on configuration, once silently                | The platform log and the browser console | `docs/deployment.md`            |
-| 14  | A reload that did nothing, and said nothing, in Expo Go                | The author using the app on the phone    | `d292085`, ADR 0015, LNG-08     |
+| 14  | A reload that did nothing, and said nothing, in Expo Go                | The author using the app on the phone    | `d292085`, ADR 0015, SWL-08     |
 | 15  | A build that was green in CI and failed on the build server            | The EAS build log                        | `18ec99f`, `a522022`, ADR 0016  |
 | 16  | A failed page of the list was retried in a loop                        | The test written for the failure case    | `f79c98a`, LST-07               |
 | 17  | Tests that guessed what the app does                                   | Running them, then looking at the app    | `348e290`, `217ebe1`, `c817a4a` |
@@ -80,7 +80,7 @@ Deploying produced two failures that no test in the repository could see. Railwa
 
 ## 14. A call that succeeds without doing anything
 
-Choosing a language in the mobile app saved it and reloaded the app, according to the tests. On the phone, in Expo Go, nothing reloaded until the author reloaded by hand. `reloadAppAsync` calls `globalThis.expo?.reloadAppAsync(...)`: a host without that native function ignores it, with no error. The unit tests had replaced the whole device module, so they could not see it. The author's report found it; reading the library's source gave the cause; the reload now asks the native side first and falls back to the dev menu's reload in development (`d292085`, ADR 0015, LNG-08). The same ADR records what is still unproven: a release build has no fallback.
+Choosing a language in the mobile app saved it and reloaded the app, according to the tests. On the phone, in Expo Go, nothing reloaded until the author reloaded by hand. `reloadAppAsync` calls `globalThis.expo?.reloadAppAsync(...)`: a host without that native function ignores it, with no error. The unit tests had replaced the whole device module, so they could not see it. The author's report found it; reading the library's source gave the cause; the reload now asks the native side first and falls back to the dev menu's reload in development (`d292085`, ADR 0015, SWL-08). The same ADR records what is still unproven: a release build has no fallback.
 
 ## 15. Green in CI, red on the build server
 

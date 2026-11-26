@@ -29,7 +29,7 @@ describe('deviceLayout.reload', () => {
     setDev(originalDev);
   });
 
-  it('LNG-08 asks the native side first, then the dev menu, in development', async () => {
+  it('SWL-08 asks the native side first, then the dev menu, in development', async () => {
     setDev(true);
 
     await deviceLayout.reload();
@@ -38,7 +38,7 @@ describe('deviceLayout.reload', () => {
     expect(reloadDevMenu).toHaveBeenCalledTimes(1);
   });
 
-  it('LNG-08 uses only the native reload outside development', async () => {
+  it('SWL-08 uses only the native reload outside development', async () => {
     setDev(false);
 
     await deviceLayout.reload();
