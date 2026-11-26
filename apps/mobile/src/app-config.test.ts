@@ -1,6 +1,7 @@
 import { resolveToken } from '@nabd/tokens';
 
 import config from '../app.config';
+import brandColor from '../brand-color.json';
 
 /** Loads a file as the test environment does: an image becomes its name, a missing file throws. */
 const load = (path: string): unknown => jest.requireActual(path);
@@ -33,5 +34,9 @@ describe('app configuration', () => {
     expect(eas?.projectId).toMatch(
       /^[0-9a-f]{8}-[0-9a-f]{4}-[0-9a-f]{4}-[0-9a-f]{4}-[0-9a-f]{12}$/,
     );
+  });
+
+  it('BLD-06 keeps its copy of the brand color equal to the token', () => {
+    expect(brandColor.brand).toBe(resolveToken('light', 'brand'));
   });
 });

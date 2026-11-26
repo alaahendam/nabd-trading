@@ -1,8 +1,13 @@
-import { resolveToken } from '@nabd/tokens';
 import type { ExpoConfig } from 'expo/config';
 
-/** The splash and the adaptive icon sit on the brand color, the same token as the app's buttons. */
-const brand = resolveToken('light', 'brand');
+import brandColor from './brand-color.json';
+
+/**
+ * The splash and the adaptive icon sit on the brand color. It is a copy of the `brand` token, not
+ * an import of it: Expo reads this file on the build server before any workspace package is
+ * built, so it can import none. A test fails if the copy and the token ever differ.
+ */
+const brand = brandColor.brand;
 
 /**
  * The Expo configuration. The API URL is not read here: the app reads
